@@ -7,238 +7,312 @@
 
     <title>Add Student</title>
     <link rel="icon" type="image/png" href="images/favicon.jpg">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/output.css">
     <link rel="stylesheet" href="css/style.css">
+
 
 
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg bg-success navbar-dark shadow">
-        <div class="container-fluid">
-            <a class="navbar-brand fw-bold" href="index.html">
-                🧑‍🎓 Student Management
-            </a>
-            <div>
-                <a href="index.html" class="btn btn-light">
-                Dashboard
-                </a>
-            </div>
-        </div>        
-    </nav>
-    <div class="container mt-5">
-        <nav aria-label="breadcrumb">
+    <nav class="bg-green-600 shadow-lg">
 
-    <ol class="breadcrumb">
-<li class="breadcrumb-item">
+    <div class="w-full px-6 py-4 flex justify-between items-center">
 
-    <a href="index.html">
+        <!-- Logo -->
+        <a href="index.html" class="text-white text-2xl font-bold">
+            🎓 Student Management
+        </a>
 
-        Dashboard
+        <!-- Dashboard Button -->
+        <a href="index.html"
+           class="bg-white text-green-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition duration-200">
+            Dashboard
+        </a>
 
-    </a>
-
-</li>
-
-<li class="breadcrumb-item">
-
-    <a href="#">
-
-        Students
-
-    </a>
-
-</li>
-
-<li class="breadcrumb-item active"
-    aria-current="page">
-    Add Student
-
-
-</li>
-    </ol>
+    </div>
 
 </nav>
-        <div class="mb-4 ">
-            <h2 class="fw-bold">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Add Student
-            </h2>
-            <p class="text-muted">
-                Fill in the details below to add a new student.
-            </p>
-        </div>
-        <div class="card">
-            <div class="card-header">
-                <h4 class="mb-0">
-                    <i class="bi bi-mortarboard-fill me-2"></i>
-                    Student Information
-                </h4>
+    <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- Breadcrumb -->
+
+    <nav class="flex items-center text-sm text-gray-500 mb-6">
+
+        <a href="index.html"
+           class="hover:text-green-600 transition">
+            Dashboard
+        </a>
+
+        <span class="mx-2">/</span>
+
+        <a href="#"
+           class="hover:text-green-600 transition">
+            Students
+        </a>
+
+        <span class="mx-2">/</span>
+
+        <span class="font-medium text-gray-700">
+            Add Student
+        </span>
+
+    </nav>
+
+    <!-- Page Heading -->
+
+    <div class="mb-8">
+
+        <h1 class="text-3xl font-bold text-gray-800 flex items-center">
+
+            <span class="mr-3">➕</span>
+
+            Add Student
+
+        </h1>
+
+        <p class="text-gray-500 mt-2">
+
+            Fill in the details below to add a new student.
+
+        </p>
+
+    </div>
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+
+    <!-- Card Header -->
+
+    <div class="bg-green-600 text-white px-6 py-4">
+
+        <h2 class="text-xl font-semibold flex items-center">
+
+            <span class="mr-3">🎓</span>
+
+            Student Information
+
+        </h2>
+
+    </div>
+
+        <div class="p-6">
+                <!-- Success Alert -->
+    <div class="mb-6 rounded-lg bg-green-100 border border-green-400 text-green-700 px-4 py-3">
+        ✅ Student Saved Successfully
+    </div>
+
+    <form>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- First Name -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    👤 First Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="Enter first name"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
             </div>
-            <div class="card-body">
-                <div class="alert alert-success">
-                    Student Saved Successfully
-                    </div>
-                <form>
-                <div class="row g-3">
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">
-                            <i class="bi bi-person me-2"></i>
-                            First Name <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter first name" required>
 
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">
-                            <i class="bi bi-person me-2"></i>
-                            Last Name<span class="text-danger">*</span>
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter last name" required>
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-envelope-fill me-2"></i>
-                            Email<span class="text-danger">*</span>
-                        </label>
-                        <input type="email" class="form-control" placeholder="Enter your email" required>
+            <!-- Last Name -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    👤 Last Name <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="Enter last name"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-                    </div>
-                    <div class="col-md-6 mb-2">
-                        <label class="form-label">
-                            <i class="bi bi-telephone-fill me-2"></i>
-                            Phone Number<span class="text-danger">*</span>
-                        </label>
-                        <input type="tel" class="form-control" placeholder="Enter your Phone Number" required>
+            <!-- Email -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📧 Email <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-                    </div>
+            <!-- Phone -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📞 Phone Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="tel"
+                    placeholder="Enter your Phone Number"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="ni ni-hash me-2"></i>
-                            Roll Number<span class="text-danger">*</span>
+            <!-- Roll Number -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    #️⃣ Roll Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="Enter your Roll Number"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter your Roll Number" required>
+            <!-- Registration Number -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    🆔 Registration Number <span class="text-red-500">*</span>
+                </label>
+                <input
+                    type="text"
+                    placeholder="Enter your Registration Number"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
 
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-card-text me-2"></i>
-                            Registration Number<span class="text-danger">*</span>
+            <!-- Gender -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-3">
+                    ⚧ Gender
+                </label>
 
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter your Registration Number" required>
+                <div class="space-y-2">
 
-                    </div>
-
-                </div>
-                <div class="row g-3 mt-1">
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label">
-                            <i class="bi bi-gender-ambiguous me-2"></i>
-                            Gender
-                        </label>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" id="male">
-                            <label class="form-check-label" for="male">
-                                male
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" id="female">
-                            <label class="form-check-label" for="female">
-                                female
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="gender" id="others">
-                            <label class="form-check-label" for="others">
-                                others
-                            </label>
-                        </div>
-                        
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="dob">
-                            <i class="bi bi-calendar-event me-2"></i>
-                            Date of Birth
-                        </label>
-                        <input class="form-control" type="date" name="DateofBirth" id="dob">
-
-                    </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6 mb-4">
-                        <label class="form-label">
-                            <i class="bi bi-calendar3 me-2"></i>
-                            Semester
-                        </label>
-                        <input type="number" class="form-control" placeholder="Enter your current semester">
-
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-building me-2"></i>
-                            Department
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter your Department">
-
-                    </div>
-
-                </div>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-geo-alt-fill me-2"></i>
-                            City
-                        </label>
-                        <select class="form-select" id="city" name="city">
-                            <option value="" selected disabled><span class="text-muted">Select City</span></option>
-                            <option value="Islamabad"> Islamabad</option>
-                            <option value="Lahore">Lahore</option>
-                            <option value="Faisalabad">Faisalabad</option>
-                            <option value="Multan">Multan</option>
-                        </select>
-
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">
-                            <i class="bi bi-globe me-2"></i>
-                            Country
-                        </label>
-                        <input type="text" class="form-control" placeholder="Enter your Country">
-
-                    </div>
-
-                </div>
-                <div class="row g-3 mt-1">
-                    <label class="form-label mb-0">
-                        <i class="bi bi-house-door-fill me-2"></i>
-                        Address
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="gender" class="text-green-600">
+                        Male
                     </label>
-                    <input class="form-control" type="text" name="Address" id="Address">
-                    </div>
-                <div class="row mt-4">
-                    <div class="col-12">
-                        <div class="d-flex justify-content-between" >
-                            <button type="submit" class="btn btn-success" >
-                                Save Student
-                            </button>
-                            <button type="reset" class="btn btn-warning">
-                                Reset
-                            </button>
-                        </div>
 
-                    </div>
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="gender" class="text-green-600">
+                        Female
+                    </label>
+
+                    <label class="flex items-center gap-2">
+                        <input type="radio" name="gender" class="text-green-600">
+                        Others
+                    </label>
+
                 </div>
-                </form>
-                
+
             </div>
+
+            <!-- Date of Birth -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📅 Date of Birth
+                </label>
+
+                <input
+                    type="date"
+                    name="DateofBirth"
+                    id="dob"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Semester -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📚 Semester
+                </label>
+
+                <input
+                    type="number"
+                    placeholder="Enter your current semester"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- Department -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    🏢 Department
+                </label>
+
+                <input
+                    type="text"
+                    placeholder="Enter your Department"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+            <!-- City -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    📍 City
+                </label>
+
+                <select
+                    id="city"
+                    name="city"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500">
+
+                    <option value="" selected disabled>Select City</option>
+                    <option value="Islamabad">Islamabad</option>
+                    <option value="Lahore">Lahore</option>
+                    <option value="Faisalabad">Faisalabad</option>
+                    <option value="Multan">Multan</option>
+
+                </select>
+
+            </div>
+
+            <!-- Country -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    🌍 Country
+                </label>
+
+                <input
+                    type="text"
+                    placeholder="Enter your Country"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            </div>
+
+        </div>
+
+        <!-- Address -->
+        <div class="mt-6">
+
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                🏠 Address
+            </label>
+
+            <input
+                type="text"
+                name="Address"
+                id="Address"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex justify-between mt-8">
+
+            <button
+                type="submit"
+                class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
+
+                Save Student
+
+            </button>
+
+            <button
+                type="reset"
+                class="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition">
+
+                Reset
+
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
         </div>
 
 

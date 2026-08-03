@@ -9,287 +9,289 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/png" href="images/favicon.jpg">
+        <link rel="stylesheet" href="css/output.css">
 
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
             <link rel="stylesheet" href="css/style.css">
 
 
 
 </head>
 
-<body>
-<nav class="navbar navbar-expand-lg bg-success navbar-dark shadow">
+<body class="bg-gray-100">
+    <nav class=" bg-gradient-to-b from-green-600 to-green-800 shadow-lg">
 
-    <div class="container-fluid">
+    <div class="w-full px-6 py-4 flex justify-between items-center">
 
-        <a class="navbar-brand fw-bold" href="#">
+        <!-- Logo -->
+        <a href="#" class="text-white text-2xl font-bold">
             🎓 Student Management
         </a>
 
-        <div class="d-flex align-items-center">
+        <!-- Right Side -->
+        <div class="flex items-center space-x-4">
 
-            <button class="btn btn-light me-3">
-
+            <button class="bg-white text-green-600 font-medium px-4 py-2 rounded-lg hover:bg-gray-100 transition duration-200">
                 Notifications
-
             </button>
 
             <img src="https://i.pravatar.cc/40"
-                 class="rounded-circle"
-                 alt="Profile">
+                 alt="Profile"
+                 class="w-10 h-10 rounded-full border-2 border-white">
 
         </div>
 
     </div>
 
 </nav>
-<div class="container-fluid">
+<div class="flex">
 
-    <div class="row">
-        <!--sidebar-->
-        <div class="col-lg-2 sidebar text-white vh-100">
+    <!-- Sidebar -->
+    <aside class="w-64 h-screen bg-gradient-to-b from-green-400 to-green-700 text-white shadow-lg">
 
-    <h4 class="mt-4 mb-4 text-center">
+        <h4 class="text-2xl font-bold text-center py-6 ">
+            Menu
+        </h4>
 
-        Menu
+        <nav class="mt-4 flex flex-col">
 
-    </h4>
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
+                Dashboard
+            </a>
 
-    <div class="list-group">
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
+                Students
+            </a>
 
-        <a href="#" class="list-group-item list-group-item-action">
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
+                Courses
+            </a>
 
-            Dashboard
-
-        </a>
-       
-        <a href="#" class="list-group-item list-group-item-action">
-
-            Students
-
-        </a>
-
-        <a href="#" class="list-group-item list-group-item-action">
-
-            Courses
-
-        </a>
-
-        <a href="#" class="list-group-item list-group-item-action">
-
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
                 Faculty
+            </a>
 
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
+                Attendance
+            </a>
+
+            <a href="#"
+               class="px-6 py-3 hover:bg-green-800 transition duration-200">
+                Settings
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <!-- Main Content starts here -->
+    <main class="flex-1 p-6">
+
+   <div class="bg-gradient-to-r from-green-400 to-green-800 text-white rounded-xl p-8 shadow-lg">
+
+    <h1 class="text-4xl font-bold mb-3">
+        Welcome Back, Ahmed 👋
+    </h1>
+
+    <p class="text-lg text-green-100 mb-6">
+        Manage students, attendance, courses and faculty from one place.
+    </p>
+
+    <div class="flex gap-4">
+
+        <a href="add-student.html"
+            class="text-white-100 border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-green-400 transition duration-200 inline-block">
+                Add Student
         </a>
 
-        <a href="#" class="list-group-item list-group-item-action">
-
-            Attendance
-
-        </a>
-
-        <a href="#" class="list-group-item list-group-item-action">
-
-            Settings
-
-        </a>
-    </div>
-
-</div>
-
-<div class="col-lg-10 p-4">
-
-    <div class="p-5 rounded main-card text-white">
-
-        <h1>
-
-            Welcome Back, Ahmed 👋
-
-        </h1>
-
-        <p>
-
-            Manage students, attendance, courses and faculty from one place.
-
-        </p>
-        <a href="add-student.html">
-        <button class="btn btn-light" >
-
-            Add Student
-
-        </button>
-        </a>
-        <button class="btn btn-outline-light">
-
+        <button class="border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-700 transition duration-200">
             View Students
-
         </button>
 
     </div>
-    <div class="row mt-4 g-4">
-        <div class="col-lg-3 ">
-            <div class="card shadow border-success h-100">
-                <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center">
-
-                        Total Students
-                        <div class="fs-1">
-                        👨‍🎓
-                        </div>
-                    </h5>
-                    <h2>
-                        1250
-                    </h2>
-                    <p class="text-muted">
-
-                        Total Registered Students
-                    </p>    
-                </div>
-            </div>
-
-            </div>
-        <div class="col-lg-3 ">
-            <div class="card shadow border-success h-100">
-                <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center">
-
-                        Faculty Members
-                        <div class="fs-1">
-                        👩‍🏫
-                        </div>                          
-                    </h5>
-                    <h2>
-                        245
-                    </h2>
-                    <p class="text-muted">
-
-                        Total Faculty
-                    </p>    
-                </div>
-            </div>
-
-        </div>
-        <div class="col-lg-3 ">
-            <div class="card shadow border-success h-100">
-                <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center">
-
-                        Courses Offered
-                        <div class="fs-1">
-                        📚
-                        </div>                          
-                    </h5>
-                    <h2>
-                        22
-                    </h2>
-                    <p class="text-muted">
-
-                        Total Available Courses
-                    </p>    
-                </div>
-            </div>
-
-        </div>
-        <div class="col-lg-3 ">
-            <div class="card shadow border-success h-100">
-                <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center">
-
-                        Attendance Records
-                        <div class="fs-1">
-                         🕒
-                        </div>                          
-                    </h5>
-                    <h2 class="mb-1 fw-bold">
-                        92%
-                    </h2>
-                    <p class="text-muted">
-
-                        Overall Attendance Rate
-                    </p>    
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-lg-8">
-            <div class="card shadow h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb=0">
-                        Recent Activity
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-
-                        <li class="list-group-item list-group-item-action ">
-                        👨‍🎓 Student Registration
-                         </li>
-
-                        <li class="list-group-item list-group-item-action">
-                        📚 New course "Web Development" added.
-                        </li>
-
-                        <li class="list-group-item list-group-item-action">
-                        🧑‍🏫 Faculty profile updated.
-                        </li>
-
-                        <li class="list-group-item list-group-item-action">
-                        📝 Attendance marked for Semester 4.
-                        </li>
-
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card shadow h-100">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">
-                        Quick Actions
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-3">
-
-                    <a href="add-student.html" class="btn btn-primary">
-                        <i class="bi bi-person-plus-fill me-2"></i>
-                        Add Student
-                    </a>
-
-                    <a href="#" class="btn btn-warning">
-                        <i class="bi bi-pencil-square me-2"></i>
-                        Edit Student
-                    </a>
-
-                    <a href="#" class="btn btn-info text-white">
-                        <i class="bi bi-search me-2"></i>
-                        Search Student
-                    </a>
-
-                    <a href="#" class="btn btn-danger">
-                        <i class="bi bi-trash-fill me-2"></i>
-                        Delete Student
-                    </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 
 </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+
+    <!-- Card 1 -->
+    <div class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 p-6">
+
+        <div class="flex justify-between items-center">
+
+            <h5 class="font-semibold text-gray-700">
+                Total Students
+            </h5>
+
+            <span class="text-4xl">👨‍🎓</span>
+
+        </div>
+
+        <h2 class="text-3xl font-bold mt-4">
+            1250
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+            Total Registered Students
+        </p>
+
+    </div>
+
+    <!-- Card 2 -->
+    <div class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 p-6">
+
+        <div class="flex justify-between items-center">
+
+            <h5 class="font-semibold text-gray-700">
+                Faculty Members
+            </h5>
+
+            <span class="text-4xl">👩‍🏫</span>
+
+        </div>
+
+        <h2 class="text-3xl font-bold mt-4">
+            245
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+            Total Faculty
+        </p>
+
+    </div>
+
+    <!-- Card 3 -->
+    <div class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 p-6">
+
+        <div class="flex justify-between items-center">
+
+            <h5 class="font-semibold text-gray-700">
+                Courses Offered
+            </h5>
+
+            <span class="text-4xl">📚</span>
+
+        </div>
+
+        <h2 class="text-3xl font-bold mt-4">
+            22
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+            Total Available Courses
+        </p>
+
+    </div>
+
+    <!-- Card 4 -->
+    <div class="bg-white rounded-xl shadow-lg border-l-4 border-green-500 p-6">
+
+        <div class="flex justify-between items-center">
+
+            <h5 class="font-semibold text-gray-700">
+                Attendance Records
+            </h5>
+
+            <span class="text-4xl">🕒</span>
+
+        </div>
+
+        <h2 class="text-3xl font-bold mt-4">
+            92%
+        </h2>
+
+        <p class="text-gray-500 mt-2">
+            Overall Attendance Rate
+        </p>
 
     </div>
 
 </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+
+    <!-- Recent Activity -->
+    <div class="lg:col-span-2 bg-white rounded-xl shadow-lg overflow-hidden">
+
+        <div class="bg-green-600 text-white px-6 py-4">
+
+            <h2 class="text-xl font-semibold">
+                Recent Activity
+            </h2>
+
+        </div>
+
+        <div>
+
+            <ul>
+
+                <li class="px-6 py-4 border-b hover:bg-gray-100 transition">
+                    👨‍🎓 Student Registration
+                </li>
+
+                <li class="px-6 py-4 border-b hover:bg-gray-100 transition">
+                    📚 New course "Web Development" added.
+                </li>
+
+                <li class="px-6 py-4 border-b hover:bg-gray-100 transition">
+                    🧑‍🏫 Faculty profile updated.
+                </li>
+
+                <li class="px-6 py-4 hover:bg-gray-100 transition">
+                    📝 Attendance marked for Semester 4.
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+
+        <div class="bg-green-600 text-white px-6 py-4">
+
+            <h2 class="text-xl font-semibold">
+                Quick Actions
+            </h2>
+
+        </div>
+
+        <div class="p-6 space-y-4">
+
+            <a href="add-student.html"
+               class="block bg-blue-600 text-white text-center py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                ➕ Add Student
+            </a>
+
+            <a href="#"
+               class="block bg-yellow-500 text-white text-center py-3 rounded-lg font-medium hover:bg-yellow-600 transition">
+                ✏️ Edit Student
+            </a>
+
+            <a href="#"
+               class="block bg-cyan-500 text-white text-center py-3 rounded-lg font-medium hover:bg-cyan-600 transition">
+                🔍 Search Student
+            </a>
+
+            <a href="#"
+               class="block bg-red-600 text-white text-center py-3 rounded-lg font-medium hover:bg-red-700 transition">
+                🗑️ Delete Student
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
 
 
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+</main>
+</div>
 </body>
 
 </html>
