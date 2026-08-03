@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Student</title>
+    <link rel="icon" type="image/png" href="images/favicon.jpg">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+
+
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg bg-success navbar-dark shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="index.html">
+                🧑‍🎓 Student Management
+            </a>
+            <div>
+                <a href="index.html" class="btn btn-light">
+                Dashboard
+                </a>
+            </div>
+        </div>        
+    </nav>
+    <div class="container mt-5">
+        <nav aria-label="breadcrumb">
+
+    <ol class="breadcrumb">
+<li class="breadcrumb-item">
+
+    <a href="index.html">
+
+        Dashboard
+
+    </a>
+
+</li>
+
+<li class="breadcrumb-item">
+
+    <a href="#">
+
+        Students
+
+    </a>
+
+</li>
+
+<li class="breadcrumb-item active"
+    aria-current="page">
+    Add Student
+
+
+</li>
+    </ol>
+
+</nav>
+        <div class="mb-4 ">
+            <h2 class="fw-bold">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Add Student
+            </h2>
+            <p class="text-muted">
+                Fill in the details below to add a new student.
+            </p>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-mortarboard-fill me-2"></i>
+                    Student Information
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-success">
+                    Student Saved Successfully
+                    </div>
+                <form>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">
+                            <i class="bi bi-person me-2"></i>
+                            First Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter first name" required>
+
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">
+                            <i class="bi bi-person me-2"></i>
+                            Last Name<span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter last name" required>
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-envelope-fill me-2"></i>
+                            Email<span class="text-danger">*</span>
+                        </label>
+                        <input type="email" class="form-control" placeholder="Enter your email" required>
+
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <label class="form-label">
+                            <i class="bi bi-telephone-fill me-2"></i>
+                            Phone Number<span class="text-danger">*</span>
+                        </label>
+                        <input type="tel" class="form-control" placeholder="Enter your Phone Number" required>
+
+                    </div>
+
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="ni ni-hash me-2"></i>
+                            Roll Number<span class="text-danger">*</span>
+
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter your Roll Number" required>
+
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-card-text me-2"></i>
+                            Registration Number<span class="text-danger">*</span>
+
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter your Registration Number" required>
+
+                    </div>
+
+                </div>
+                <div class="row g-3 mt-1">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-gender-ambiguous me-2"></i>
+                            Gender
+                        </label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="male">
+                            <label class="form-check-label" for="male">
+                                male
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="female">
+                            <label class="form-check-label" for="female">
+                                female
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="gender" id="others">
+                            <label class="form-check-label" for="others">
+                                others
+                            </label>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="dob">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            Date of Birth
+                        </label>
+                        <input class="form-control" type="date" name="DateofBirth" id="dob">
+
+                    </div>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-4">
+                        <label class="form-label">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            Semester
+                        </label>
+                        <input type="number" class="form-control" placeholder="Enter your current semester">
+
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-building me-2"></i>
+                            Department
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter your Department">
+
+                    </div>
+
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-geo-alt-fill me-2"></i>
+                            City
+                        </label>
+                        <select class="form-select" id="city" name="city">
+                            <option value="" selected disabled><span class="text-muted">Select City</span></option>
+                            <option value="Islamabad"> Islamabad</option>
+                            <option value="Lahore">Lahore</option>
+                            <option value="Faisalabad">Faisalabad</option>
+                            <option value="Multan">Multan</option>
+                        </select>
+
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">
+                            <i class="bi bi-globe me-2"></i>
+                            Country
+                        </label>
+                        <input type="text" class="form-control" placeholder="Enter your Country">
+
+                    </div>
+
+                </div>
+                <div class="row g-3 mt-1">
+                    <label class="form-label mb-0">
+                        <i class="bi bi-house-door-fill me-2"></i>
+                        Address
+                    </label>
+                    <input class="form-control" type="text" name="Address" id="Address">
+                    </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between" >
+                            <button type="submit" class="btn btn-success" >
+                                Save Student
+                            </button>
+                            <button type="reset" class="btn btn-warning">
+                                Reset
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+                </form>
+                
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+    </div>
+
+
+
+
+    </body>
+</html>
