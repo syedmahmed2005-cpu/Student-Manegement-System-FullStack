@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+    <title>View Student</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="css/output.css">
+
+</head>
+<body class="bg-slate-50">
+    <main class="p-5">
+       
+        <div class="bg-linear-to-r from-green-700 to-green-500 rounded-2xl shadow-lg p-8 text-white mb-8">
+
+    <div class="flex justify-between items-center">
+
+        <div>
+
+            <h1 class="text-4xl font-bold">
+                👨‍🎓 View Students
+            </h1>
+
+            <p class="mt-2 text-green-100">
+                Manage all registered students in the system.
+            </p>
+
+        </div>
+
+        <a href="add-student.html"
+           class="bg-white text-green-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition">
+
+            + Add Student
+
+        </a>
+
+    </div>
+
+</div>
+
+
+    <div class="bg-white rounded-xl shadow-lg p-6 mt-5">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+    <label for="search" class=" text-sm font-medium text-gray-700 mb-2">
+        Search Students
+    </label>
+
+    <input
+        id="search"
+        type="text"
+        placeholder="Search students..."
+        class="w-full border border-gray-300 rounded-[15px] px-4 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+    >
+    </div>
+    <div>
+    <label for="Semester" class="text-sm font-medium text-gray-700 mb-5">
+        Semester
+    </label>
+    <select id="Semester"
+    class="w-full border border-gray-300 rounded-[15px] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+    <option value="">All Semesters</option>
+    <option value="1">First</option>
+    <option value="2">Second</option>
+    <option value="3">Third</option>
+    <option value="4">Fourth</option>
+    <option value="5">Fifth</option>
+    <option value="6">Sixth</option>
+    <option value="7">Seventh</option>
+    <option value="8">Eighth</option>
+    </select>
+    </div>
+    </div>
+
+    </div>
+
+
+
+    <div class="bg-white rounded-xl shadow-lg mt-8 overflow-hidden">
+        <div class=" text-gray-900 px-6 py-4">
+            <h2 class="text-xl font-semibold">
+                Student Records
+            </h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-green-600 text-white">
+                    <tr>
+                        <th class="px-6 py-3 text-left">Student</th>
+                        <th class="px-6 py-3 text-left">Roll No</th>
+                        <th class="px-6 py-3 text-left">Semester</th>
+                        <th class="px-6 py-3 text-left">Department</th>
+                        <th class="px-6 py-3 text-left">Status</th>
+                        <th class="px-6 py-3 text-left">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b hover:bg-green-50 transition">
+                        <td class="px-6 py-4 font-medium">
+                            Ahmed
+                        </td>
+                        <td class=" px-6 py-4">
+                            FA24-BCS-120
+                        </td>
+                        <td class="px-6 py-4">
+                            4
+                        </td>
+                        <td class="px-6 py-4">
+                            Computer Science
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                            Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+
+                            <div class="flex gap-2">
+
+                                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+
+                                  Edit
+
+                                </button>
+
+                                <button class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">
+
+                                  Delete
+
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+                    <tr class="border-b hover:bg-green-50 transition">
+                        <td class="px-6 py-4 font-medium">
+                            Usman
+                        </td>
+                        <td class=" px-6 py-4">
+                            FA24-BCS-121
+                        </td>
+                        <td class="px-6 py-4">
+                            3
+                        </td>
+                        <td class="px-6 py-4">
+                            Software Engineering
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+                            Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+
+                            <div class="flex gap-2">
+
+                                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+
+                                  Edit
+
+                                </button>
+
+                                <button class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">
+
+                                  Delete
+
+                                </button>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                    <tr class="border-b hover:bg-green-50 transition">
+                        <td class="px-6 py-4 font-medium">
+                            Mehdi
+                        </td>
+                        <td class=" px-6 py-4">
+                            FA24-BCS-122
+                        </td>
+                        <td class="px-6 py-4">
+                            3
+                        </td>
+                        <td class="px-6 py-4">
+                            Software Engineering
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="bg-red-200 text-red-700 px-3 py-1 rounded-full text-sm">
+                            Inactive
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+
+                            <div class="flex gap-2">
+
+                                <button class="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition">
+
+                                  Edit
+
+                                </button>
+
+                                <button class="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition">
+
+                                  Delete
+
+                                </button>
+
+                            </div>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="bg-white rounded-xl shadow-lg mt-6 p-6">
+                <div class="flex justify-between items-center">
+                    <div class="text-gray-500 font-medium">
+                        Showing 1-10 of 100 students
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-100 transition">
+                            Previous
+                        </button>
+                        <button class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition">
+                            1
+                        </button>
+
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-100 transition">
+                            2
+                        </button>
+
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-100 transition">
+                            3
+                        </button>
+
+                        <button class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-green-100 transition">
+                            Next
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+
+
+</body>
+</html>
