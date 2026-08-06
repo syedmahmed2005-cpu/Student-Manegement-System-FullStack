@@ -98,7 +98,7 @@
         ✅ Student Saved Successfully
     </div>
 
-    <form>
+    <form id="studentForm">
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -339,13 +339,17 @@
 
 
 
-    <script src="js/script.js"></script>
+    <script src="js/utils.js"></script>
+        <script src="js/storage.js"></script>
+
+    <script src="js/add-student.js"></script>
+
     <div
     id="toast"
     class="hidden fixed z-50 top-5 right-5 bg-green-600 text-white px-6 py-4 rounded-lg shadow-xl">
-
+    <span id="toastMessage">
     Student Added Successfully!
-
+    </span>
     </div>
     <div
     id="errorToast"
