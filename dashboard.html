@@ -18,13 +18,13 @@
 </head>
 
 <body class="bg-gray-100">
-    <nav class=" bg-linear-to-r from-green-400 to-green-700 shadow-lg">
+    <nav class=" bg-linear-to-r from-green-700 to-green-400 shadow-[15px]">
 
     <div class="w-full px-6 py-4 flex justify-between items-center">
 
         <!-- Logo -->
-        <a href="#" class="text-white text-2xl font-bold">
-            🎓 Student Management
+        <a href="#" class="text-white text-3xl font-bold">
+            🎓 EduCore | <span class="text-white text-md font-bold-italic">University Management Platform</span>
         </a>
 
         <!-- Right Side -->
@@ -46,7 +46,7 @@
 <div class="flex">
 
     <!-- Sidebar -->
-    <aside class="w-64 h-screen bg-linear-to-b from-green-400 to-green-700 text-white shadow-lg">
+    <aside class="w-64 h-screen bg-linear-to-b from-green-700 to-green-400 text-white shadow-lg">
 
         <h4 class="text-2xl font-bold text-center py-6 ">
             Menu
@@ -69,7 +69,7 @@
                 Courses
             </a>
 
-            <a href="#"
+            <a href="view-faculty.html"
                class="px-6 py-3 hover:bg-green-800 transition duration-200">
                 Faculty
             </a>
@@ -91,7 +91,7 @@
     <!-- Main Content starts here -->
     <main class="flex-1 p-6">
 
-   <div class="bg-linear-to-r from-green-400 to-green-800 text-white rounded-xl p-8 shadow-lg">
+   <div class="bg-linear-to-r from-green-600 to-green-400 text-white rounded-xl p-8 shadow-lg">
 
     <h1 class="text-4xl font-bold mb-3">
         Welcome Back, Ahmed 👋
@@ -153,8 +153,8 @@
 
         </div>
 
-        <h2 class="text-3xl font-bold mt-4">
-            245
+        <h2 id="facultyCount" class="text-3xl font-bold mt-4">
+            0
         </h2>
 
         <p class="text-gray-500 mt-2">
@@ -267,17 +267,17 @@
                 ➕ Add Student
             </a>
 
-            <a href="#"
+            <a href="view-student.html"
                class="block bg-yellow-500 text-white text-center py-3 rounded-lg font-medium hover:bg-yellow-600 transition">
                 ✏️ Edit Student
             </a>
 
-            <a href="#"
+            <a href="view-student.html"
                class="block bg-cyan-500 text-white text-center py-3 rounded-lg font-medium hover:bg-cyan-600 transition">
                 🔍 Search Student
             </a>
 
-            <a href="#"
+            <a href="view-student.html"
                class="block bg-red-600 text-white text-center py-3 rounded-lg font-medium hover:bg-red-700 transition">
                 🗑️ Delete Student
             </a>
@@ -292,8 +292,10 @@
 
 </main>
 </div>
-<script src="js/dashboard.js"></script>
+<script src="js/utils.js"></script>
 <script src="js/storage.js"></script>
+
+<script src="js/dashboard.js"></script>
 </body>
 
 </html>

@@ -14,3 +14,19 @@ function saveStudents(students) {
     );
 
 }
+function getFaculty() {
+
+    return JSON.parse(
+        localStorage.getItem("faculty")
+    ) || [];
+
+}
+
+function saveFaculty(faculty) {
+
+    localStorage.setItem(
+        "faculty",
+        JSON.stringify(faculty)
+    );
+
+}
