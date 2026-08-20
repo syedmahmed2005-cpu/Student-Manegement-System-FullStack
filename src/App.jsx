@@ -1,5 +1,7 @@
+import {BrowserRouter,Routes,Route} from "react-router-dom";
 import { useEffect,useState } from "react";
 import Navbar from "./components/Navbar";
+import Dashboard from "./pages/Dashboard.jsx";
 import Toast from "./components/Toast";
 import Students from "./pages/Students";
 import EditStudent from "./pages/EditStudent";
@@ -197,34 +199,72 @@ useEffect(function () {
 }
 
   return (
-    <div>
-      <Navbar title="Student Management System" 
-      setPage={setPage}/>
-
-      {page === "students" && (
-        <Students
-          students={students}
-          setStudents={setStudents}
-          setPage={setPage}
-          setSelectedStudent={setSelectedStudent}
-        />
-      )}
-      {page === "faculty" && (
-  <Faculty
-    faculty={faculty}
-    setFaculty={setFaculty}
-    setPage={setPage}
-    setSelectedFaculty={setSelectedFaculty}
+    
+    <BrowserRouter>
+           
+    <Navbar title="Student Management System" />
+    <Routes>
+    <Route
+    path="/students"
+    element={<Students
+      students={students}
+      setStudents={setStudents}
+      setPage={setPage}
+      setSelectedStudent={setSelectedStudent}
+    />}
   />
-)}
 
+  <Route
+    path="/faculty"
+    element={<Faculty
+      faculty={faculty}
+      setFaculty={setFaculty}
+      setPage={setPage}
+      setSelectedFaculty={setSelectedFaculty}
+    />}
+  />
+
+  <Route
+    path="/courses"
+    element={<Courses
+      courses={courses}
+      setPage={setPage}
+      setSelectedCourse={setSelectedCourse}
+      setCourses={setCourses}
+      showToast={showToast}
+    />}
+  />
+  {/* Dynamic Route */}
+      <Route
+  path="/students/:studentId"
+  element={
+    <ViewStudent
+      students={students}
+      setPage={setPage}
+    />
+  }
+/>
+<Route
+  path="/"
+  element={<Dashboard />}
+/>
+
+<Route
+  path="/dashboard"
+  element={<Dashboard />}
+/>
+</Routes>
+
+  
+    <div>
       {page === "edit" && (
         <EditStudent
           student={selectedStudent}
           updateStudent={updateStudent}
         />
       )}
-      {page === "addStudent" && (<AddStudent setPage={setPage} />)}
+      {page === "addStudent" && (
+        <AddStudent setPage={setPage} />)}
       {page === "viewStudent" && (
         <ViewStudent
           student={selectedStudent}
@@ -247,15 +287,6 @@ useEffect(function () {
   <ViewFaculty
     faculty={selectedFaculty}
     setPage={setPage}
-  />
-)}
-{page === "courses" && (
-  <Courses
-    courses={courses}
-    setPage={setPage}
-    setSelectedCourse={setSelectedCourse}
-    setCourses={setCourses}
-    showToast={showToast}
   />
 )}
 {page === "classes" && (
@@ -295,6 +326,7 @@ useEffect(function () {
 {page === "facultyCourses" && (
   <FacultyCourses
     faculty={selectedFaculty}
+    classes={classes}
     courses={courses}
     setPage={setPage}
   />
@@ -317,7 +349,6 @@ useEffect(function () {
     students={students}
     classes={classes}
     courses={courses}
-    faculty={faculty}
     setPage={setPage}
     setEnrollments={setEnrollments}
     showToast={showToast}
@@ -378,6 +409,7 @@ useEffect(function () {
   />
 )}
     </div>
+    </BrowserRouter>
   );
 }
 export default App;

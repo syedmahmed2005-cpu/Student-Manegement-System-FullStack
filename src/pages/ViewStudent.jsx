@@ -1,4 +1,10 @@
-function ViewStudent({ student, setPage }) {
+import { useParams } from "react-router-dom";
+function ViewStudent({ students, setPage }) {
+  const { studentId } = useParams();
+
+const student = students.find(function (student) {
+  return student.studentId === studentId;
+});
   if (!student) {
     return (
       <main className="p-5">
@@ -116,12 +122,6 @@ function ViewStudent({ student, setPage }) {
               </p>
             </div>
 
-            <div>
-              <p className="text-sm text-gray-500">Semester</p>
-              <p className="font-semibold text-gray-800">
-                {student.semester || "Not provided"}
-              </p>
-            </div>
 
             <div>
               <p className="text-sm text-gray-500">Department</p>

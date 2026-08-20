@@ -1,6 +1,24 @@
-function FacultyCourses({ faculty, courses, setPage }) {
-  const assignedCourses = courses.filter(function (course) {
-    return course.facultyId === faculty.facultyId;
+function FacultyCourses({
+  faculty,
+  classes,
+  courses,
+  setPage,
+}) {
+  const facultyClasses = classes.filter(function (classItem) {
+    return classItem.facultyId === faculty.facultyId;
+  });
+
+  const assignedCourses = facultyClasses.map(function (classItem) {
+    const course = courses.find(function (course) {
+      return course.courseId === classItem.courseId;
+    });
+
+    return {
+      classItem: classItem,
+      course: course,
+    };
+  }).filter(function (item) {
+    return item.course !== undefined;
   });
 
   return (
@@ -37,21 +55,47 @@ function FacultyCourses({ faculty, courses, setPage }) {
 
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-4 py-3 text-left">Course Code</th>
-                <th className="px-4 py-3 text-left">Course Name</th>
-                <th className="px-4 py-3 text-left">Credit Hours</th>
-                <th className="px-4 py-3 text-left">Department</th>
-                <th className="px-4 py-3 text-left">Semester</th>
+
+                <th className="px-4 py-3 text-left">
+                  Course Code
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  Course Name
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  Credit Hours
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  Department
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  Batch
+                </th>
+
+                <th className="px-4 py-3 text-left">
+                  Semester
+                </th>
+
               </tr>
             </thead>
 
             <tbody>
-              {assignedCourses.map(function (course) {
+
+              {assignedCourses.map(function (item) {
+
+                const course = item.course;
+                const classItem = item.classItem;
+
                 return (
                   <tr
-                    key={course.courseId}
+                    key={classItem.classId}
                     className="border-t hover:bg-gray-50"
                   >
+
                     <td className="px-4 py-3">
                       {course.courseCode}
                     </td>
@@ -69,17 +113,24 @@ function FacultyCourses({ faculty, courses, setPage }) {
                     </td>
 
                     <td className="px-4 py-3">
-                      {course.semester}
+                      {classItem.batchId}
                     </td>
+
+                    <td className="px-4 py-3">
+                      {classItem.semester}
+                    </td>
+
                   </tr>
                 );
               })}
+
             </tbody>
 
           </table>
         )}
 
       </div>
+
     </main>
   );
 }

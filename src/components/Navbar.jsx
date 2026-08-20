@@ -1,13 +1,14 @@
-function Navbar({ title, setPage }) {
+import {Link} from "react-router-dom";
+function Navbar({ title }) {
   const menuItems = [
-    { label: "Dashboard", page: "dashboard" },
-    { label: "Students", page: "students" },
-    { label: "Courses", page: "courses" },
-    { label: "Classes", page: "classes" },
-    { label: "Faculty", page: "faculty" },
-    { label: "Enrollments", page: "enrollments" },
-    { label: "Attendance", page: "attendance" },
-    { label: "Settings", page: "settings" },
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Students", path: "/students" },
+    { label: "Courses", path: "/courses" },
+    { label: "Classes", path: "/classes" },
+    { label: "Faculty", path: "/faculty" },
+    { label: "Enrollments", path: "/enrollments" },
+    { label: "Attendance", path: "/attendance" },
+    { label: "Settings", path: "/settings" },
   ];
 
   return (
@@ -16,14 +17,9 @@ function Navbar({ title, setPage }) {
 
       {menuItems.map(function (item) {
         return (
-          <button
-            key={item.label}
-            onClick={function () {
-              setPage(item.page);
-            }}
-          >
-            {item.label}
-          </button>
+          <Link key={item.label} to={item.path}>
+              {item.label}
+          </Link>
         );
       })}
     </nav>

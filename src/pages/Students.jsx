@@ -1,8 +1,10 @@
 import { useEffect,useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import {getStudents} from '../utils/storage.js';
 function Students({students, setStudents, setPage, setSelectedStudent }) {
   const [searchText, setSearchText]= useState("");
   const [deleteIndex, setDeleteIndex] = useState(null);
+  const navigate = useNavigate();
   useEffect(function () {
   setStudents(getStudents());
 }, []);
@@ -64,7 +66,7 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
             </div>
       <div className="bg-white rounded-xl shadow-lg mt-8 overflow-hidden">
         <div className="px-6 py-4">
-          <h2 className="text-xl font-semibold">Student Records</h2>
+          <div className="text-xl font-semibold text-green-600">Student Records</div>
         </div>
 
         <div className="overflow-x-auto">
@@ -73,7 +75,6 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
               <tr>
                 <th className="px-6 py-3 text-left">Student</th>
                 <th className="px-6 py-3 text-left">Roll No</th>
-                <th className="px-6 py-3 text-left">Semester</th>
                 <th className="px-6 py-3 text-left">Department</th>
                 <th className="px-6 py-3 text-left">Status</th>
                 <th className="px-6 py-3 text-left">Actions</th>
@@ -107,10 +108,6 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
                     </td>
 
                     <td className="px-6 py-4">
-                      {student.semester}
-                    </td>
-
-                    <td className="px-6 py-4">
                       {student.department}
                     </td>
 
@@ -120,7 +117,7 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
+                    <button className="bg-blue-500 text-white px-3 py-1 rounded mr-2 mb-2"
                     onClick={function () {
                         setSelectedStudent(student);
                         setPage("edit");
@@ -128,7 +125,7 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
                         Edit
                     </button>
 
-                    <button className="bg-red-500 text-white px-3 py-1 rounded"
+                    <button className="bg-red-500 text-white px-3 py-1 rounded mb-2"
                     onClick={function () {
                         const index = students.indexOf(student);
                         setDeleteIndex(index);}}>
@@ -136,9 +133,8 @@ function Students({students, setStudents, setPage, setSelectedStudent }) {
                     </button>
                     <button
                     onClick={function () {
-                         setSelectedStudent(student);
-                         setPage("viewStudent"); }}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        navigate("/students/" + student.studentId); }}
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700 transition">
                           View
                         </button>
                     </td>

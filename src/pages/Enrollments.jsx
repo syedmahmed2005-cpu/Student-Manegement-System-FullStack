@@ -3,7 +3,6 @@ function Enrollments({
   students,
   classes,
   courses,
-  faculty,
   setPage,
   setEnrollments,
   showToast,
@@ -24,11 +23,6 @@ function getCourse(courseId) {
     return course.courseId === courseId;
   });
 }
-  function getCourse(courseId) {
-    return courses.find(function (course) {
-      return course.courseId === courseId;
-    });
-  }
 
   return (
     <main className="p-5">

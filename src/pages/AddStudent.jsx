@@ -1,5 +1,4 @@
 import { useEffect,useState } from "react";
-import { getStudents, saveStudents} from "../utils/storage.js";
 function AddStudent({setPage}) {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -394,8 +393,8 @@ useEffect(function () {
 
   <button
     type="button"
-    onClick={function () {
-         if (
+    onClick={async function () {
+  if (
     formData.firstName === "" ||
     formData.lastName === "" ||
     formData.email === "" ||
@@ -406,44 +405,52 @@ useEffect(function () {
     setErrorMessage("Please fill all required fields.");
     return;
   }
-  const students = getStudents();
 
-  const newStudent = {
-    ...formData,
-    studentId: "STU-" + Date.now(),
-    status: "active",
-  };
+  try {
+    const response = await fetch("http://localhost:5000/api/students", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-  students.push(newStudent);
-saveStudents(students);
+    const data = await response.json();
 
-setFormData({
-  firstName: "",
-  lastName: "",
-  batchId: "",
-  email: "",
-  phoneNumber: "",
-  rollNumber: "",
-  registrationNumber: "",
-  gender: "",
-  dob: "",
-  department: "",
-  city: "",
-  country: "",
-  address: "",
-});
+    if (!response.ok) {
+      setErrorMessage(data.message || "Failed to save student.");
+      return;
+    }
 
-setSuccessMessage("Student saved successfully!");
+    console.log(data);
 
-setTimeout(function () {
-  setPage("students");
-}, 1000);
-setSuccessMessage("Student saved successfully!");
+    setFormData({
+      firstName: "",
+      lastName: "",
+      batchId: "",
+      email: "",
+      phoneNumber: "",
+      rollNumber: "",
+      registrationNumber: "",
+      gender: "",
+      dob: "",
+      department: "",
+      city: "",
+      country: "",
+      address: ""
+    });
 
-setTimeout(function () {
-  setPage("students");
-}, 1000);
+    setSuccessMessage("Student saved successfully!");
 
+    setTimeout(function () {
+      setPage("students");
+    }, 1000);
+
+  } catch (error) {
+    console.log(error);
+
+    setErrorMessage("Unable to connect to the server.");
+  }
 }}
     className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
   >

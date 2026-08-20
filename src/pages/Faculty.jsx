@@ -128,7 +128,7 @@ function Faculty({ faculty, setPage, setSelectedFaculty,setFaculty}) {
                         </button>
                         <button
                         type="button"
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                        className="bg-yellow-500 text-white px-3 py-1 rounded"
                         onClick={function () {
                         setSelectedFaculty(member);
                         setPage("facultyCourses");
