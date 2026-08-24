@@ -170,8 +170,8 @@ function Attendance({
 
                 return (
                   <option
-                    key={classItem.classId}
-                    value={classItem.classId}
+                    key={classItem._id}
+                    value={classItem._id}
                   >
                     {course
                       ? course.courseCode

@@ -17,12 +17,22 @@ app.use(express.json());
 connectDB();
 
 const studentRoutes = require("./routes/students");
+const facultyRoutes = require("./routes/faculty");
+const courseRoutes = require("./routes/courses");
+const classRoutes = require("./routes/classRoutes");
+const enrollmentRoutes = require("./routes/enrollmentRoutes");
+const attendanceRoutes = require("./routes/attendanceRoutes");
 
 app.get("/", function (req, res) {
   res.send("Student Management System Backend Server is running");
 });
 
 app.use("/api/students", studentRoutes);
+app.use("/api/faculty", facultyRoutes);
+app.use("/api/courses", courseRoutes);
+app.use("/api/classes", classRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/attendance", attendanceRoutes);
 
 app.listen(5000, function () {
   console.log("Backend server is running on port 5000");

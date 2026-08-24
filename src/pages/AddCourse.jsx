@@ -1,5 +1,7 @@
 import {useState} from "react";
-function AddCourse({setCourses,setPage,showToast}) {
+import { useNavigate } from "react-router-dom";
+function AddCourse({showToast}) {
+    const navigate = useNavigate();
     const[formData,setFormData]=useState({
         courseCode:"",
         courseName:"",
@@ -104,7 +106,7 @@ return(
           <button
             type="button"
             onClick={function () {
-              setPage("courses");
+              navigate("/courses");
             }}
             className="bg-gray-500 text-white px-6 py-3 rounded-lg"
           >
@@ -113,7 +115,7 @@ return(
 
           <button
             type="button"
-            onClick={function () {
+            onClick={async function () {
   if (
     formData.courseCode === "" ||
     formData.courseName === "" ||
@@ -124,20 +126,28 @@ return(
     return;
   }
 
-  
+  try {
+    const response = await fetch("http://localhost:5000/api/courses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-  const newCourse = {
-    ...formData,
-    courseId: "COURSE-" + Date.now(),
-  };
+    const data = await response.json();
 
-  setCourses(function (currentCourses) {
-    return [...currentCourses, newCourse];
-  });
+    if (!response.ok) {
+      showToast(data.message || "Failed to add course.", "error");
+      return;
+    }
 
-  showToast("Course added successfully.", "success");
-
-  setPage("courses");
+    showToast("Course added successfully.", "success");
+    navigate("/courses");
+  } catch (error) {
+    console.log(error);
+    showToast("Unable to connect to the server.", "error");
+  }
 }}
             className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
           >

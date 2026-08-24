@@ -1,19 +1,46 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function AddClass({
   courses,
   faculty,
   students,
-  setClasses,
-  setPage,
+  setCourses,
+  setFaculty,
+  setStudents,
   showToast,
 }) {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     courseId: "",
     facultyId: "",
     batchId: "",
     semester: "",
   });
+
+  useEffect(function () {
+    async function fetchDependencies() {
+      try {
+        const responses = await Promise.all([
+          fetch("http://localhost:5000/api/courses"),
+          fetch("http://localhost:5000/api/faculty"),
+          fetch("http://localhost:5000/api/students"),
+        ]);
+        const data = await Promise.all(responses.map(function (response) { return response.json(); }));
+        if (!responses[0].ok || !responses[1].ok || !responses[2].ok) {
+          showToast("Failed to retrieve class data.", "error");
+          return;
+        }
+        setCourses(data[0].courses);
+        setFaculty(data[1].faculty);
+        setStudents(data[2].students);
+      } catch (error) {
+        console.log(error);
+        showToast("Unable to connect to the server.", "error");
+      }
+    }
+    fetchDependencies();
+  }, [setCourses, setFaculty, setStudents]);
 
   function handleChange(event) {
     setFormData({
@@ -22,7 +49,7 @@ function AddClass({
     });
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (
       formData.courseId === "" ||
       formData.facultyId === "" ||
@@ -34,7 +61,7 @@ function AddClass({
     }
 
     const selectedCourse = courses.find(function (course) {
-      return course.courseId === formData.courseId;
+      return course.courseCode === formData.courseId;
     });
 
     const selectedFaculty = faculty.find(function (member) {
@@ -46,21 +73,23 @@ function AddClass({
       return;
     }
 
-    const newClass = {
-      classId: "CLASS-" + Date.now(),
-      courseId: formData.courseId,
-      facultyId: formData.facultyId,
-      batchId: formData.batchId,
-      semester: formData.semester,
-    };
-
-    setClasses(function (currentClasses) {
-      return [...currentClasses, newClass];
-    });
-
-    showToast("Class created successfully.", "success");
-
-    setPage("classes");
+    try {
+      const response = await fetch("http://localhost:5000/api/classes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        showToast(data.message || "Failed to create class.", "error");
+        return;
+      }
+      showToast("Class created successfully.", "success");
+      navigate("/classes");
+    } catch (error) {
+      console.log(error);
+      showToast("Unable to connect to the server.", "error");
+    }
   }
 
   return (
@@ -97,8 +126,8 @@ function AddClass({
               {courses.map(function (course) {
                 return (
                   <option
-                    key={course.courseId}
-                    value={course.courseId}
+                    key={course._id}
+                    value={course.courseCode}
                   >
                     {course.courseCode} - {course.courseName}
                   </option>
@@ -126,7 +155,7 @@ function AddClass({
               {faculty.map(function (member) {
                 return (
                   <option
-                    key={member.facultyId}
+                    key={member._id}
                     value={member.facultyId}
                   >
                     {member.firstName} {member.lastName}
@@ -202,7 +231,7 @@ function AddClass({
           <button
             type="button"
             onClick={function () {
-              setPage("classes");
+              navigate("/classes");
             }}
             className="bg-gray-500 text-white px-6 py-3 rounded-lg"
           >

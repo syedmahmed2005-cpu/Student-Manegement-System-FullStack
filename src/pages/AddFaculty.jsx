@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-function AddFaculty({ setPage, setFaculty }) {
+function AddFaculty() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     facultyId: "",
     firstName: "",
@@ -15,12 +17,46 @@ function AddFaculty({ setPage, setFaculty }) {
     country: "",
     address: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   function handleChange(event) {
     setFormData({
       ...formData,
       [event.target.name]: event.target.value,
     });
+  }
+
+  async function handleSubmit() {
+    if (
+      formData.facultyId === "" ||
+      formData.firstName === "" ||
+      formData.lastName === "" ||
+      formData.email === "" ||
+      formData.phoneNumber === "" ||
+      formData.department === "" ||
+      formData.designation === "" ||
+      formData.qualification === "" ||
+      formData.joiningDate === ""
+    ) {
+      setErrorMessage("Please fill all required fields.");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/faculty", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (!response.ok) { setErrorMessage(data.message || "Failed to save faculty member."); return; }
+      setSuccessMessage("Faculty member saved successfully!");
+      setTimeout(function () { navigate("/faculty"); }, 1000);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("Unable to connect to the server.");
+    }
   }
 
   return (
@@ -193,7 +229,7 @@ function AddFaculty({ setPage, setFaculty }) {
           <button
             type="button"
             onClick={function () {
-              setPage("faculty");
+              navigate("/faculty");
             }}
             className="bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-600"
           >
@@ -202,38 +238,15 @@ function AddFaculty({ setPage, setFaculty }) {
 
           <button
             type="button"
-            onClick={function () {
-              if (
-                formData.firstName === "" ||
-                formData.lastName === "" ||
-                formData.email === "" ||
-                formData.phoneNumber === "" ||
-                formData.department === "" ||
-                formData.designation === "" ||
-                formData.qualification === "" ||
-                formData.joiningDate === ""
-              ) {
-                alert("Please fill all required fields.");
-                return;
-              }
-
-              const newFaculty = {
-                ...formData,
-                internalId: "FAC-" + Date.now(),
-                status: "active",
-              };
-
-              setFaculty(function (faculty) {
-                return [...faculty, newFaculty];
-              });
-              setPage("faculty");
-            }}
+            onClick={handleSubmit}
             className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
           >
             Save Faculty
           </button>
         </div>
       </div>
+      {errorMessage !== "" && <div className="fixed top-5 right-5 bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">{errorMessage}</div>}
+      {successMessage !== "" && <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">{successMessage}</div>}
     </main>
   );
 }

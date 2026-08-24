@@ -20,11 +20,12 @@ import Enrollments from "./pages/Enrollments.jsx";
 import Attendance from "./pages/Attendance.jsx";
 import AddClass from "./pages/AddClass.jsx";
 import Classes from "./pages/Classes.jsx";
+import ViewClass from "./pages/ViewClass.jsx";
 import FacultyAttendance from "./pages/FacultyAttendance.jsx";
 import FacultyClassAttendance from "./pages/FacultyClassAttendance.jsx";
 import StudentAttendance from "./pages/StudentAttendance.jsx";
 
-const paths = { students: "/students", addStudent: "/students/add", edit: "/students/edit", viewStudent: "/students/view", faculty: "/faculty", addFaculty: "/faculty/add", editFaculty: "/faculty/edit", viewFaculty: "/faculty/view", facultyCourses: "/faculty/courses", courses: "/courses", addCourse: "/courses/add", viewCourse: "/courses/view", classes: "/classes", addClass: "/classes/add", viewClass: "/classes/view", enrollStudent: "/enrollments/add", enrollments: "/enrollments", attendance: "/attendance", facultyAttendance: "/faculty/attendance", facultyClassAttendance: "/faculty/class-attendance", studentAttendance: "/students/attendance" };
+const paths = { students: "/students", addStudent: "/students/add", edit: "/students/edit", viewStudent: "/students/view", faculty: "/faculty", addFaculty: "/faculty/add", editFaculty: "/faculty/edit", viewFaculty: "/faculty/view", facultyCourses: "/faculty/courses", courses: "/courses", addCourse: "/courses/add", classes: "/classes", addClass: "/classes/add", enrollStudent: "/enrollments/add", enrollments: "/enrollments", attendance: "/attendance", facultyAttendance: "/faculty/attendance", facultyClassAttendance: "/faculty/class-attendance", studentAttendance: "/students/attendance" };
 
 function AppContent() {
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ function AppContent() {
   const [attendance, setAttendance] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedFaculty, setSelectedFaculty] = useState(null);
-  const [selectedCourse, setSelectedCourse] = useState(null);
   const [selectedClass, setSelectedClass] = useState(null);
   const [toast, setToast] = useState(null);
   const showToast = (message, type) => setToast({ message, type });
@@ -54,17 +54,19 @@ function AppContent() {
     <Route path="/students/:studentId" element={<ViewStudent students={students} setPage={go} />} />
     <Route path="/students/attendance" element={<StudentAttendance student={selectedStudent} classes={classes} courses={courses} enrollments={enrollments} attendance={attendance} />} />
     <Route path="/faculty" element={<Faculty faculty={faculty} setFaculty={setFaculty} setPage={go} setSelectedFaculty={setSelectedFaculty} />} />
-    <Route path="/faculty/add" element={<AddFaculty setPage={go} setFaculty={setFaculty} />} />
-    <Route path="/faculty/edit" element={<EditFaculty faculty={selectedFaculty} updateFaculty={updateFaculty} />} />
+    <Route path="/faculty/add" element={<AddFaculty />} />
+    <Route path="/faculty/:facultyId/edit" element={<EditFaculty />} />
     <Route path="/faculty/view" element={<ViewFaculty faculty={selectedFaculty} setPage={go} />} />
     <Route path="/faculty/courses" element={<FacultyCourses faculty={selectedFaculty} classes={classes} courses={courses} setPage={go} />} />
     <Route path="/faculty/attendance" element={<FacultyAttendance faculty={selectedFaculty} classes={classes} courses={courses} attendance={attendance} setSelectedClass={setSelectedClass} setPage={go} />} />
     <Route path="/faculty/class-attendance" element={<FacultyClassAttendance selectedClass={selectedClass} courses={courses} students={students} enrollments={enrollments} attendance={attendance} setPage={go} />} />
-    <Route path="/courses" element={<Courses courses={courses} setCourses={setCourses} setPage={go} setSelectedCourse={setSelectedCourse} showToast={showToast} />} />
-    <Route path="/courses/add" element={<AddCourse setCourses={setCourses} setPage={go} showToast={showToast} />} />
-    <Route path="/courses/view" element={<ViewCourse course={selectedCourse} setPage={go} />} />
-    <Route path="/classes" element={<Classes classes={classes} courses={courses} faculty={faculty} setClasses={setClasses} setPage={go} setSelectedClass={setSelectedClass} showToast={showToast} />} />
-    <Route path="/classes/add" element={<AddClass courses={courses} faculty={faculty} students={students} setClasses={setClasses} setPage={go} showToast={showToast} />} />
+    <Route path="/faculty/:facultyId" element={<ViewFaculty />} />
+    <Route path="/courses" element={<Courses courses={courses} setCourses={setCourses} showToast={showToast} />} />
+    <Route path="/courses/add" element={<AddCourse showToast={showToast} />} />
+    <Route path="/courses/:courseId" element={<ViewCourse />} />
+    <Route path="/classes" element={<Classes classes={classes} courses={courses} faculty={faculty} setClasses={setClasses} setCourses={setCourses} setFaculty={setFaculty} showToast={showToast} />} />
+    <Route path="/classes/add" element={<AddClass courses={courses} faculty={faculty} students={students} setCourses={setCourses} setFaculty={setFaculty} setStudents={setStudents} showToast={showToast} />} />
+    <Route path="/classes/:classId" element={<ViewClass />} />
     <Route path="/enrollments" element={<Enrollments enrollments={enrollments} students={students} classes={classes} courses={courses} setEnrollments={setEnrollments} setPage={go} showToast={showToast} />} />
     <Route path="/enrollments/add" element={<EnrollStudent students={students} classes={classes} courses={courses} faculty={faculty} enrollments={enrollments} setEnrollments={setEnrollments} setPage={go} showToast={showToast} />} />
     <Route path="/attendance" element={<Attendance classes={classes} courses={courses} faculty={faculty} students={students} enrollments={enrollments} attendance={attendance} setAttendance={setAttendance} setPage={go} showToast={showToast} />} />
