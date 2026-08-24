@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getFaculty, saveFaculty } from "../utils/storage.js";
 
 function AddFaculty({ setPage, setFaculty }) {
   const [formData, setFormData] = useState({
@@ -218,18 +217,15 @@ function AddFaculty({ setPage, setFaculty }) {
                 return;
               }
 
-              const faculty = getFaculty();
-
               const newFaculty = {
                 ...formData,
                 internalId: "FAC-" + Date.now(),
                 status: "active",
               };
 
-              faculty.push(newFaculty);
-
-              saveFaculty(faculty);
-              setFaculty(faculty);
+              setFaculty(function (faculty) {
+                return [...faculty, newFaculty];
+              });
               setPage("faculty");
             }}
             className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"

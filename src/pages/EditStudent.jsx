@@ -1,13 +1,138 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-function EditStudent({ student, updateStudent }) {
-  const [formData, setFormData] = useState(student);
+function EditStudent() {
+  const navigate = useNavigate();
+  const { studentId } = useParams();
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    batchId: "",
+    email: "",
+    phoneNumber: "",
+    rollNumber: "",
+    registrationNumber: "",
+    gender: "",
+    dob: "",
+    department: "",
+    city: "",
+    country: "",
+    address: "",
+  });
+
+  const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(function () {
+    async function fetchStudent() {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/students/" + studentId
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          setErrorMessage(data.message || "Student not found.");
+          return;
+        }
+
+        setFormData({
+          firstName: data.student.firstName || "",
+          lastName: data.student.lastName || "",
+          batchId: data.student.batchId || "",
+          email: data.student.email || "",
+          phoneNumber: data.student.phoneNumber || "",
+          rollNumber: data.student.rollNumber || "",
+          registrationNumber: data.student.registrationNumber || "",
+          gender: data.student.gender || "",
+          dob: data.student.dob
+            ? data.student.dob.substring(0, 10)
+            : "",
+          department: data.student.department || "",
+          city: data.student.city || "",
+          country: data.student.country || "",
+          address: data.student.address || "",
+        });
+      } catch (error) {
+        console.log(error);
+        setErrorMessage("Unable to connect to the server.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStudent();
+  }, [studentId]);
+
+  async function handleUpdate() {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/students/" + studentId,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setErrorMessage(data.message || "Failed to update student.");
+        return;
+      }
+
+      setSuccessMessage("Student updated successfully!");
+
+      setTimeout(function () {
+        navigate("/students");
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setErrorMessage("Unable to connect to the server.");
+    }
+  }
+
+  if (loading) {
+    return (
+      <main className="p-5">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          Loading student...
+        </div>
+      </main>
+    );
+  }
+
+  if (errorMessage !== "") {
+    return (
+      <main className="p-5">
+        <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-800">
+            Unable to edit student
+          </h1>
+          <p className="text-gray-500 mt-2">{errorMessage}</p>
+          <button
+            onClick={function () {
+              navigate("/students");
+            }}
+            className="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+          >
+            Back to Students
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="p-5">
       <div className="bg-gradient-to-r from-green-700 to-green-500 rounded-2xl shadow-lg p-8 text-white mb-8">
-        <h1 className="text-4xl font-bold">
-          ✏️ Edit Student
-        </h1>
+        <h1 className="text-4xl font-bold">✏️ Edit Student</h1>
 
         <p className="mt-2 text-green-100">
           Update student information.
@@ -21,7 +146,6 @@ function EditStudent({ student, updateStudent }) {
             <label className="text-sm font-medium text-gray-700">
               First Name
             </label>
-
             <input
               type="text"
               value={formData.firstName}
@@ -39,7 +163,6 @@ function EditStudent({ student, updateStudent }) {
             <label className="text-sm font-medium text-gray-700">
               Last Name
             </label>
-
             <input
               type="text"
               value={formData.lastName}
@@ -52,65 +175,62 @@ function EditStudent({ student, updateStudent }) {
               className="w-full border border-gray-300 rounded-[15px] px-4 py-2 mt-2"
             />
           </div>
+
           <div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    📧 Email <span className="text-red-500">*</span>
-  </label>
+            <label className="text-sm font-medium text-gray-700">
+              📧 Email
+            </label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  email: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+            />
+          </div>
 
-  <input
-    id="email"
-    type="email"
-    value={formData.email}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        email: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    📞 Phone Number <span className="text-red-500">*</span>
-  </label>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              📞 Phone Number
+            </label>
+            <input
+              type="tel"
+              value={formData.phoneNumber}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  phoneNumber: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+            />
+          </div>
 
-  <input
-    id="phoneNumber"
-    type="tel"
-    value={formData.phoneNumber}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        phoneNumber: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    🆔 Registration Number <span className="text-red-500">*</span>
-  </label>
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              🆔 Registration Number
+            </label>
+            <input
+              type="text"
+              value={formData.registrationNumber}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  registrationNumber: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+            />
+          </div>
 
-  <input
-    id="registrationNumber"
-    type="text"
-    value={formData.registrationNumber}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        registrationNumber: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-<div>
+          <div>
             <label className="text-sm font-medium text-gray-700">
               Roll Number
             </label>
-
             <input
               type="text"
               value={formData.rollNumber}
@@ -125,181 +245,193 @@ function EditStudent({ student, updateStudent }) {
           </div>
 
           <div>
-            <label className="text-sm font-medium text-gray-700 ">
-              Semester
+            <label className="text-sm font-medium text-gray-700">
+              Batch
             </label>
-
-            <select
-              value={formData.semester}
+            <input
+              type="text"
+              value={formData.batchId}
               onChange={function (event) {
                 setFormData({
                   ...formData,
-                  semester: event.target.value,
+                  batchId: event.target.value,
                 });
               }}
-              className="w-full border border-gray-300 rounded-[15px] px-4 py-2 mt-2 mb-4"
+              className="w-full border border-gray-300 rounded-[15px] px-4 py-2 mt-2"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              🏢 Department
+            </label>
+            <input
+              type="text"
+              value={formData.department}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  department: event.target.value,
+                });
+              }}
+              className="w-full border border-gray-300 rounded-[15px] px-4 py-2 mt-2"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              ⚧ Gender
+            </label>
+
+            <div className="space-y-2 mt-3">
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Male"
+                  checked={formData.gender === "Male"}
+                  onChange={function (event) {
+                    setFormData({
+                      ...formData,
+                      gender: event.target.value,
+                    });
+                  }}
+                />
+                Male
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Female"
+                  checked={formData.gender === "Female"}
+                  onChange={function (event) {
+                    setFormData({
+                      ...formData,
+                      gender: event.target.value,
+                    });
+                  }}
+                />
+                Female
+              </label>
+
+              <label className="flex items-center gap-2">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Other"
+                  checked={formData.gender === "Other"}
+                  onChange={function (event) {
+                    setFormData({
+                      ...formData,
+                      gender: event.target.value,
+                    });
+                  }}
+                />
+                Others
+              </label>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              📅 Date of Birth
+            </label>
+            <input
+              type="date"
+              value={formData.dob}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  dob: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              📍 City
+            </label>
+
+            <select
+              value={formData.city}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  city: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
             >
-              <option value="">Select Semester</option>
-              <option value="1">First</option>
-              <option value="2">Second</option>
-              <option value="3">Third</option>
-              <option value="4">Fourth</option>
-              <option value="5">Fifth</option>
-              <option value="6">Sixth</option>
-              <option value="7">Seventh</option>
-              <option value="8">Eighth</option>
+              <option value="">Select City</option>
+              <option value="Islamabad">Islamabad</option>
+              <option value="Lahore">Lahore</option>
+              <option value="Faisalabad">Faisalabad</option>
+              <option value="Multan">Multan</option>
             </select>
           </div>
 
+          <div>
+            <label className="text-sm font-medium text-gray-700">
+              🌍 Country
+            </label>
+            <input
+              type="text"
+              value={formData.country}
+              onChange={function (event) {
+                setFormData({
+                  ...formData,
+                  country: event.target.value,
+                });
+              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+            />
+          </div>
         </div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-3">
-    ⚧ Gender
-  </label>
 
-  <div className="space-y-2">
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        name="gender"
-        value="Male"
-        checked={formData.gender === "Male"}
-        onChange={function (event) {
-          setFormData({
-            ...formData,
-            gender: event.target.value,
-          });
-        }}
-        className="text-green-600"
-      />
-      Male
-    </label>
-
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        name="gender"
-        value="Female"
-        checked={formData.gender === "Female"}
-        onChange={function (event) {
-          setFormData({
-            ...formData,
-            gender: event.target.value,
-          });
-        }}
-        className="text-green-600"
-      />
-      Female
-    </label>
-
-    <label className="flex items-center gap-2">
-      <input
-        type="radio"
-        name="gender"
-        value="Other"
-        checked={formData.gender === "Other"}
-        onChange={function (event) {
-          setFormData({
-            ...formData,
-            gender: event.target.value,
-          });
-        }}
-        className="text-green-600"
-      />
-      Others
-    </label>
-  </div>
-</div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    📅 Date of Birth
-  </label>
-
-  <input
-    id="dob"
-    type="date"
-    value={formData.dob}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        dob: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    📍 City
-  </label>
-
-  <select
-    id="city"
-    value={formData.city}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        city: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
-  >
-    <option value="">Select City</option>
-    <option value="Islamabad">Islamabad</option>
-    <option value="Lahore">Lahore</option>
-    <option value="Faisalabad">Faisalabad</option>
-    <option value="Multan">Multan</option>
-  </select>
-</div>
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    🌍 Country
-  </label>
-
-  <input
-    id="country"
-    type="text"
-    value={formData.country}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        country: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-          
         <div className="mt-6">
-  <label className="block text-sm font-medium text-gray-700 mb-2">
-    🏠 Address
-  </label>
+          <label className="text-sm font-medium text-gray-700">
+            🏠 Address
+          </label>
 
-  <input
-    id="address"
-    type="text"
-    value={formData.address}
-    onChange={function (event) {
-      setFormData({
-        ...formData,
-        address: event.target.value,
-      });
-    }}
-    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-  />
-</div>
-
+          <input
+            type="text"
+            value={formData.address}
+            onChange={function (event) {
+              setFormData({
+                ...formData,
+                address: event.target.value,
+              });
+            }}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg mt-2"
+          />
+        </div>
 
         <div className="flex justify-end mt-6">
-        <button
-            className="bg-green-600 text-white px-6 py-2 rounded-lg"
-            onClick={function () {
-            updateStudent(formData);
-        }}>
-         Save Changes
-        </button>        
+          <button
+            type="button"
+            onClick={handleUpdate}
+            className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700"
+          >
+            Save Changes
+          </button>
         </div>
       </div>
+
+      {errorMessage !== "" && (
+        <div className="fixed top-5 right-5 bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">
+          {errorMessage}
+        </div>
+      )}
+
+      {successMessage !== "" && (
+        <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">
+          {successMessage}
+        </div>
+      )}
     </main>
   );
 }

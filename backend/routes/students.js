@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const Student = require("../models/Student");
 
-//CREATE STUDENT
+// CREATE STUDENT
 router.post("/", async function (req, res) {
   try {
     const student = await Student.create(req.body);
@@ -22,27 +22,31 @@ router.post("/", async function (req, res) {
   }
 });
 
-//GET ALL STUDENTS
+// GET ALL STUDENTS
 router.get("/", async function (req, res) {
-    try {  
-        const students= await Student.find();
-        res.status(200).json({
-            message:"Students fetched successfully",
-            students:students
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: "Failed to retrieve students",
-            error: error.message,
-        });
-    } 
+  try {
+    const students = await Student.find();
+
+    res.status(200).json({
+      message: "Students fetched successfully",
+      students: students,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: "Failed to retrieve students",
+      error: error.message,
+    });
+  }
 });
 
 // GET ONE STUDENT
-router.get("/:id", async function (req, res) {
+router.get("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findById(req.params.id);
+    const student = await Student.findOne({
+      studentId: req.params.studentId,
+    });
 
     if (!student) {
       return res.status(404).json({
@@ -64,12 +68,13 @@ router.get("/:id", async function (req, res) {
   }
 });
 
-
 // UPDATE STUDENT
-router.put("/:id", async function (req, res) {
+router.put("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findByIdAndUpdate(
-      req.params.id,
+    const student = await Student.findOneAndUpdate(
+      {
+        studentId: req.params.studentId,
+      },
       req.body,
       {
         new: true,
@@ -97,11 +102,12 @@ router.put("/:id", async function (req, res) {
   }
 });
 
-
 // DELETE STUDENT
-router.delete("/:id", async function (req, res) {
+router.delete("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findByIdAndDelete(req.params.id);
+    const student = await Student.findOneAndDelete({
+      studentId: req.params.studentId,
+    });
 
     if (!student) {
       return res.status(404).json({

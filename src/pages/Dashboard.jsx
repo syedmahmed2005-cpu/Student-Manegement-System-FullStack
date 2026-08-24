@@ -73,7 +73,7 @@ function Dashboard() {
           <div className="flex justify-between items-start">
 
             <div>
-              <p className="text-gray-500 font-medium">
+              <p className="flex items-center text-gray-500 font-medium">
                 Faculty Members
               </p>
 

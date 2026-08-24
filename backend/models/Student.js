@@ -1,85 +1,128 @@
 const mongoose = require("mongoose");
 
-const studentSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+const studentSchema = new mongoose.Schema(
+  {
+    studentId: {
+      type: String,
+      unique: true,
+      required: true,
+    },
 
-  lastName: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    firstName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  batchId: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    lastName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    lowercase: true,
-  },
+    batchId: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  phoneNumber: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
 
-  rollNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
+    phoneNumber: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  registrationNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-  },
+    rollNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
 
-  gender: {
-    type: String,
-    required: true,
-  },
+    registrationNumber: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
 
-  dob: {
-    type: Date,
-    required: true,
-  },
+    gender: {
+      type: String,
+      required: true,
+    },
 
-  department: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    dob: {
+      type: Date,
+      required: true,
+    },
 
-  city: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    department: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  country: {
-    type: String,
-    required: true,
-    trim: true,
-  },
+    city: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  address: {
-    type: String,
-    required: true,
-    trim: true,
+    country: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    status: {
+      type: String,
+      default: "active",
+    },
   },
+  {
+    timestamps: true,
+  }
+);
+
+// Automatically generate student ID
+studentSchema.pre("validate", async function (next) {
+  if (!this.studentId) {
+    const lastStudent = await mongoose
+      .model("Student")
+      .findOne()
+      .sort({ createdAt: -1 });
+
+    let nextNumber = 1;
+
+    if (lastStudent && lastStudent.studentId) {
+      const lastNumber = parseInt(
+        lastStudent.studentId.replace("STU-", ""),
+        10
+      );
+
+      if (!isNaN(lastNumber)) {
+        nextNumber = lastNumber + 1;
+      }
+    }
+
+    this.studentId = "STU-" + String(nextNumber).padStart(3, "0");
+  }
+
+  next();
 });
 
 const Student = mongoose.model("Student", studentSchema);
