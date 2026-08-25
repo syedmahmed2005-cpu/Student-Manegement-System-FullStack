@@ -52,14 +52,14 @@ function AppContent() {
     <Route path="/students/:studentId/edit" element={<EditStudent />} />
     <Route path="/students/view" element={<ViewStudent student={selectedStudent} setPage={go} />} />
     <Route path="/students/:studentId" element={<ViewStudent students={students} setPage={go} />} />
-    <Route path="/students/attendance" element={<StudentAttendance student={selectedStudent} classes={classes} courses={courses} enrollments={enrollments} attendance={attendance} />} />
+    <Route path="/students/attendance" element={<StudentAttendance student={selectedStudent} />} />
     <Route path="/faculty" element={<Faculty faculty={faculty} setFaculty={setFaculty} setPage={go} setSelectedFaculty={setSelectedFaculty} />} />
     <Route path="/faculty/add" element={<AddFaculty />} />
     <Route path="/faculty/:facultyId/edit" element={<EditFaculty />} />
     <Route path="/faculty/view" element={<ViewFaculty faculty={selectedFaculty} setPage={go} />} />
     <Route path="/faculty/courses" element={<FacultyCourses faculty={selectedFaculty} classes={classes} courses={courses} setPage={go} />} />
-    <Route path="/faculty/attendance" element={<FacultyAttendance faculty={selectedFaculty} classes={classes} courses={courses} attendance={attendance} setSelectedClass={setSelectedClass} setPage={go} />} />
-    <Route path="/faculty/class-attendance" element={<FacultyClassAttendance selectedClass={selectedClass} courses={courses} students={students} enrollments={enrollments} attendance={attendance} setPage={go} />} />
+    <Route path="/faculty/attendance" element={<FacultyAttendance faculty={selectedFaculty} />} />
+    <Route path="/faculty/class-attendance" element={<FacultyClassAttendance faculty={selectedFaculty} />} />
     <Route path="/faculty/:facultyId" element={<ViewFaculty />} />
     <Route path="/courses" element={<Courses courses={courses} setCourses={setCourses} showToast={showToast} />} />
     <Route path="/courses/add" element={<AddCourse showToast={showToast} />} />

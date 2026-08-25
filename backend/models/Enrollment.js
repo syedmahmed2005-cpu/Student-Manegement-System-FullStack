@@ -25,11 +25,10 @@ const enrollmentSchema = new mongoose.Schema(
 
 enrollmentSchema.index({ studentId: 1, classId: 1 }, { unique: true });
 
-enrollmentSchema.pre("validate", async function (next) {
+enrollmentSchema.pre("validate", async function () {
   if (!this.enrollmentId) {
     this.enrollmentId = "ENR-" + Date.now();
   }
-  next();
 });
 
 const Enrollment = mongoose.model("Enrollment", enrollmentSchema);

@@ -44,9 +44,7 @@ router.get("/", async function (req, res) {
 // GET ONE STUDENT
 router.get("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findOne({
-      studentId: req.params.studentId,
-    });
+    const student = await Student.findById(req.params.studentId);
 
     if (!student) {
       return res.status(404).json({
@@ -71,10 +69,8 @@ router.get("/:studentId", async function (req, res) {
 // UPDATE STUDENT
 router.put("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findOneAndUpdate(
-      {
-        studentId: req.params.studentId,
-      },
+    const student = await Student.findByIdAndUpdate(
+      req.params.studentId,
       req.body,
       {
         new: true,
@@ -105,9 +101,7 @@ router.put("/:studentId", async function (req, res) {
 // DELETE STUDENT
 router.delete("/:studentId", async function (req, res) {
   try {
-    const student = await Student.findOneAndDelete({
-      studentId: req.params.studentId,
-    });
+    const student = await Student.findByIdAndDelete(req.params.studentId);
 
     if (!student) {
       return res.status(404).json({

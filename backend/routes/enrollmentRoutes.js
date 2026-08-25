@@ -7,7 +7,15 @@ const router = express.Router();
 
 router.post("/", async function (req, res) {
   try {
-    const student = await Student.findOne({ studentId: req.body.studentId });
+    let student = await Student.findOne({ studentId: req.body.studentId });
+
+    if (!student) {
+      try {
+        student = await Student.findById(req.body.studentId);
+      } catch (error) {
+        student = null;
+      }
+    }
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
@@ -35,7 +43,7 @@ router.post("/", async function (req, res) {
     }
 
     const enrollment = await Enrollment.create({
-      studentId: req.body.studentId,
+      studentId: student.studentId || student._id.toString(),
       classId: req.body.classId,
     });
 

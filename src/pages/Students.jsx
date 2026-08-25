@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function Students({ students, setStudents }) {
+function Students({ students, setStudents, setSelectedStudent }) {
   const [searchText, setSearchText] = useState("");
   const [deleteStudent, setDeleteStudent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -243,6 +243,17 @@ function Students({ students, setStudents }) {
                           className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-700 transition"
                         >
                           View
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={function () {
+                            setSelectedStudent(student);
+                            navigate("/students/attendance");
+                          }}
+                          className="bg-purple-600 text-white px-3 py-1 rounded ml-2 hover:bg-purple-700 transition"
+                        >
+                          Attendance
                         </button>
                       </td>
                     </tr>

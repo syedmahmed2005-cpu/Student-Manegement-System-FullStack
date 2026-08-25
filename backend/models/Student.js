@@ -99,7 +99,7 @@ const studentSchema = new mongoose.Schema(
 );
 
 // Automatically generate student ID
-studentSchema.pre("validate", async function (next) {
+studentSchema.pre("validate", async function () {
   if (!this.studentId) {
     const lastStudent = await mongoose
       .model("Student")
@@ -122,7 +122,6 @@ studentSchema.pre("validate", async function (next) {
     this.studentId = "STU-" + String(nextNumber).padStart(3, "0");
   }
 
-  next();
 });
 
 const Student = mongoose.model("Student", studentSchema);
