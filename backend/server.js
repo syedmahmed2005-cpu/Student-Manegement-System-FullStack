@@ -9,10 +9,12 @@ console.log("MONGODB_URI exists:", !!process.env.MONGODB_URI);
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 connectDB();
 
@@ -22,11 +24,13 @@ const courseRoutes = require("./routes/courses");
 const classRoutes = require("./routes/classRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 app.get("/", function (req, res) {
   res.send("Student Management System Backend Server is running");
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/courses", courseRoutes);

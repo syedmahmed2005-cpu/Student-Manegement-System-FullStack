@@ -2,9 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 const Student = require("../models/Student");
+const authenticate = require("../middleware/authMiddleware");
+const authorize = require("../middleware/authorize");
 
 // CREATE STUDENT
-router.post("/", async function (req, res) {
+router.post("/",
+  authenticate,
+  authorize("admin"),
+   async function (req, res) {
   try {
     const student = await Student.create(req.body);
 
@@ -23,7 +28,10 @@ router.post("/", async function (req, res) {
 });
 
 // GET ALL STUDENTS
-router.get("/", async function (req, res) {
+router.get("/",
+  authenticate,
+  authorize("admin", "faculty"),
+  async function (req, res) {
   try {
     const students = await Student.find();
 
@@ -42,7 +50,7 @@ router.get("/", async function (req, res) {
 });
 
 // GET ONE STUDENT
-router.get("/:studentId", async function (req, res) {
+router.get("/:studentId", authenticate, authorize("admin", "faculty"), async function (req, res) {
   try {
     const student = await Student.findById(req.params.studentId);
 
@@ -67,7 +75,10 @@ router.get("/:studentId", async function (req, res) {
 });
 
 // UPDATE STUDENT
-router.put("/:studentId", async function (req, res) {
+router.put("/:studentId",
+  authenticate,
+  authorize("admin"),
+  async function (req, res) {
   try {
     const student = await Student.findByIdAndUpdate(
       req.params.studentId,
@@ -99,7 +110,7 @@ router.put("/:studentId", async function (req, res) {
 });
 
 // DELETE STUDENT
-router.delete("/:studentId", async function (req, res) {
+router.delete("/:studentId", authenticate, authorize("admin"), async function (req, res) {
   try {
     const student = await Student.findByIdAndDelete(req.params.studentId);
 
