@@ -1,264 +1,94 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function Dashboard() {
-  return (
-    <main className="max-w-7xl mx-auto px-6 py-8">
+function Dashboard({ user }) {
+  const [stats, setStats] = useState(null);
+  const [error, setError] = useState("");
 
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-green-600 to-green-500 rounded-2xl p-8 text-white shadow-lg mb-8">
+  useEffect(function () {
+    async function loadDashboard() {
+      try {
+        const requests = [
+          fetch("http://localhost:5000/api/courses"),
+          fetch("http://localhost:5000/api/classes"),
+        ];
 
-        <h1 className="text-3xl md:text-4xl font-bold">
-          Welcome Back, Ahmed 👋
-        </h1>
+        if (user.role !== "student") {
+          requests.push(fetch("http://localhost:5000/api/attendance"));
+          requests.push(fetch("http://localhost:5000/api/enrollments"));
+          requests.unshift(
+            fetch("http://localhost:5000/api/students"),
+            fetch("http://localhost:5000/api/faculty")
+          );
+        }
 
-        <p className="mt-2 text-green-50 text-lg">
-          Manage students, attendance, courses and faculty from one place.
-        </p>
+        const responses = await Promise.all(requests);
+        const data = await Promise.all(responses.map(function (response) { return response.json(); }));
 
-        <div className="flex flex-wrap gap-4 mt-6">
+        if (responses.some(function (response) { return !response.ok; })) {
+          setError("Dashboard data could not be loaded.");
+          return;
+        }
 
-          <Link
-            to="/students/add"
-            className="bg-white text-green-700 font-semibold px-6 py-3 rounded-lg hover:bg-gray-100 transition"
-          >
-            ➕ Add Student
-          </Link>
+        const attendanceData = data.find(function (item) { return item.attendance; })?.attendance || [];
+        const presentCount = attendanceData.filter(function (record) { return record.status === "present"; }).length;
+        setStats({
+          students: data.find(function (item) { return item.students; })?.students.length || 0,
+          faculty: data.find(function (item) { return item.faculty; })?.faculty.length || 0,
+          courses: data.find(function (item) { return item.courses; })?.courses.length || 0,
+          classes: data.find(function (item) { return item.classes; })?.classes.length || 0,
+          enrollments: data.find(function (item) { return item.enrollments; })?.enrollments.length || 0,
+          attendance: attendanceData.length ? Math.round((presentCount / attendanceData.length) * 100) : 0,
+        });
+      } catch (requestError) {
+        console.log(requestError);
+        setError("Unable to connect to the server.");
+      }
+    }
 
-          <Link
-            to="/students"
-            className="border border-white text-white font-semibold px-6 py-3 rounded-lg hover:bg-white hover:text-green-700 transition"
-          >
-            👨‍🎓 View Students
-          </Link>
+    loadDashboard();
+  }, [user.role]);
 
+  const cards = [
+    ["👨‍🎓", "Students", stats?.students, "Registered learners", "/students"],
+    ["👩‍🏫", "Faculty", stats?.faculty, "Teaching staff", "/faculty"],
+    ["📚", "Courses", stats?.courses, "Course catalog", "/courses"],
+    ["🏫", "Classes", stats?.classes, "Active class groups", "/classes"],
+    ["↗", "Enrollments", stats?.enrollments, "Active registrations", "/enrollments"],
+    ["✓", "Attendance", stats ? stats.attendance + "%" : "—", "Overall present rate", "/attendance"],
+  ].filter(function (card) { return user.role !== "student" || ["Courses", "Classes"].includes(card[1]); });
+
+  return <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-left text-white shadow-xl shadow-green-900/10">
+      <p className="text-sm font-semibold uppercase tracking-widest text-green-100">{user.role} portal</p>
+      <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Welcome back, {user.name}</h1>
+      <p className="mt-3 max-w-2xl text-green-50">Here is a live overview of your academic workspace.</p>
+      {user.role === "admin" && <Link to="/students/add" className="mt-6 inline-flex rounded-xl bg-white px-5 py-3 font-semibold text-green-800 shadow-sm hover:bg-green-50">Add Student</Link>}
+    </section>
+    {error && <p className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">{error}</p>}
+    <section className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-5">
+      {cards.map(function (card) { return <Link key={card[1]} to={card[4]} className="rounded-2xl border border-white/70 bg-white/80 p-5 text-left shadow-sm backdrop-blur transition hover:-translate-y-1 hover:shadow-lg"><span className="text-3xl">{card[0]}</span><p className="mt-4 font-semibold text-slate-700">{card[1]}</p><p className="mt-1 text-3xl font-bold text-slate-900">{stats ? card[2] : "…"}</p><p className="mt-2 text-sm text-slate-600">{card[3]}</p></Link>; })}
+    </section>
+    <section className="mt-8 grid gap-6 lg:grid-cols-3">
+      <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-sm backdrop-blur lg:col-span-2">
+        <div className="flex items-center justify-between"><h2 className="text-xl font-bold text-slate-900">Recent Activity</h2><span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">Live data</span></div>
+        <div className="mt-5 space-y-4">
+          {[
+            ["👨‍🎓", stats?.students || 0, "students registered"],
+            ["📚", stats?.courses || 0, "courses available"],
+            ["🏫", stats?.classes || 0, "active classes"],
+            ["✓", stats?.attendance ? stats.attendance + "%" : "—", "overall attendance"],
+          ].map(function (activity) { return <div key={activity[2]} className="flex items-center gap-4 rounded-xl border border-slate-100 px-4 py-3"><span className="grid h-10 w-10 place-items-center rounded-xl bg-green-50 text-lg">{activity[0]}</span><p className="text-slate-700"><strong className="text-slate-900">{activity[1]}</strong> {activity[2]}</p></div>; })}
         </div>
-
       </div>
-
-
-      {/* Statistics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-        {/* Students */}
-        <div className="bg-white rounded-xl shadow-md border border-green-200 p-6 hover:shadow-lg transition">
-
-          <div className="flex justify-between items-start">
-
-            <div>
-              <p className="text-gray-500 font-medium">
-                Total Students
-              </p>
-
-              <h2 className="text-3xl font-bold text-gray-800 mt-2">
-                1250
-              </h2>
-            </div>
-
-            <div className="text-4xl">
-              👨‍🎓
-            </div>
-
-          </div>
-
-          <p className="text-sm text-gray-500 mt-4">
-            Total Registered Students
-          </p>
-
+      <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-sm backdrop-blur">
+        <h2 className="text-xl font-bold text-slate-900">Quick Actions</h2>
+        <div className="mt-5 grid gap-3">
+          {(user.role === "admin" ? [["Add Student", "/students/add"], ["Add Faculty", "/faculty/add"], ["Add Course", "/courses/add"], ["Mark Attendance", "/attendance"]] : user.role === "faculty" ? [["My Attendance", "/faculty/attendance"], ["View Classes", "/classes"], ["Mark Attendance", "/attendance"]] : [["My Attendance", "/students/attendance"], ["View Courses", "/courses"]]).map(function (action) { return <Link key={action[0]} to={action[1]} className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 font-semibold text-green-800 transition hover:bg-green-600 hover:text-white">{action[0]} →</Link>; })}
         </div>
-
-
-        {/* Faculty */}
-        <div className="bg-white rounded-xl shadow-md border border-green-200 p-6 hover:shadow-lg transition">
-
-          <div className="flex justify-between items-start">
-
-            <div>
-              <p className="flex items-center text-gray-500 font-medium">
-                Faculty Members
-              </p>
-
-              <h2 className="text-3xl font-bold text-gray-800 mt-2">
-                245
-              </h2>
-            </div>
-
-            <div className="text-4xl">
-              👩‍🏫
-            </div>
-
-          </div>
-
-          <p className="text-sm text-gray-500 mt-4">
-            Total Faculty
-          </p>
-
-        </div>
-
-
-        {/* Courses */}
-        <div className="bg-white rounded-xl shadow-md border border-green-200 p-6 hover:shadow-lg transition">
-
-          <div className="flex justify-between items-start">
-
-            <div>
-              <p className="text-gray-500 font-medium">
-                Courses Offered
-              </p>
-
-              <h2 className="text-3xl font-bold text-gray-800 mt-2">
-                22
-              </h2>
-            </div>
-
-            <div className="text-4xl">
-              📚
-            </div>
-
-          </div>
-
-          <p className="text-sm text-gray-500 mt-4">
-            Total Available Courses
-          </p>
-
-        </div>
-
-
-        {/* Attendance */}
-        <div className="bg-white rounded-xl shadow-md border border-green-200 p-6 hover:shadow-lg transition">
-
-          <div className="flex justify-between items-start">
-
-            <div>
-              <p className="text-gray-500 font-medium">
-                Attendance
-              </p>
-
-              <h2 className="text-3xl font-bold text-gray-800 mt-2">
-                92%
-              </h2>
-            </div>
-
-            <div className="text-4xl">
-              🕒
-            </div>
-
-          </div>
-
-          <p className="text-sm text-gray-500 mt-4">
-            Overall Attendance Rate
-          </p>
-
-        </div>
-
       </div>
-
-
-      {/* Recent Activity + Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* Recent Activity */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-md overflow-hidden">
-
-          <div className="bg-green-600 text-white px-6 py-4">
-            <h2 className="text-lg font-semibold">
-              Recent Activity
-            </h2>
-          </div>
-
-          <div className="divide-y">
-
-            <div className="px-6 py-4 hover:bg-gray-50 transition">
-              <p className="font-medium text-gray-800">
-                👨‍🎓 Student Registration
-              </p>
-
-              <p className="text-sm text-gray-500 mt-1">
-                A new student was registered in the system.
-              </p>
-            </div>
-
-            <div className="px-6 py-4 hover:bg-gray-50 transition">
-              <p className="font-medium text-gray-800">
-                📚 New Course Added
-              </p>
-
-              <p className="text-sm text-gray-500 mt-1">
-                A new course was added to the course catalog.
-              </p>
-            </div>
-
-            <div className="px-6 py-4 hover:bg-gray-50 transition">
-              <p className="font-medium text-gray-800">
-                🧑‍🏫 Faculty Profile Updated
-              </p>
-
-              <p className="text-sm text-gray-500 mt-1">
-                A faculty member's information was updated.
-              </p>
-            </div>
-
-            <div className="px-6 py-4 hover:bg-gray-50 transition">
-              <p className="font-medium text-gray-800">
-                📝 Attendance Marked
-              </p>
-
-              <p className="text-sm text-gray-500 mt-1">
-                Attendance was recorded for a class.
-              </p>
-            </div>
-
-          </div>
-
-        </div>
-
-
-        {/* Quick Actions */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-
-          <div className="bg-green-600 text-white px-6 py-4">
-            <h2 className="text-lg font-semibold">
-              Quick Actions
-            </h2>
-          </div>
-
-          <div className="p-6 space-y-4">
-
-            <Link
-              to="/students/add"
-              className="block w-full text-center bg-blue-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-            >
-              👤 Add Student
-            </Link>
-
-            <Link
-              to="/students"
-              className="block w-full text-center bg-yellow-500 text-white px-4 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition"
-            >
-              ✏️ Manage Students
-            </Link>
-
-            <Link
-              to="/students"
-              className="block w-full text-center bg-cyan-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-cyan-700 transition"
-            >
-              🔍 Search Students
-            </Link>
-
-            <Link
-              to="/students"
-              className="block w-full text-center bg-red-600 text-white px-4 py-3 rounded-lg font-semibold hover:bg-red-700 transition"
-            >
-              🗑️ Manage Students
-            </Link>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </main>
-  );
+    </section>
+  </main>;
 }
 
 export default Dashboard;

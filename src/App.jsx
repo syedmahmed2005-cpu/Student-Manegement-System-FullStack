@@ -28,6 +28,17 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RoleRoute from "./components/RoleRoute.jsx";
 import Login from "./pages/Login.jsx";
 
+const browserFetch = window.fetch;
+
+window.fetch = function (url, options = {}) {
+  const isApiRequest = typeof url === "string" && url.includes("/api/");
+
+  return browserFetch(url, {
+    ...options,
+    credentials: isApiRequest ? "include" : options.credentials,
+  });
+};
+
 const paths = {
   students: "/students",
   addStudent: "/students/add",
@@ -126,18 +137,7 @@ function AppContent() {
 
   return (
     <>
-      <Navbar title="Student Management System"
-      user={user}
-      setUser={setUser}
-       />
-
-      <div style={{ padding: "10px" }}>
-        {authLoading
-          ? "Checking authentication..."
-          : user
-            ? `Logged in as ${user.name} (${user.role})`
-            : "Not logged in"}
-      </div>
+      {user && <Navbar title="Student Management System" user={user} setUser={setUser} />}
 
       <Routes>
 
@@ -156,10 +156,11 @@ function AppContent() {
             />
           }
         >
+          <Route element={<RoleRoute user={user} />}>
 
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/" element={<Dashboard user={user} />} />
 
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard user={user} />} />
 
           <Route
             path="/students"
@@ -204,9 +205,7 @@ function AppContent() {
           <Route
             path="/students/attendance"
             element={
-              <StudentAttendance
-                student={selectedStudent}
-              />
+              <StudentAttendance student={user?.role === "student" ? user : selectedStudent} />
             }
           />
 
@@ -257,18 +256,14 @@ function AppContent() {
           <Route
             path="/faculty/attendance"
             element={
-              <FacultyAttendance
-                faculty={selectedFaculty}
-              />
+              <FacultyAttendance faculty={user?.role === "faculty" ? user : selectedFaculty} />
             }
           />
 
           <Route
             path="/faculty/class-attendance"
             element={
-              <FacultyClassAttendance
-                faculty={selectedFaculty}
-              />
+              <FacultyClassAttendance faculty={user?.role === "faculty" ? user : selectedFaculty} />
             }
           />
 
@@ -385,6 +380,7 @@ function AppContent() {
             }
           />
 
+          </Route>
         </Route>
 
       </Routes>

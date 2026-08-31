@@ -101,29 +101,30 @@ const studentSchema = new mongoose.Schema(
 // Automatically generate student ID
 studentSchema.pre("validate", async function () {
   if (!this.studentId) {
-    const lastStudent = await mongoose
+    const students = await mongoose
       .model("Student")
-      .findOne()
-      .sort({ createdAt: -1 });
+      .find({}, { studentId: 1 })
+      .lean();
 
-    let nextNumber = 1;
+    let highestNumber = 0;
 
-    if (lastStudent && lastStudent.studentId) {
-      const lastNumber = parseInt(
-        lastStudent.studentId.replace("STU-", ""),
-        10
-      );
+    students.forEach(function (student) {
+      if (student.studentId) {
+        const number = parseInt(
+          student.studentId.replace("STU-", ""),
+          10
+        );
 
-      if (!isNaN(lastNumber)) {
-        nextNumber = lastNumber + 1;
+        if (!isNaN(number) && number > highestNumber) {
+          highestNumber = number;
+        }
       }
-    }
+    });
 
-    this.studentId = "STU-" + String(nextNumber).padStart(3, "0");
+    this.studentId =
+      "STU-" + String(highestNumber + 1).padStart(3, "0");
   }
-
 });
-
 const Student = mongoose.model("Student", studentSchema);
 
 module.exports = Student;

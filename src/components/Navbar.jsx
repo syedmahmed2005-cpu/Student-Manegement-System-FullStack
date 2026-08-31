@@ -1,50 +1,41 @@
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Navbar({ title, user, setUser }) {
   const navigate = useNavigate();
+  const menuItems = {
+    admin: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Faculty", "/faculty"], ["Courses", "/courses"], ["Classes", "/classes"], ["Enrollments", "/enrollments"], ["Attendance", "/attendance"]],
+    faculty: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Courses", "/courses"], ["Classes", "/classes"], ["Attendance", "/attendance"], ["My Attendance", "/faculty/attendance"]],
+    student: [["Dashboard", "/dashboard"], ["Courses", "/courses"], ["Classes", "/classes"], ["My Attendance", "/students/attendance"]],
+  };
 
-  const menuItems = [
-    { label: "Dashboard", path: "/dashboard" },
-    { label: "Students", path: "/students" },
-    { label: "Courses", path: "/courses" },
-    { label: "Classes", path: "/classes" },
-    { label: "Faculty", path: "/faculty" },
-    { label: "Enrollments", path: "/enrollments" },
-    { label: "Attendance", path: "/attendance" },
-    { label: "Settings", path: "/settings" },
-  ];
-
-  const handleLogout = async function () {
+  async function handleLogout() {
     try {
-      await fetch("http://localhost:5000/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await fetch("http://localhost:5000/api/auth/logout", { method: "POST", credentials: "include" });
     } catch (error) {
       console.log(error);
     }
 
     setUser(null);
     navigate("/login");
-  };
+  }
 
   return (
-    <nav>
-      <h2>{title}</h2>
-
-      {menuItems.map(function (item) {
-        return (
-          <Link key={item.label} to={item.path}>
-            {item.label}
-          </Link>
-        );
-      })}
-
-      {user && (
-        <button onClick={handleLogout}>
-          Logout
-        </button>
-      )}
+    <nav className="sticky top-0 z-20 border-b border-green-100/80 bg-white/85 backdrop-blur-xl shadow-sm">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
+        <NavLink to="/dashboard" className="flex items-center gap-2 font-bold text-green-800">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-lg text-white shadow-sm">🎓</span>
+          <span>{title}</span>
+        </NavLink>
+        <div className="order-3 flex w-full gap-1 overflow-x-auto text-sm font-medium md:order-2 md:w-auto">
+          {menuItems[user.role].map(function (item) {
+            return <NavLink key={item[1]} to={item[1]} className={({ isActive }) => "whitespace-nowrap rounded-lg px-3 py-2 transition " + (isActive ? "bg-green-600 text-white shadow-sm" : "text-slate-700 hover:bg-green-50 hover:text-green-800")}>{item[0]}</NavLink>;
+          })}
+        </div>
+        <div className="order-2 flex items-center gap-3 md:order-3">
+          <div className="hidden text-right text-sm sm:block"><p className="font-semibold text-slate-800">{user.name}</p><p className="capitalize text-slate-600">{user.role}</p></div>
+          <button type="button" onClick={handleLogout} className="rounded-lg border border-green-200 px-3 py-2 text-sm font-semibold text-green-800 hover:bg-green-50">Logout</button>
+        </div>
+      </div>
     </nav>
   );
 }

@@ -5,6 +5,7 @@ const Student = require("../models/Student");
 const Class = require("../models/Class");
 const Faculty = require("../models/Faculty");
 const Course = require("../models/Course");
+const User = require("../models/User");
 const {
     authorizeStudent,
     authorizeFaculty
@@ -60,6 +61,16 @@ router.post(
         return res.status(404).json({
           message: "Class not found"
         });
+      }
+
+      if (req.user.role === "faculty") {
+        const user = await User.findById(req.user.userId);
+
+        if (!user || user.facultyId !== classItem.facultyId) {
+          return res.status(403).json({
+            message: "You can only mark attendance for your assigned classes"
+          });
+        }
       }
 
       const enrollment = await Enrollment.findOne({
@@ -118,7 +129,7 @@ router.post(
 router.get(
   "/",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "faculty"),
   async function (req, res) {
     try {
       const attendance = await Attendance.find();
@@ -436,7 +447,7 @@ router.get(
 router.get(
   "/:id",
   authenticate,
-  authorize("admin"),
+  authorize("admin", "faculty"),
   async function (req, res) {
     try {
       const attendance = await Attendance.findById(req.params.id);

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 :root {
-  --text: #6b6375;
+  --text: #08be2938;
   --text-h: #08060d;
   --bg: #fff;
   --border: #e5e4e7;
@@ -112,4 +112,86 @@ code {
 }
 body{
   background-color: #f8fafc;
+}
+
+/* Application defaults: keep Tailwind pages readable and responsive. */
+:root {
+  color-scheme: light;
+  color: #1e293b;
+  background: #f8fafc;
+}
+
+body {
+  min-width: 320px;
+  background: #f8fafc;
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  min-height: 100vh;
+  margin: 0;
+  border: 0;
+  text-align: left;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    min-height: 100vh;
+    color: #1e293b;
+    background:
+      radial-gradient(circle at top left, rgb(220 252 231 / 0.7), transparent 26rem),
+      #f8fafc;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  input,
+  select,
+  textarea {
+    min-height: 2.75rem;
+    color: #1e293b;
+    background-color: rgb(255 255 255 / 0.92);
+    border-color: #cbd5e1;
+    transition: border-color 160ms ease, box-shadow 160ms ease;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgb(34 197 94 / 0.14);
+  }
+
+  th {
+    color: #334155;
+    font-weight: 700;
+  }
+
+  td {
+    color: #475569;
+  }
+}
+
+@layer components {
+  main {
+    min-height: calc(100vh - 5rem);
+  }
+
+  .page-surface {
+    border: 1px solid rgb(255 255 255 / 0.7);
+    background: rgb(255 255 255 / 0.78);
+    box-shadow: 0 12px 32px rgb(15 23 42 / 0.06);
+    backdrop-filter: blur(12px);
+  }
 }

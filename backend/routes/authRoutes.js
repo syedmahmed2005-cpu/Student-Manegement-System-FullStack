@@ -118,7 +118,9 @@ router.post("/login", async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                studentId: user.studentId,
+                facultyId: user.facultyId
             }
         });
 
@@ -131,7 +133,11 @@ router.post("/login", async (req, res) => {
 
 //LOGOUT
 router.post("/logout", (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false
+    });
 
     res.json({
         message: "Logout Successful"
@@ -154,7 +160,9 @@ router.get("/me", authenticate, async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role
+                role: user.role,
+                studentId: user.studentId,
+                facultyId: user.facultyId
             }
         });
 

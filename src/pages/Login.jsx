@@ -44,7 +44,7 @@ function Login({ setUser }) {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-10">
+    <main className="min-h-screen bg-gradient-to-br from-green-50 via-slate-50 to-emerald-100 flex items-center justify-center px-4 py-10">
 
       <div className="w-full max-w-md">
 
@@ -54,24 +54,24 @@ function Login({ setUser }) {
             <span className="text-3xl">🎓</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-green-800">
+          <h1 className="text-2xl font-bold tracking-tight text-green-900">
             Student Management System
           </h1>
 
-          <p className="text-gray-500 mt-2">
+          <p className="text-slate-600 mt-2">
             Sign in to access your account
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-md border border-green-200 p-8">
+        <div className="rounded-3xl border border-white/80 bg-white/85 p-8 shadow-xl shadow-green-950/10 backdrop-blur-xl">
 
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">
+            <h2 className="text-2xl font-bold text-slate-900">
               Welcome Back
             </h2>
 
-            <p className="text-gray-500 mt-1">
+            <p className="text-slate-600 mt-1">
               Please enter your credentials to continue.
             </p>
           </div>
@@ -87,7 +87,7 @@ function Login({ setUser }) {
 
             {/* Email */}
             <div className="mb-5">
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-slate-700 font-semibold mb-2">
                 Email Address
               </label>
 
@@ -96,14 +96,14 @@ function Login({ setUser }) {
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Enter your email"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition"
+                className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none transition"
                 required
               />
             </div>
 
             {/* Password */}
             <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2">
+              <label className="block text-slate-700 font-semibold mb-2">
                 Password
               </label>
 
@@ -112,7 +112,7 @@ function Login({ setUser }) {
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder="Enter your password"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition"
+                className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none transition"
                 required
               />
             </div>
@@ -121,7 +121,7 @@ function Login({ setUser }) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-green-700 transition shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full bg-green-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-700 hover:shadow-lg hover:shadow-green-900/15 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -130,9 +130,8 @@ function Login({ setUser }) {
 
         </div>
 
-        {/* Footer */}
-        <p className="text-center text-sm text-gray-500 mt-6">
-          Student Management System
+        <p className="text-center text-sm text-slate-600 mt-6">
+          Secure access for students, faculty, and administrators.
         </p>
 
       </div>
