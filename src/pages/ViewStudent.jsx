@@ -13,7 +13,7 @@ function ViewStudent() {
     async function fetchStudent() {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/students/" + studentId
+          `${import.meta.env.VITE_API_URL}/api/students/${studentId}`
         );
 
         const data = await response.json();

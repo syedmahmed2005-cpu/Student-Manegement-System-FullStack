@@ -14,9 +14,9 @@ function ViewClass() {
     async function fetchClassData() {
       try {
         const responses = await Promise.all([
-          fetch("http://localhost:5000/api/classes/" + classId),
-          fetch("http://localhost:5000/api/courses"),
-          fetch("http://localhost:5000/api/faculty"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/classes/${classId}`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/faculty`),
         ]);
         const data = await Promise.all(responses.map(function (response) { return response.json(); }));
         if (!responses[0].ok) {

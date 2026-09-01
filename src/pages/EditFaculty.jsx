@@ -12,7 +12,7 @@ function EditFaculty() {
   useEffect(function () {
     async function fetchFaculty() {
       try {
-        const response = await fetch("http://localhost:5000/api/faculty/" + facultyId);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty/${facultyId}`);
         const data = await response.json();
         if (!response.ok) { setErrorMessage(data.message || "Faculty member not found."); return; }
         setFormData({ facultyId: data.faculty.facultyId || "", firstName: data.faculty.firstName || "", lastName: data.faculty.lastName || "", email: data.faculty.email || "", phoneNumber: data.faculty.phoneNumber || "", department: data.faculty.department || "", designation: data.faculty.designation || "", qualification: data.faculty.qualification || "", joiningDate: data.faculty.joiningDate ? data.faculty.joiningDate.substring(0, 10) : "", city: data.faculty.city || "", country: data.faculty.country || "", address: data.faculty.address || "" });

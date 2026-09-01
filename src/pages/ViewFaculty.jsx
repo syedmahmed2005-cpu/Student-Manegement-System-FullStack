@@ -11,7 +11,7 @@ function ViewFaculty() {
   useEffect(function () {
     async function fetchFaculty() {
       try {
-        const response = await fetch("http://localhost:5000/api/faculty/" + facultyId);
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty/${facultyId}`);
         const data = await response.json();
         if (!response.ok) { setErrorMessage(data.message || "Faculty member not found."); return; }
         setFaculty(data.faculty);

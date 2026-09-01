@@ -25,10 +25,7 @@ function FacultyClassAttendance({ faculty }) {
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/attendance/faculty/" +
-            faculty.facultyId +
-            "/class/" +
-            classId
+          `${import.meta.env.VITE_API_URL}/api/attendance/faculty/${faculty.facultyId}/class/${classId}`
         );
         const data = await response.json();
 

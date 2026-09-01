@@ -12,7 +12,7 @@ function Students({ students, setStudents, setSelectedStudent }) {
     async function fetchStudents() {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/students"
+          `${import.meta.env.VITE_API_URL}/api/students`
         );
 
         const data = await response.json();
@@ -39,8 +39,7 @@ function Students({ students, setStudents, setSelectedStudent }) {
   async function handleDelete() {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/students/" +
-          deleteStudent._id,
+        `${import.meta.env.VITE_API_URL}/api/students/${deleteStudent._id}`,
         {
           method: "DELETE",
         }

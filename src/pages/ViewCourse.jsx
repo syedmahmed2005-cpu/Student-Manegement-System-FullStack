@@ -12,7 +12,7 @@ function ViewCourse() {
     async function fetchCourse() {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/courses/" + courseId
+          `${import.meta.env.VITE_API_URL}/api/courses/${courseId}`
         );
         const data = await response.json();
         if (!response.ok) {

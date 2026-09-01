@@ -15,7 +15,7 @@ function StudentAttendance({ student }) {
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/attendance/student/" + student.studentId
+          `${import.meta.env.VITE_API_URL}/api/attendance/student/${student.studentId}`
         );
         const data = await response.json();
 

@@ -10,7 +10,7 @@ function Faculty({ faculty, setFaculty, setSelectedFaculty, setPage }) {
   useEffect(function () {
     async function fetchFaculty() {
       try {
-        const response = await fetch("http://localhost:5000/api/faculty");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty`);
         const data = await response.json();
         if (!response.ok) { setErrorMessage(data.message || "Failed to retrieve faculty."); return; }
         setFaculty(data.faculty);
@@ -22,7 +22,7 @@ function Faculty({ faculty, setFaculty, setSelectedFaculty, setPage }) {
 
   async function handleDelete() {
     try {
-      const response = await fetch("http://localhost:5000/api/faculty/" + deleteFaculty._id, { method: "DELETE" });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/faculty/${deleteFaculty._id}`, { method: "DELETE" });
       const data = await response.json();
       if (!response.ok) { setErrorMessage(data.message || "Failed to delete faculty member."); return; }
       setFaculty(faculty.filter(function (member) { return member._id !== deleteFaculty._id; }));

@@ -9,16 +9,16 @@ function Dashboard({ user }) {
     async function loadDashboard() {
       try {
         const requests = [
-          fetch("http://localhost:5000/api/courses"),
-          fetch("http://localhost:5000/api/classes"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/classes`),
         ];
 
         if (user.role !== "student") {
-          requests.push(fetch("http://localhost:5000/api/attendance"));
-          requests.push(fetch("http://localhost:5000/api/enrollments"));
+          requests.push(fetch(`${import.meta.env.VITE_API_URL}/api/attendance`));
+          requests.push(fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`));
           requests.unshift(
-            fetch("http://localhost:5000/api/students"),
-            fetch("http://localhost:5000/api/faculty")
+            fetch(`${import.meta.env.VITE_API_URL}/api/students`),
+            fetch(`${import.meta.env.VITE_API_URL}/api/faculty`)
           );
         }
 

@@ -114,7 +114,7 @@ function AppContent() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/auth/me", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/auth/me`, {
       credentials: "include",
     })
       .then((response) => {

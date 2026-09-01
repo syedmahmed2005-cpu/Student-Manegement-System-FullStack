@@ -11,7 +11,7 @@ function Courses({ courses, setCourses, showToast }) {
   useEffect(function () {
     async function fetchCourses() {
       try {
-        const response = await fetch("http://localhost:5000/api/courses");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/courses`);
         const data = await response.json();
         if (!response.ok) {
           setErrorMessage(data.message || "Failed to retrieve courses.");
@@ -32,7 +32,7 @@ function Courses({ courses, setCourses, showToast }) {
   async function handleDelete() {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/courses/" + deleteCourse._id,
+        `${import.meta.env.VITE_API_URL}/api/courses/${deleteCourse._id}`,
         { method: "DELETE" }
       );
       const data = await response.json();

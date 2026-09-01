@@ -14,10 +14,10 @@ function Enrollments({ showToast }) {
     async function fetchEnrollmentData() {
       try {
         const responses = await Promise.all([
-          fetch("http://localhost:5000/api/enrollments"),
-          fetch("http://localhost:5000/api/students"),
-          fetch("http://localhost:5000/api/classes"),
-          fetch("http://localhost:5000/api/courses"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/students`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/classes`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
         ]);
         const data = await Promise.all(responses.map(function (response) { return response.json(); }));
         if (!responses[0].ok || !responses[1].ok || !responses[2].ok || !responses[3].ok) {

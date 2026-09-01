@@ -22,9 +22,9 @@ function AddClass({
     async function fetchDependencies() {
       try {
         const responses = await Promise.all([
-          fetch("http://localhost:5000/api/courses"),
-          fetch("http://localhost:5000/api/faculty"),
-          fetch("http://localhost:5000/api/students"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/faculty`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/students`),
         ]);
         const data = await Promise.all(responses.map(function (response) { return response.json(); }));
         if (!responses[0].ok || !responses[1].ok || !responses[2].ok) {
@@ -74,7 +74,7 @@ function AddClass({
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/classes", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),

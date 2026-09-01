@@ -11,9 +11,9 @@ function Classes({ classes, courses, faculty, setClasses, setCourses, setFaculty
     async function fetchClassData() {
       try {
         const responses = await Promise.all([
-          fetch("http://localhost:5000/api/classes"),
-          fetch("http://localhost:5000/api/courses"),
-          fetch("http://localhost:5000/api/faculty"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/classes`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
+          fetch(`${import.meta.env.VITE_API_URL}/api/faculty`),
         ]);
         const data = await Promise.all(responses.map(function (response) { return response.json(); }));
         if (!responses[0].ok || !responses[1].ok || !responses[2].ok) {
@@ -35,7 +35,7 @@ function Classes({ classes, courses, faculty, setClasses, setCourses, setFaculty
 
   async function handleDelete() {
     try {
-      const response = await fetch("http://localhost:5000/api/classes/" + deleteClass._id, { method: "DELETE" });
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes/${deleteClass._id}`, { method: "DELETE" });
       const data = await response.json();
       if (!response.ok) {
         showToast(data.message || "Failed to delete class.", "error");
