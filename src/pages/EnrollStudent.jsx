@@ -18,19 +18,19 @@ function EnrollStudent({ showToast }) {
     async function fetchEnrollmentData() {
       try {
         const responses = await Promise.all([
-          fetch("/api/students", {
+          fetch(`${import.meta.env.VITE_API_URL}/api/students`, {
             credentials: "include",
           }),
 
-          fetch("/api/classes", {
+          fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
             credentials: "include",
           }),
 
-          fetch("/api/courses", {
+          fetch(`${import.meta.env.VITE_API_URL}/api/courses`, {
             credentials: "include",
           }),
 
-          fetch("/api/faculty", {
+          fetch(`${import.meta.env.VITE_API_URL}/api/faculty`, {
             credentials: "include",
           }),
         ]);
@@ -78,7 +78,7 @@ function EnrollStudent({ showToast }) {
     }
 
     try {
-      const response = await fetch("/api/enrollments", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

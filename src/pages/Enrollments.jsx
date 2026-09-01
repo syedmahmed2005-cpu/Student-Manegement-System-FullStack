@@ -40,8 +40,13 @@ function Enrollments({ showToast }) {
 
   async function removeEnrollment(enrollment) {
     try {
-      const response = await fetch("/api/enrollments/" + enrollment._id, { method: "DELETE" });
-      const data = await response.json();
+const response = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/enrollments/${enrollment._id}`,
+  {
+    method: "DELETE",
+    credentials: "include"
+  }
+);      const data = await response.json();
       if (!response.ok) { showToast(data.message || "Failed to remove enrollment.", "error"); return; }
       setEnrollments(enrollments.filter(function (item) { return item._id !== enrollment._id; }));
       showToast("Enrollment removed successfully.", "success");
