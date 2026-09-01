@@ -138,15 +138,13 @@ router.post("/login", async function (req, res) {
       }
     );
 
-    const isProduction = process.env.NODE_ENV === "production";
-
     res.cookie("token", token, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      maxAge: 60 * 60 * 1000
-    });
-
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/",
+  maxAge: 60 * 60 * 1000
+});
     res.json({
       message: "Login successful",
       user: {
@@ -171,13 +169,12 @@ router.post("/login", async function (req, res) {
 
 // LOGOUT
 router.post("/logout", function (req, res) {
-  const isProduction = process.env.NODE_ENV === "production";
-
   res.clearCookie("token", {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax"
-  });
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  path: "/"
+});
 
   res.json({
     message: "Logout successful"
