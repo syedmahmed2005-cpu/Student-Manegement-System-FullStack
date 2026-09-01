@@ -9,18 +9,36 @@ function Dashboard({ user }) {
     async function loadDashboard() {
       try {
         const requests = [
-          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
-          fetch(`${import.meta.env.VITE_API_URL}/api/classes`),
-        ];
+  fetch(`${import.meta.env.VITE_API_URL}/api/courses`, {
+    credentials: "include",
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
+    credentials: "include",
+  }),
+];
 
-        if (user.role !== "student") {
-          requests.push(fetch(`${import.meta.env.VITE_API_URL}/api/attendance`));
-          requests.push(fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`));
-          requests.unshift(
-            fetch(`${import.meta.env.VITE_API_URL}/api/students`),
-            fetch(`${import.meta.env.VITE_API_URL}/api/faculty`)
-          );
-        }
+if (user.role !== "student") {
+  requests.push(
+    fetch(`${import.meta.env.VITE_API_URL}/api/attendance`, {
+      credentials: "include",
+    })
+  );
+
+  requests.push(
+    fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`, {
+      credentials: "include",
+    })
+  );
+
+  requests.unshift(
+    fetch(`${import.meta.env.VITE_API_URL}/api/students`, {
+      credentials: "include",
+    }),
+    fetch(`${import.meta.env.VITE_API_URL}/api/faculty`, {
+      credentials: "include",
+    })
+  );
+}
 
         const responses = await Promise.all(requests);
         const data = await Promise.all(responses.map(function (response) { return response.json(); }));
