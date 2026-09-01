@@ -15,26 +15,25 @@ function Attendance({ showToast, user }) {
     async function fetchAttendanceData() {
       try {
         const responses = await Promise.all([
-          fetch("/api/classes", {
-            credentials: "include"
-          }),
-          fetch("/api/courses", {
-            credentials: "include"
-          }),
-          fetch("/api/faculty", {
-            credentials: "include"
-          }),
-          fetch("/api/students", {
-            credentials: "include"
-          }),
-          fetch("/api/enrollments", {
-            credentials: "include"
-          }),
-          fetch("/api/attendance", {
-            credentials: "include"
-          })
-        ]);
-
+  fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
+    credentials: "include"
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/courses`, {
+    credentials: "include"
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/faculty`, {
+    credentials: "include"
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/students`, {
+    credentials: "include"
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/enrollments`, {
+    credentials: "include"
+  }),
+  fetch(`${import.meta.env.VITE_API_URL}/api/attendance`, {
+    credentials: "include"
+  })
+]);
         const data = await Promise.all(
           responses.map(function (response) {
             return response.json();
@@ -175,7 +174,7 @@ function Attendance({ showToast, user }) {
         enrolledStudents.map(function (student) {
           const studentId = getStudentIdentifier(student);
 
-          return fetch("/api/attendance", {
+          return fetch(`${import.meta.env.VITE_API_URL}/api/attendance`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
