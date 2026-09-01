@@ -70,7 +70,7 @@ function EditStudent() {
   async function handleUpdate() {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/students/" + studentId,
+        "/api/students/" + studentId,
         {
           method: "PUT",
           headers: {

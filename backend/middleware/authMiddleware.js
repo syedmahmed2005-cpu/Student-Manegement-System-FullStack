@@ -1,29 +1,40 @@
+
 const jwt = require("jsonwebtoken");
 
 const authenticate = (req, res, next) => {
-    try {
-        const token = req.cookies.token;
+  try {
+    const token = req.cookies && req.cookies.token;
 
-        if (!token) {
-            return res.status(401).json({
-                message: "Authentication required"
-            });
-        }
-
-        const decoded = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
-
-        req.user = decoded;
-
-        next();
-
-    } catch (error) {
-        return res.status(401).json({
-            message: "Invalid or expired token"
-        });
+    if (!token) {
+      return res.status(401).json({
+        message: "Authentication required"
+      });
     }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not configured");
+
+      return res.status(500).json({
+        message: "Server configuration error"
+      });
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.user = decoded;
+
+    next();
+
+  } catch (error) {
+    console.log("Authentication error:", error.message);
+
+    return res.status(401).json({
+      message: "Invalid or expired token"
+    });
+  }
 };
 
 module.exports = authenticate;

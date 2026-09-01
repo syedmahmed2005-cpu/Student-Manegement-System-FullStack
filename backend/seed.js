@@ -1,10 +1,10 @@
+require("dotenv").config();
 const dns = require("dns");
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
-
-require("dotenv").config();
-const bcrypt = require("bcrypt");
 const mongoose = require("mongoose");
+const bcrypt = require("bcrypt");
+
 const Student = require("./models/Student");
 const Faculty = require("./models/Faculty");
 const Course = require("./models/Course");
@@ -13,140 +13,460 @@ const Enrollment = require("./models/Enrollment");
 const Attendance = require("./models/Attendance");
 const User = require("./models/User");
 
-const batches = ["FA23", "FA24", "SP24"];
-const studentNames = [
-  ["Ahmed", "Khan"], ["Ayesha", "Malik"], ["Hamza", "Ahmed"],
-  ["Hira", "Siddiqui"], ["Bilal", "Raza"], ["Mahnoor", "Ali"],
-  ["Usman", "Tariq"], ["Zainab", "Aslam"], ["Saad", "Iqbal"],
-  ["Laiba", "Farooq"], ["Danish", "Shah"], ["Iqra", "Nawaz"],
-  ["Talha", "Hussain"], ["Sana", "Javed"], ["Fahad", "Butt"],
-  ["Eman", "Yousaf"], ["Hassan", "Akram"], ["Maham", "Rashid"],
-  ["Omer", "Saeed"], ["Areeba", "Qureshi"], ["Rafay", "Anwar"],
-  ["Noor", "Zahid"], ["Arham", "Latif"], ["Mehak", "Sohail"],
-  ["Taimoor", "Maqsood"],
-];
-
-const faculty = [
-  ["FAC-001", "Dr. Salman", "Rauf", "salman.rauf@university.edu.pk", "Computer Science", "Associate Professor"],
-  ["FAC-002", "Dr. Amina", "Khalid", "amina.khalid@university.edu.pk", "Computer Science", "Assistant Professor"],
-  ["FAC-003", "Mr. Imran", "Sheikh", "imran.sheikh@university.edu.pk", "Computer Science", "Lecturer"],
-  ["FAC-004", "Ms. Hina", "Arif", "hina.arif@university.edu.pk", "Computer Science", "Lecturer"],
-  ["FAC-005", "Dr. Farhan", "Mirza", "farhan.mirza@university.edu.pk", "Software Engineering", "Associate Professor"],
-  ["FAC-006", "Ms. Rabia", "Nadeem", "rabia.nadeem@university.edu.pk", "Software Engineering", "Lecturer"],
-  ["FAC-007", "Dr. Waqas", "Naseer", "waqas.naseer@university.edu.pk", "Computer Science", "Assistant Professor"],
-  ["FAC-008", "Mr. Ali", "Haider", "ali.haider@university.edu.pk", "Computer Science", "Lecturer"],
-];
-
-const courses = [
-  ["CSC101", "Programming Fundamentals", 4], ["CSC102", "Object Oriented Programming", 4],
-  ["CSC201", "Data Structures", 4], ["CSC202", "Database Systems", 3],
-  ["CSC203", "Computer Networks", 3], ["CSC204", "Operating Systems", 4],
-  ["CSC301", "Software Engineering", 3], ["CSC302", "Web Engineering", 3],
-  ["CSC303", "Artificial Intelligence", 3], ["CSC304", "Data Mining", 3],
-  ["CSC305", "Information Security", 3], ["CSC306", "Human Computer Interaction", 3],
-];
-
 async function seedDatabase() {
-  if (!process.env.MONGODB_URI) {
-    throw new Error("MONGODB_URI is missing from the environment.");
-  }
+  try {
+    await mongoose.connect(process.env.MONGODB_URI);
 
-  await mongoose.connect(process.env.MONGODB_URI);
+    console.log("MongoDB connected.");
 
-  await Promise.all([
-    Attendance.deleteMany({}),
-    Enrollment.deleteMany({}),
-    Class.deleteMany({}),
-    Course.deleteMany({}),
-    Student.deleteMany({}),
-    Faculty.deleteMany({}),
-    User.deleteMany({ email: { $in: ["admin@test.com", "faculty@test.com", "student@test.com"] } }),
-  ]);
+    // CLEAR EXISTING DATA
+    await Attendance.deleteMany({});
+    await Enrollment.deleteMany({});
+    await Class.deleteMany({});
+    await Course.deleteMany({});
+    await Student.deleteMany({});
+    await Faculty.deleteMany({});
+    await User.deleteMany({});
 
-  const createdFaculty = await Faculty.insertMany(faculty.map(function (item, index) {
-    return {
-      facultyId: item[0], firstName: item[1], lastName: item[2], email: item[3],
-      phoneNumber: "0300-1000" + String(index + 1).padStart(3, "0"), department: item[4],
-      designation: item[5], qualification: "MS Computer Science", joiningDate: new Date("2019-08-15"),
-      city: "Lahore", country: "Pakistan", address: "University Road, Lahore", status: "active",
-    };
-  }));
+    console.log("Existing data cleared.");
 
-  const createdCourses = await Course.insertMany(courses.map(function (item) {
-    return { courseCode: item[0], courseName: item[1], creditHours: item[2], department: "Computer Science" };
-  }));
+    // --------------------------------------------------
+    // ADMIN USER
+    // --------------------------------------------------
 
-  const createdStudents = await Student.insertMany(studentNames.map(function (name, index) {
-    const number = String(index + 1).padStart(3, "0");
-    return {
-      studentId: "STU-" + number, firstName: name[0], lastName: name[1], batchId: batches[index % batches.length],
-      email: name[0].toLowerCase() + "." + name[1].toLowerCase() + "@student.edu.pk",
-      phoneNumber: "0301-200" + String(index + 1).padStart(4, "0"), rollNumber: "BCS-" + number,
-      registrationNumber: "REG-2024-" + number, gender: index % 2 === 0 ? "male" : "female",
-      dob: new Date(2002 + (index % 3), index % 12, (index % 27) + 1), department: "Computer Science",
-      city: "Lahore", country: "Pakistan", address: "Model Town, Lahore", status: "active",
-    };
-  }));
+    const password = await bcrypt.hash("Admin123", 10);
 
-  const classDocuments = [];
-  batches.forEach(function (batch, batchIndex) {
-    for (let index = 0; index < 4; index += 1) {
-      classDocuments.push({
-        courseId: createdCourses[(batchIndex * 4 + index) % createdCourses.length].courseCode,
-        facultyId: createdFaculty[(batchIndex * 2 + index) % createdFaculty.length].facultyId,
-        batchId: batch,
-        semester: String(2 + batchIndex * 2),
-      });
-    }
-  });
-  const createdClasses = await Class.insertMany(classDocuments);
-
-  const enrollmentDocuments = [];
-  createdStudents.forEach(function (student, studentIndex) {
-    const batchClasses = createdClasses.filter(function (classItem) { return classItem.batchId === student.batchId; });
-    batchClasses.forEach(function (classItem, classIndex) {
-      enrollmentDocuments.push({ enrollmentId: "ENR-" + String(studentIndex + 1).padStart(3, "0") + "-" + String(classIndex + 1), studentId: student.studentId, classId: classItem._id.toString() });
+    await User.create({
+      name: "System Administrator",
+      email: "admin@sms.com",
+      password: password,
+      role: "admin",
+      studentId: null,
+      facultyId: null,
     });
-  });
-  const createdEnrollments = await Enrollment.insertMany(enrollmentDocuments);
 
-  const attendanceDocuments = [];
-  createdEnrollments.forEach(function (enrollment, enrollmentIndex) {
-    for (let day = 0; day < 12; day += 1) {
-      const date = new Date(2026, 0, 5 + day * 3);
-      const absent = (enrollmentIndex * 3 + day * 5) % 13 < 2 + (enrollmentIndex % 4);
-      attendanceDocuments.push({
-        attendanceId: "ATT-" + enrollment._id + "-" + day,
-        studentId: enrollment.studentId, classId: enrollment.classId, date: date,
-        status: absent ? "absent" : "present",
+    // --------------------------------------------------
+    // FACULTY
+    // --------------------------------------------------
+
+    const facultyData = [
+      {
+        facultyId: "FAC-001",
+        firstName: "Ahmed",
+        lastName: "Khan",
+        email: "ahmed.khan@sms.com",
+        phoneNumber: "03001234567",
+        department: "Computer Science",
+        designation: "Assistant Professor",
+        qualification: "MS Computer Science",
+      },
+      {
+        facultyId: "FAC-002",
+        firstName: "Sara",
+        lastName: "Malik",
+        email: "sara.malik@sms.com",
+        phoneNumber: "03011234567",
+        department: "Computer Science",
+        designation: "Lecturer",
+        qualification: "MS Computer Science",
+      },
+      {
+        facultyId: "FAC-003",
+        firstName: "Usman",
+        lastName: "Raza",
+        email: "usman.raza@sms.com",
+        phoneNumber: "03021234567",
+        department: "Software Engineering",
+        designation: "Assistant Professor",
+        qualification: "MS Software Engineering",
+      },
+      {
+        facultyId: "FAC-004",
+        firstName: "Ayesha",
+        lastName: "Siddiqui",
+        email: "ayesha.siddiqui@sms.com",
+        phoneNumber: "03031234567",
+        department: "Software Engineering",
+        designation: "Lecturer",
+        qualification: "MS Software Engineering",
+      },
+      {
+        facultyId: "FAC-005",
+        firstName: "Bilal",
+        lastName: "Ahmed",
+        email: "bilal.ahmed@sms.com",
+        phoneNumber: "03041234567",
+        department: "Electrical Engineering",
+        designation: "Assistant Professor",
+        qualification: "MS Electrical Engineering",
+      },
+      {
+        facultyId: "FAC-006",
+        firstName: "Hina",
+        lastName: "Tariq",
+        email: "hina.tariq@sms.com",
+        phoneNumber: "03051234567",
+        department: "Electrical Engineering",
+        designation: "Lecturer",
+        qualification: "MS Electrical Engineering",
+      },
+      {
+        facultyId: "FAC-007",
+        firstName: "Hamza",
+        lastName: "Iqbal",
+        email: "hamza.iqbal@sms.com",
+        phoneNumber: "03061234567",
+        department: "Psychology",
+        designation: "Assistant Professor",
+        qualification: "MS Psychology",
+      },
+      {
+        facultyId: "FAC-008",
+        firstName: "Maham",
+        lastName: "Fatima",
+        email: "maham.fatima@sms.com",
+        phoneNumber: "03071234567",
+        department: "Psychology",
+        designation: "Lecturer",
+        qualification: "MS Psychology",
+      },
+    ];
+
+    const faculties = [];
+
+    for (const data of facultyData) {
+      const faculty = await Faculty.create({
+        ...data,
+        joiningDate: new Date("2022-08-15"),
+        city: "Lahore",
+        country: "Pakistan",
+        address: "COMSATS University Lahore",
+        status: "active",
+      });
+
+      faculties.push(faculty);
+
+      await User.create({
+        name: `${data.firstName} ${data.lastName}`,
+        email: data.email,
+        password: password,
+        role: "faculty",
+        studentId: null,
+        facultyId: data.facultyId,
       });
     }
-  });
-  const createdAttendance = await Attendance.insertMany(attendanceDocuments);
 
-  const password = await bcrypt.hash("Test@12345", 10);
-  await User.insertMany([
-    { name: "System Admin", email: "admin@test.com", password: password, role: "admin" },
-    { name: "Dr. Salman Rauf", email: "faculty@test.com", password: password, role: "faculty", facultyId: createdFaculty[0].facultyId },
-    { name: createdStudents[0].firstName + " " + createdStudents[0].lastName, email: "student@test.com", password: password, role: "student", studentId: createdStudents[0].studentId },
-  ]);
+    console.log("Faculty and faculty users created.");
 
-  console.log("Seed complete");
-  console.log("Students created:", createdStudents.length);
-  console.log("Faculty created:", createdFaculty.length);
-  console.log("Courses created:", createdCourses.length);
-  console.log("Classes created:", createdClasses.length);
-  console.log("Enrollments created:", createdEnrollments.length);
-  console.log("Attendance records created:", createdAttendance.length);
-  console.log("Users created: 3");
-  console.log("Test password: Test@12345");
+    // --------------------------------------------------
+    // COURSES
+    // --------------------------------------------------
+
+    const courseData = [
+      {
+        courseCode: "CSC101",
+        courseName: "Programming Fundamentals",
+        creditHours: 3,
+        department: "Computer Science",
+      },
+      {
+        courseCode: "CSC201",
+        courseName: "Object Oriented Programming",
+        creditHours: 3,
+        department: "Computer Science",
+      },
+      {
+        courseCode: "CSC301",
+        courseName: "Database Systems",
+        creditHours: 3,
+        department: "Computer Science",
+      },
+      {
+        courseCode: "CSC401",
+        courseName: "Artificial Intelligence",
+        creditHours: 3,
+        department: "Computer Science",
+      },
+
+      {
+        courseCode: "SWE101",
+        courseName: "Software Engineering Fundamentals",
+        creditHours: 3,
+        department: "Software Engineering",
+      },
+      {
+        courseCode: "SWE201",
+        courseName: "Software Design and Architecture",
+        creditHours: 3,
+        department: "Software Engineering",
+      },
+      {
+        courseCode: "SWE301",
+        courseName: "Web Engineering",
+        creditHours: 3,
+        department: "Software Engineering",
+      },
+      {
+        courseCode: "SWE401",
+        courseName: "Software Project Management",
+        creditHours: 3,
+        department: "Software Engineering",
+      },
+
+      {
+        courseCode: "EEE101",
+        courseName: "Circuit Analysis",
+        creditHours: 3,
+        department: "Electrical Engineering",
+      },
+      {
+        courseCode: "EEE201",
+        courseName: "Digital Logic Design",
+        creditHours: 3,
+        department: "Electrical Engineering",
+      },
+      {
+        courseCode: "EEE301",
+        courseName: "Microprocessors",
+        creditHours: 3,
+        department: "Electrical Engineering",
+      },
+      {
+        courseCode: "EEE401",
+        courseName: "Power Systems",
+        creditHours: 3,
+        department: "Electrical Engineering",
+      },
+
+      {
+        courseCode: "PSY101",
+        courseName: "Introduction to Psychology",
+        creditHours: 3,
+        department: "Psychology",
+      },
+      {
+        courseCode: "PSY201",
+        courseName: "Cognitive Psychology",
+        creditHours: 3,
+        department: "Psychology",
+      },
+      {
+        courseCode: "PSY301",
+        courseName: "Social Psychology",
+        creditHours: 3,
+        department: "Psychology",
+      },
+      {
+        courseCode: "PSY401",
+        courseName: "Clinical Psychology",
+        creditHours: 3,
+        department: "Psychology",
+      },
+    ];
+
+    const courses = await Course.insertMany(courseData);
+
+    console.log("Courses created.");
+
+    // --------------------------------------------------
+    // STUDENTS
+    // --------------------------------------------------
+
+    const studentNames = [
+      ["Ali", "Hassan"],
+      ["Usman", "Khan"],
+      ["Hamza", "Raza"],
+      ["Ahmed", "Sheikh"],
+      ["Zain", "Malik"],
+      ["Bilal", "Ahmed"],
+
+      ["Sara", "Khan"],
+      ["Ayesha", "Raza"],
+      ["Hira", "Malik"],
+      ["Maham", "Ahmed"],
+      ["Fatima", "Sheikh"],
+      ["Iqra", "Khan"],
+
+      ["Danish", "Raza"],
+      ["Talha", "Ahmed"],
+      ["Saad", "Malik"],
+      ["Hassan", "Ali"],
+      ["Omer", "Khan"],
+      ["Hamza", "Sheikh"],
+
+      ["Maryam", "Ahmed"],
+      ["Noor", "Malik"],
+      ["Laiba", "Raza"],
+      ["Anaya", "Khan"],
+      ["Zoya", "Ahmed"],
+      ["Areeba", "Sheikh"],
+    ];
+
+    const departments = [
+      "Computer Science",
+      "Software Engineering",
+      "Electrical Engineering",
+      "Psychology",
+    ];
+
+    const students = [];
+
+    for (let i = 0; i < studentNames.length; i++) {
+      const department = departments[Math.floor(i / 6)];
+
+      const student = new Student({
+        firstName: studentNames[i][0],
+        lastName: studentNames[i][1],
+        batchId: "FA24",
+        email: `student${i + 1}@sms.com`,
+        phoneNumber: `0312${String(i + 1).padStart(7, "0")}`,
+        gender: i % 2 === 0 ? "Male" : "Female",
+        dob: new Date("2004-05-15"),
+        department: department,
+        city: "Lahore",
+        country: "Pakistan",
+        address: "Lahore, Pakistan",
+        status: "active",
+      });
+
+      await student.save();
+
+      students.push(student);
+
+      await User.create({
+        name: `${student.firstName} ${student.lastName}`,
+        email: student.email,
+        password: password,
+        role: "student",
+        studentId: student.studentId,
+        facultyId: null,
+      });
+    }
+
+    console.log("Students and student users created.");
+
+    // --------------------------------------------------
+    // CLASSES
+    // --------------------------------------------------
+
+    const classes = [];
+
+    for (const department of departments) {
+      const departmentCourses = courses.filter(
+        function (course) {
+          return course.department === department;
+        }
+      );
+
+      const departmentFaculty = faculties.filter(
+        function (faculty) {
+          return faculty.department === department;
+        }
+      );
+
+      for (let i = 0; i < departmentCourses.length; i++) {
+        const classItem = await Class.create({
+          courseId: departmentCourses[i].courseCode,
+          facultyId: departmentFaculty[i % departmentFaculty.length].facultyId,
+          batchId: "FA24",
+          semester: String((i % 4) + 1),
+        });
+
+        classes.push(classItem);
+      }
+    }
+
+    console.log("Classes created.");
+
+    // --------------------------------------------------
+    // ENROLLMENTS + ATTENDANCE
+    // --------------------------------------------------
+
+    let enrollmentCounter = 1;
+    let attendanceCounter = 1;
+
+    for (const department of departments) {
+      const departmentStudents = students.filter(
+        function (student) {
+          return student.department === department;
+        }
+      );
+
+      const departmentClasses = classes.filter(
+        function (classItem) {
+          const course = courses.find(
+            function (courseItem) {
+              return courseItem.courseCode === classItem.courseId;
+            }
+          );
+
+          return course && course.department === department;
+        }
+      );
+
+      for (const student of departmentStudents) {
+        for (const classItem of departmentClasses) {
+          const enrollment = await Enrollment.create({
+            enrollmentId:
+              "ENR-" + String(enrollmentCounter).padStart(3, "0"),
+            studentId: student.studentId,
+            classId: classItem._id.toString(),
+          });
+
+          enrollmentCounter++;
+
+          // Create 5 attendance records for every enrollment
+          for (let day = 1; day <= 5; day++) {
+            const attendanceDate = new Date(
+              `2026-08-${String(day).padStart(2, "0")}`
+            );
+
+            await Attendance.create({
+              attendanceId:
+                "ATT-" + String(attendanceCounter).padStart(4, "0"),
+              studentId: student.studentId,
+              classId: classItem._id.toString(),
+              date: attendanceDate,
+              status: day === 3 ? "absent" : "present",
+            });
+
+            attendanceCounter++;
+          }
+        }
+      }
+    }
+
+    console.log("Enrollments and attendance records created.");
+
+    console.log("");
+    console.log("======================================");
+    console.log("DATABASE SEEDED SUCCESSFULLY");
+    console.log("======================================");
+    console.log("");
+    console.log("ADMIN LOGIN");
+    console.log("Email: admin@sms.com");
+    console.log("Password: Admin123");
+    console.log("");
+    console.log("FACULTY/STUDENT PASSWORD");
+    console.log("Password for all seeded accounts: Admin123");
+    console.log("");
+    console.log("Students:");
+    console.log("24 students created.");
+    console.log("8 faculty members created.");
+    console.log("16 courses created.");
+    console.log(`${classes.length} classes created.`);
+    console.log("Enrollments created for every student.");
+    console.log("5 attendance records created per enrollment.");
+    console.log("");
+    
+    await mongoose.connection.close();
+  } catch (error) {
+    console.error("SEED ERROR:");
+    console.error(error);
+
+    await mongoose.connection.close();
+    process.exit(1);
+  }
 }
 
-seedDatabase()
-  .catch(function (error) {
-    console.error("Seed failed:", error.message);
-    process.exitCode = 1;
-  })
-  .finally(function () {
-    mongoose.connection.close();
-  });
+seedDatabase();

@@ -1,6 +1,8 @@
 const express = require("express");
 
 const Class = require("../models/Class");
+const Enrollment = require("../models/Enrollment");
+const Attendance = require("../models/Attendance");
 const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
@@ -95,7 +97,7 @@ router.delete(
   authorize("admin"),
   async function (req, res) {
     try {
-      const classItem = await Class.findByIdAndDelete(req.params.id);
+      const classItem = await Class.findById(req.params.id);
 
       if (!classItem) {
         return res.status(404).json({
@@ -103,8 +105,21 @@ router.delete(
         });
       }
 
+      // Delete attendance records for this class
+      await Attendance.deleteMany({
+        classId: classItem._id.toString(),
+      });
+
+      // Delete enrollments for this class
+      await Enrollment.deleteMany({
+        classId: classItem._id.toString(),
+      });
+
+      // Delete the class
+      await Class.findByIdAndDelete(req.params.id);
+
       res.status(200).json({
-        message: "Class deleted successfully",
+        message: "Class and related records deleted successfully",
         class: classItem,
       });
     } catch (error) {
@@ -117,6 +132,5 @@ router.delete(
     }
   }
 );
-
 
 module.exports = router;

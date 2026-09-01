@@ -1,25 +1,68 @@
+import { useEffect, useState } from "react";
+
 function FacultyCourses({
   faculty,
-  classes,
-  courses,
   setPage,
 }) {
+  const [classes, setClasses] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(function () {
+    async function fetchFacultyCourses() {
+      try {
+        const responses = await Promise.all([
+          fetch("/api/classes", {
+            credentials: "include"
+          }),
+          fetch("/api/courses", {
+            credentials: "include"
+          })
+        ]);
+
+        const data = await Promise.all(
+          responses.map(function (response) {
+            return response.json();
+          })
+        );
+
+        if (
+          !responses[0].ok ||
+          !responses[1].ok
+        ) {
+          return;
+        }
+
+        setClasses(data[0].classes);
+        setCourses(data[1].courses);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchFacultyCourses();
+  }, []);
+
   const facultyClasses = classes.filter(function (classItem) {
     return classItem.facultyId === faculty.facultyId;
   });
 
-  const assignedCourses = facultyClasses.map(function (classItem) {
-    const course = courses.find(function (course) {
-      return course.courseId === classItem.courseId;
-    });
+  const assignedCourses = facultyClasses
+    .map(function (classItem) {
+      const course = courses.find(function (course) {
+        return course.courseCode === classItem.courseId;
+      });
 
-    return {
-      classItem: classItem,
-      course: course,
-    };
-  }).filter(function (item) {
-    return item.course !== undefined;
-  });
+      return {
+        classItem: classItem,
+        course: course,
+      };
+    })
+    .filter(function (item) {
+      return item.course !== undefined;
+    });
 
   return (
     <main className="p-5">
@@ -46,7 +89,11 @@ function FacultyCourses({
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
 
-        {assignedCourses.length === 0 ? (
+        {loading ? (
+          <p className="p-6 text-gray-500">
+            Loading courses...
+          </p>
+        ) : assignedCourses.length === 0 ? (
           <p className="p-6 text-gray-500">
             No courses are currently assigned to this faculty member.
           </p>
@@ -86,13 +133,12 @@ function FacultyCourses({
             <tbody>
 
               {assignedCourses.map(function (item) {
-
                 const course = item.course;
                 const classItem = item.classItem;
 
                 return (
                   <tr
-                    key={classItem.classId}
+                    key={classItem._id}
                     className="border-t hover:bg-gray-50"
                   >
 

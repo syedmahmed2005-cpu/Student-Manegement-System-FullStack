@@ -1,198 +1,220 @@
-const express = require("express");
-const bcrypt=require("bcrypt");
-const jwt=require("jsonwebtoken");
-const User=require("../models/User");
-const authenticate = require("../middleware/authMiddleware");
 
+const express = require("express");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
+
+const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-    try {
-        const {
-            name,
-            email,
-            password,
-            role,
-            studentId,
-            facultyId
-        } = req.body;
 
-        const existingUser = await User.findOne({ email });
+// REGISTER
+router.post("/register", async function (req, res) {
+  try {
+    const {
+      name,
+      email,
+      password,
+      role,
+      studentId,
+      facultyId
+    } = req.body;
 
-        if (existingUser) {
-            return res.status(400).json({
-                message: "User already exists"
-            });
-        }
-
-        // Student must have a studentId
-        if (role === "student" && !studentId) {
-            return res.status(400).json({
-                message: "studentId is required for student accounts"
-            });
-        }
-
-        // Faculty must have a facultyId
-        if (role === "faculty" && !facultyId) {
-            return res.status(400).json({
-                message: "facultyId is required for faculty accounts"
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            role,
-            studentId: role === "student" ? studentId : null,
-            facultyId: role === "faculty" ? facultyId : null
-        });
-
-        res.status(201).json({
-            message: "User created successfully",
-
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                studentId: user.studentId,
-                facultyId: user.facultyId
-            }
-        });
-
-    } catch (error) {
-        console.log(error);
-
-        res.status(500).json({
-            message: "Server error",
-            error: error.message
-        });
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({
+        message: "Name, email, password and role are required"
+      });
     }
-});
-//LOGIN
-router.post("/login", async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        const user = await User.findOne({ email });
+    const existingUser = await User.findOne({
+      email: email.toLowerCase().trim()
+    });
 
-        if (!user) {
-            return res.status(401).json({
-                message: "Invalid email or password"
-            });
-        }
-
-        const isMatch = await bcrypt.compare(password, user.password);
-
-        if (!isMatch) {
-            return res.status(401).json({
-                message: "Invalid email or password"
-            });
-        }
-
-        const token = jwt.sign(
-            {
-                userId: user._id,
-                role: user.role
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: "1h"
-            }
-        );
-
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: "lax",
-            maxAge: 60 * 60 * 1000
-        });
-
-        res.json({
-            message: "Login successful",
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                studentId: user.studentId,
-                facultyId: user.facultyId
-            }
-        });
-
-    } catch (error) {
-        res.status(500).json({
-            message: "Server error"
-        });
+    if (existingUser) {
+      return res.status(400).json({
+        message: "User already exists"
+      });
     }
+
+    // Student must have a studentId
+    if (role === "student" && !studentId) {
+      return res.status(400).json({
+        message: "studentId is required for student accounts"
+      });
+    }
+
+    // Faculty must have a facultyId
+    if (role === "faculty" && !facultyId) {
+      return res.status(400).json({
+        message: "facultyId is required for faculty accounts"
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      password: hashedPassword,
+      role,
+      studentId: role === "student" ? studentId : null,
+      facultyId: role === "faculty" ? facultyId : null
+    });
+
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        studentId: user.studentId,
+        facultyId: user.facultyId
+      }
+    });
+
+  } catch (error) {
+    console.log("Registration error:", error);
+
+    if (error.code === 11000) {
+      return res.status(400).json({
+        message: "A user with these details already exists"
+      });
+    }
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
 });
 
-//LOGOUT
-router.post("/logout", (req, res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        sameSite: "lax",
-        secure: false
+
+// LOGIN
+router.post("/login", async function (req, res) {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required"
+      });
+    }
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not configured");
+
+      return res.status(500).json({
+        message: "Server configuration error"
+      });
+    }
+
+    const user = await User.findOne({
+      email: email.toLowerCase().trim()
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Invalid email or password"
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        role: user.role
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "1h"
+      }
+    );
+
+    const isProduction = process.env.NODE_ENV === "production";
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+      maxAge: 60 * 60 * 1000
     });
 
     res.json({
-        message: "Logout Successful"
+      message: "Login successful",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        studentId: user.studentId,
+        facultyId: user.facultyId
+      }
     });
+
+  } catch (error) {
+    console.log("Login error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
 });
 
-//CURRENT USER
-router.get("/me", authenticate, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId).select("-password");
 
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found"
-            });
-        }
+// LOGOUT
+router.post("/logout", function (req, res) {
+  const isProduction = process.env.NODE_ENV === "production";
 
-        res.json({
-            user: {
-                id: user._id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                studentId: user.studentId,
-                facultyId: user.facultyId
-            }
-        });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
+  });
 
-    } catch (error) {
-        res.status(500).json({
-            message: "Server error"
-        });
+  res.json({
+    message: "Logout successful"
+  });
+});
+
+
+// CURRENT USER
+router.get("/me", authenticate, async function (req, res) {
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
     }
-});
 
-
-//Testing 
-router.get("/test", authenticate, (req, res) => {
     res.json({
-        message: "Authentication successful",
-        user: req.user
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        studentId: user.studentId,
+        facultyId: user.facultyId
+      }
     });
-});
-const authorize = require("../middleware/authorize");
 
-router.get(
-    "/admin-test",
-    authenticate,
-    authorize("faculty"),
-    (req, res) => {
-        res.json({
-            message: "Admin access granted",
-            user: req.user
-        });
-    }
-);
+  } catch (error) {
+    console.log("Current user error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+
 
 module.exports = router;

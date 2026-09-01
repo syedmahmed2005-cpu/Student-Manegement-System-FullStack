@@ -71,7 +71,7 @@ function Dashboard({ user }) {
     </section>
     <section className="mt-8 grid gap-6 lg:grid-cols-3">
       <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-sm backdrop-blur lg:col-span-2">
-        <div className="flex items-center justify-between"><h2 className="text-xl font-bold text-slate-900">Recent Activity</h2><span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">Live data</span></div>
+        <div className="flex items-center justify-between"><h2 className="text-xl font-bold text-green-900">Recent Activity</h2><span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">Live data</span></div>
         <div className="mt-5 space-y-4">
           {[
             ["👨‍🎓", stats?.students || 0, "students registered"],
@@ -82,7 +82,7 @@ function Dashboard({ user }) {
         </div>
       </div>
       <div className="rounded-2xl border border-slate-200 bg-white/85 p-6 shadow-sm backdrop-blur">
-        <h2 className="text-xl font-bold text-slate-900">Quick Actions</h2>
+        <h2 className="text-xl font-bold text-green-800">Quick Actions</h2>
         <div className="mt-5 grid gap-3">
           {(user.role === "admin" ? [["Add Student", "/students/add"], ["Add Faculty", "/faculty/add"], ["Add Course", "/courses/add"], ["Mark Attendance", "/attendance"]] : user.role === "faculty" ? [["My Attendance", "/faculty/attendance"], ["View Classes", "/classes"], ["Mark Attendance", "/attendance"]] : [["My Attendance", "/students/attendance"], ["View Courses", "/courses"]]).map(function (action) { return <Link key={action[0]} to={action[1]} className="rounded-xl border border-green-200 bg-green-50 px-4 py-3 font-semibold text-green-800 transition hover:bg-green-600 hover:text-white">{action[0]} →</Link>; })}
         </div>

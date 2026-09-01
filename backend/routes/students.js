@@ -4,6 +4,8 @@ const router = express.Router();
 const Student = require("../models/Student");
 const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
+const Enrollment = require("../models/Enrollment");
+const Attendance = require("../models/Attendance");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
@@ -183,7 +185,7 @@ router.put("/:studentId",
 // DELETE STUDENT
 router.delete("/:studentId", authenticate, authorize("admin"), async function (req, res) {
   try {
-    const student = await Student.findByIdAndDelete(req.params.studentId);
+    const student = await Student.findById(req.params.studentId);
 
     if (!student) {
       return res.status(404).json({
@@ -191,8 +193,26 @@ router.delete("/:studentId", authenticate, authorize("admin"), async function (r
       });
     }
 
+    // Delete related enrollments
+    await Enrollment.deleteMany({
+      studentId: student.studentId,
+    });
+
+    // Delete related attendance records
+    await Attendance.deleteMany({
+      studentId: student.studentId,
+    });
+
+    // Delete student login account
+    await User.deleteOne({
+      studentId: student.studentId,
+    });
+
+    // Delete student
+    await Student.findByIdAndDelete(req.params.studentId);
+
     res.status(200).json({
-      message: "Student deleted successfully",
+      message: "Student and related records deleted successfully",
       student: student,
     });
   } catch (error) {

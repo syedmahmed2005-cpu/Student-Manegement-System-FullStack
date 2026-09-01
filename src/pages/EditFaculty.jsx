@@ -25,7 +25,7 @@ function EditFaculty() {
   function handleChange(event) { setFormData({ ...formData, [event.target.name]: event.target.value }); }
   async function handleUpdate() {
     try {
-      const response = await fetch("http://localhost:5000/api/faculty/" + facultyId, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
+      const response = await fetch("/api/faculty/" + facultyId, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(formData) });
       const data = await response.json();
       if (!response.ok) { setErrorMessage(data.message || "Failed to update faculty member."); return; }
       setSuccessMessage("Faculty member updated successfully!");

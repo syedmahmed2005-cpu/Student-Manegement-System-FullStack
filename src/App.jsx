@@ -376,6 +376,7 @@ function AppContent() {
                 setAttendance={setAttendance}
                 setPage={go}
                 showToast={showToast}
+                user={user}
               />
             }
           />

@@ -40,7 +40,7 @@ function Enrollments({ showToast }) {
 
   async function removeEnrollment(enrollment) {
     try {
-      const response = await fetch("http://localhost:5000/api/enrollments/" + enrollment._id, { method: "DELETE" });
+      const response = await fetch("/api/enrollments/" + enrollment._id, { method: "DELETE" });
       const data = await response.json();
       if (!response.ok) { showToast(data.message || "Failed to remove enrollment.", "error"); return; }
       setEnrollments(enrollments.filter(function (item) { return item._id !== enrollment._id; }));

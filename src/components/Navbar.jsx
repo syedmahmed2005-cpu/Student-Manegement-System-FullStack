@@ -5,7 +5,7 @@ function Navbar({ title, user, setUser }) {
   const menuItems = {
     admin: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Faculty", "/faculty"], ["Courses", "/courses"], ["Classes", "/classes"], ["Enrollments", "/enrollments"], ["Attendance", "/attendance"]],
     faculty: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Courses", "/courses"], ["Classes", "/classes"], ["Attendance", "/attendance"], ["My Attendance", "/faculty/attendance"]],
-    student: [["Dashboard", "/dashboard"], ["Courses", "/courses"], ["Classes", "/classes"], ["My Attendance", "/students/attendance"]],
+    student: [["Dashboard", "/dashboard"], ["My Attendance", "/students/attendance"]],
   };
 
   async function handleLogout() {

@@ -10,8 +10,6 @@ function AddStudent({ setStudents }) {
     batchId: "",
     email: "",
     phoneNumber: "",
-    rollNumber: "",
-    registrationNumber: "",
     gender: "",
     dob: "",
     department: "",
@@ -51,8 +49,6 @@ function AddStudent({ setStudents }) {
       formData.batchId === "" ||
       formData.email === "" ||
       formData.phoneNumber === "" ||
-      formData.rollNumber === "" ||
-      formData.registrationNumber === "" ||
       formData.gender === "" ||
       formData.dob === "" ||
       formData.department === "" ||
@@ -90,8 +86,6 @@ function AddStudent({ setStudents }) {
         batchId: "",
         email: "",
         phoneNumber: "",
-        rollNumber: "",
-        registrationNumber: "",
         gender: "",
         dob: "",
         department: "",
@@ -118,8 +112,6 @@ function AddStudent({ setStudents }) {
       batchId: "",
       email: "",
       phoneNumber: "",
-      rollNumber: "",
-      registrationNumber: "",
       gender: "",
       dob: "",
       department: "",
@@ -218,36 +210,6 @@ function AddStudent({ setStudents }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  #️⃣ Roll Number <span className="text-red-500">*</span>
-                </label>
-
-                <input
-                  name="rollNumber"
-                  type="text"
-                  placeholder="Enter your Roll Number"
-                  value={formData.rollNumber}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🆔 Registration Number <span className="text-red-500">*</span>
-                </label>
-
-                <input
-                  name="registrationNumber"
-                  type="text"
-                  placeholder="Enter your Registration Number"
-                  value={formData.registrationNumber}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-              </div>
-
-              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   ⚧ Gender <span className="text-red-500">*</span>
                 </label>
@@ -314,7 +276,7 @@ function AddStudent({ setStudents }) {
                   type="text"
                   value={formData.batchId}
                   onChange={handleChange}
-                  placeholder="e.g. FA24-BCS"
+                  placeholder="e.g. FA24"
                   className="border rounded-lg px-4 py-2 w-full"
                 />
               </div>

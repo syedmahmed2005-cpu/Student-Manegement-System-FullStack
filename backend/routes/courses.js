@@ -1,10 +1,13 @@
 const express = require("express");
 const Course = require("../models/Course");
-
+const Class = require("../models/Class");
+const Enrollment = require("../models/Enrollment");
+const Attendance = require("../models/Attendance");
 const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
 const router = express.Router();
+
 
 
 // CREATE COURSE
@@ -95,7 +98,7 @@ router.delete(
   authorize("admin"),
   async function (req, res) {
     try {
-      const course = await Course.findByIdAndDelete(req.params.id);
+      const course = await Course.findById(req.params.id);
 
       if (!course) {
         return res.status(404).json({
@@ -103,8 +106,35 @@ router.delete(
         });
       }
 
+      // Find all classes using this course
+      const classes = await Class.find({
+        courseId: course.courseCode,
+      });
+
+      const classIds = classes.map(function (classItem) {
+        return classItem._id;
+      });
+
+      // Delete attendance for these classes
+      await Attendance.deleteMany({
+        classId: { $in: classIds },
+      });
+
+      // Delete enrollments for these classes
+      await Enrollment.deleteMany({
+        classId: { $in: classIds },
+      });
+
+      // Delete the classes
+      await Class.deleteMany({
+        courseId: course.courseCode,
+      });
+
+      // Delete the course
+      await Course.findByIdAndDelete(req.params.id);
+
       res.status(200).json({
-        message: "Course deleted successfully",
+      message: "Course and related records deleted successfully",
         course: course,
       });
     } catch (error) {
@@ -117,6 +147,5 @@ router.delete(
     }
   }
 );
-
 
 module.exports = router;

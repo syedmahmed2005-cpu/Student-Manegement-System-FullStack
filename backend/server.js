@@ -2,24 +2,42 @@ const dns = require("dns");
 
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
-
 require("dotenv").config();
 
-console.log("MONGODB_URI exists:", !!process.env.MONGODB_URI);
 const express = require("express");
 const cors = require("cors");
-const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
 
+const connectDB = require("./config/db");
+
 const app = express();
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
-}));
+
+const PORT = process.env.PORT || 5000;
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Origin not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser());
 
-connectDB();
+connectDB().catch(function (error) {
+  console.log("Database connection failed:", error.message);
+});
 
 const studentRoutes = require("./routes/students");
 const facultyRoutes = require("./routes/faculty");
@@ -41,6 +59,10 @@ app.use("/api/classes", classRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
 
-app.listen(5000, function () {
-  console.log("Backend server is running on port 5000");
-});
+if (require.main === module) {
+  app.listen(PORT, function () {
+    console.log(`Backend server is running on port ${PORT}`);
+  });
+}
+
+module.exports = app;

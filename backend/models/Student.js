@@ -98,8 +98,11 @@ const studentSchema = new mongoose.Schema(
   }
 );
 
-// Automatically generate student ID
+
+// Automatically generate student ID, roll number and registration number
 studentSchema.pre("validate", async function () {
+
+  // Generate global student ID
   if (!this.studentId) {
     const students = await mongoose
       .model("Student")
@@ -124,7 +127,66 @@ studentSchema.pre("validate", async function () {
     this.studentId =
       "STU-" + String(highestNumber + 1).padStart(3, "0");
   }
+
+
+  // Generate department prefix
+  const departmentPrefixes = {
+    "Computer Science": "BCS",
+    "Software Engineering": "BSE",
+    "Electrical Engineering": "BEE",
+    "Psychology": "PSY",
+  };
+
+  const prefix = departmentPrefixes[this.department];
+
+  if (!prefix) {
+    throw new Error(
+      "Unsupported department. Use Computer Science, Software Engineering, Electrical Engineering, or Psychology."
+    );
+  }
+
+
+  // Generate roll number and registration number
+  if (!this.rollNumber || !this.registrationNumber) {
+
+    const students = await mongoose
+      .model("Student")
+      .find(
+        {
+          department: this.department,
+        },
+        {
+          rollNumber: 1,
+        }
+      )
+      .lean();
+
+    let highestNumber = 0;
+
+    students.forEach(function (student) {
+      if (student.rollNumber) {
+
+        const number = parseInt(
+          student.rollNumber.replace(prefix + "-", ""),
+          10
+        );
+
+        if (!isNaN(number) && number > highestNumber) {
+          highestNumber = number;
+        }
+      }
+    });
+
+    const nextNumber = String(highestNumber + 1).padStart(3, "0");
+
+    this.rollNumber = prefix + "-" + nextNumber;
+
+    this.registrationNumber =
+      "REG-" + prefix + "-" + nextNumber;
+  }
 });
+
+
 const Student = mongoose.model("Student", studentSchema);
 
 module.exports = Student;

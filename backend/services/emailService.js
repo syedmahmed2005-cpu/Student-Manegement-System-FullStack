@@ -10,9 +10,9 @@ const transporter = nodemailer.createTransport({
 
 async function sendStudentCredentials(email, name, studentId, password) {
   await transporter.sendMail({
-    from: `"Student Management System" <${process.env.EMAIL_USER}>`,
+    from: `"Educore" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: "Your Student Management System Account",
+    subject: "Your EduCore Account",
     text: `
 Hello ${name},
 

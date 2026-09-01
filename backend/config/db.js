@@ -8,6 +8,7 @@ async function connectDB() {
   } catch (error) {
     console.log("MongoDB connection failed");
     console.log(error.message);
+    throw error;
   }
 }
 
