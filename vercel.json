@@ -1,3 +1,9 @@
 {
-  "installCommand": "npm ci && npm install --no-save --platform=linux --arch=x64 lightningcss"
+  "installCommand": "npm ci && npm install --no-save --platform=linux --arch=x64 lightningcss",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
