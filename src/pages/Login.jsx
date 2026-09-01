@@ -55,7 +55,7 @@ function Login({ setUser }) {
           </div>
 
           <h1 className="text-2xl font-bold tracking-tight text-green-900">
-            Student Management System
+            EduCore
           </h1>
 
           <p className="text-slate-600 mt-2">
