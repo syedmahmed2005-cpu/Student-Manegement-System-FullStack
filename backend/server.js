@@ -35,8 +35,16 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-connectDB().catch(function (error) {
-  console.log("Database connection failed:", error.message);
+app.use(async function (req, res, next) {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.log("Database connection failed:", error.message);
+    res.status(500).json({
+      message: "Database connection failed"
+    });
+  }
 });
 
 const studentRoutes = require("./routes/students");
