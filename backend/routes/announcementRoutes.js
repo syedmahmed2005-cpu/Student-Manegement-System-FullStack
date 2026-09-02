@@ -1,6 +1,6 @@
 const express = require("express");
 const Announcement = require("../models/Announcement");
-const authenticate = require("../middleware/authenticate");
+const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
 const router = express.Router();
