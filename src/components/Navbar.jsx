@@ -3,9 +3,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 function Navbar({ title, user, setUser }) {
   const navigate = useNavigate();
   const menuItems = {
-    admin: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Faculty", "/faculty"], ["Courses", "/courses"], ["Classes", "/classes"], ["Enrollments", "/enrollments"], ["Attendance", "/attendance"], ["Announcements", "/announcements"]],
-    faculty: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Courses", "/courses"], ["Classes", "/classes"], ["Attendance", "/attendance"], ["My Attendance", "/faculty/attendance"], ["Announcements", "/announcements"]],
-    student: [["Dashboard", "/dashboard"], ["My Attendance", "/students/attendance"],["Announcements", "/announcements"]],
+    admin: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Faculty", "/faculty"], ["Courses", "/courses"], ["Classes", "/classes"], ["Enrollments", "/enrollments"], ["Attendance", "/attendance"], ["Announcements", "/announcements"],["Settings", "/settings"]],
+    faculty: [["Dashboard", "/dashboard"], ["Students", "/students"], ["Courses", "/courses"], ["Classes", "/classes"], ["Attendance", "/attendance"], ["My Attendance", "/faculty/attendance"], ["Announcements", "/announcements"],["Settings", "/settings"]],
+    student: [["Dashboard", "/dashboard"], ["My Attendance", "/students/attendance"],["Announcements", "/announcements"],["Settings", "/settings"]],
   };
 
   async function handleLogout() {
