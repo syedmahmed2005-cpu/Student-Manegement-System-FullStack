@@ -60,13 +60,13 @@ app.get("/", function (req, res) {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/announcements", announcementRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/classes", classRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/announcements", announcementRoutes);
 
 if (require.main === module) {
   app.listen(PORT, function () {
