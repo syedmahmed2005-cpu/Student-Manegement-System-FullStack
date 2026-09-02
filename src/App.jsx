@@ -27,7 +27,7 @@ import StudentAttendance from "./pages/StudentAttendance.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import RoleRoute from "./components/RoleRoute.jsx";
 import Login from "./pages/Login.jsx";
-
+import Announcements from "./pages/Announcements.jsx";
 const browserFetch = window.fetch;
 
 window.fetch = function (url, options = {}) {
@@ -201,7 +201,12 @@ function AppContent() {
               />
             }
           />
-
+          <Route
+            path="/announcements"
+            element={
+            <Announcements 
+              user={user} showToast={showToast} />}
+          />
           <Route
             path="/students/attendance"
             element={

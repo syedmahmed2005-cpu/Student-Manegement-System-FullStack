@@ -54,12 +54,13 @@ const classRoutes = require("./routes/classRoutes");
 const enrollmentRoutes = require("./routes/enrollmentRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
 const authRoutes = require("./routes/authRoutes");
-
+const announcementRoutes = require("./routes/announcementRoutes");
 app.get("/", function (req, res) {
   res.send("Student Management System Backend Server is running");
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/announcements", announcementRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/faculty", facultyRoutes);
 app.use("/api/courses", courseRoutes);
