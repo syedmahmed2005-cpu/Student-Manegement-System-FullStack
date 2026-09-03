@@ -7,7 +7,10 @@ const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
-
+bcrypt.compare(
+  "THE_PASSWORD_YOU_ARE_ENTERING",
+  "PASTE_THE_HASH_FROM_MONGODB_HERE"
+).then(console.log);
 
 // REGISTER
 router.post("/register", async function (req, res) {
@@ -115,7 +118,7 @@ router.post("/login", async function (req, res) {
 
     if (!user) {
       return res.status(401).json({
-        message: "Invalid email or password"
+        message: "Debug:User not found"
       });
     }
 
@@ -123,7 +126,7 @@ router.post("/login", async function (req, res) {
 
     if (!isMatch) {
       return res.status(401).json({
-        message: "Invalid email or password"
+        message: "Debug:Password does not match"
       });
     }
 
