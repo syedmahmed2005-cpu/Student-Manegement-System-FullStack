@@ -5,31 +5,37 @@ const gradeSchema = new mongoose.Schema(
     studentId: {
       type: String,
       required: true,
+      trim: true,
     },
 
     courseId: {
       type: String,
       required: true,
+      trim: true,
     },
 
     classId: {
       type: String,
       required: true,
+      trim: true,
     },
 
     facultyId: {
       type: String,
       required: true,
+      trim: true,
     },
 
     semester: {
       type: String,
       required: true,
+      trim: true,
     },
 
     academicYear: {
       type: String,
       required: true,
+      trim: true,
     },
 
     assignmentMarks: {
@@ -103,6 +109,11 @@ const gradeSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
+);
+
+gradeSchema.index(
+  { studentId: 1, classId: 1 },
+  { unique: true }
 );
 
 module.exports = mongoose.model("Grade", gradeSchema);

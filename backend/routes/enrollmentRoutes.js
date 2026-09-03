@@ -103,7 +103,53 @@ router.get(
     }
   }
 );
+// GET STUDENTS ENROLLED IN A CLASS
+router.get(
+  "/class/:classId",
+  authenticate,
+  authorize("admin", "faculty"),
+  async function (req, res) {
+    try {
+      const enrollments = await Enrollment.find({
+        classId: req.params.classId,
+      });
 
+      const students = await Promise.all(
+        enrollments.map(async function (enrollment) {
+          const student = await Student.findOne({
+            studentId: enrollment.studentId,
+          });
+
+          if (!student) {
+            return null;
+          }
+
+          return {
+            studentId: student.studentId,
+            firstName: student.firstName,
+            lastName: student.lastName,
+            rollNumber: student.rollNumber,
+            registrationNumber: student.registrationNumber,
+          };
+        })
+      );
+
+      res.status(200).json({
+        message: "Class students fetched successfully",
+        students: students.filter(function (student) {
+          return student !== null;
+        }),
+      });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: "Failed to retrieve class students",
+        error: error.message,
+      });
+    }
+  }
+);
 
 // GET ONE ENROLLMENT
 router.get(

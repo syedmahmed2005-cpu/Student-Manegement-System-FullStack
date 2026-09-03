@@ -3,8 +3,10 @@ const express = require("express");
 const Class = require("../models/Class");
 const Enrollment = require("../models/Enrollment");
 const Attendance = require("../models/Attendance");
+const Course = require("../models/Course");
 const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
+const User = require("../models/User");
 
 const router = express.Router();
 
@@ -58,7 +60,55 @@ router.get(
   }
 );
 
+// GET FACULTY CLASSES
+router.get(
+  "/faculty/my-classes",
+  authenticate,
+  authorize("faculty"),
+  async function (req, res) {
+    try {
+      const User = require("../models/User");
 
+      const user = await User.findById(req.user.userId);
+
+      if (!user || !user.facultyId) {
+        return res.status(404).json({
+          message: "Faculty account not found",
+        });
+      }
+
+      const classes = await Class.find({
+        facultyId: user.facultyId,
+      }).lean();
+
+      const enrichedClasses = await Promise.all(
+        classes.map(async function (classItem) {
+          const course = await Course.findOne({
+            courseCode: classItem.courseId,
+          }).lean();
+
+          return {
+            ...classItem,
+            courseName: course ? course.courseName : classItem.courseId,
+            courseCode: course ? course.courseCode : classItem.courseId,
+          };
+        })
+      );
+
+      res.status(200).json({
+        message: "Faculty classes fetched successfully",
+        classes: enrichedClasses,
+      });
+    } catch (error) {
+      console.log(error);
+
+      res.status(500).json({
+        message: "Failed to retrieve faculty classes",
+        error: error.message,
+      });
+    }
+  }
+);
 // GET ONE CLASS
 router.get(
   "/:id",
