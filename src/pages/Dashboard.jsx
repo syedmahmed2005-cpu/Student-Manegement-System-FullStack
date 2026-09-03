@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
+import dashboardBackground from "../assets/educore-background.png";
 function Dashboard({ user }) {
   const [stats, setStats] = useState(null);
   const [error, setError] = useState("");
@@ -81,7 +81,7 @@ return (
     className="mx-auto min-h-screen max-w-7xl bg-cover bg-center bg-fixed px-4 py-8 sm:px-6"
     style={{
       backgroundImage:
-        "linear-gradient(rgba(6, 78, 59, 0.88), rgba(6, 78, 59, 0.88)), url('/educore-background.png')",
+        `url(${dashboardBackground})`,
     }}
   >    <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-left text-white shadow-xl shadow-green-900/10">
       <p className="text-sm font-semibold uppercase tracking-widest text-green-100">{user.role} portal</p>
