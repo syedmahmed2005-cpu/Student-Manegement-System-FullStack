@@ -118,7 +118,7 @@ router.post("/login", async function (req, res) {
 
     if (!user) {
       return res.status(401).json({
-        message: "Debug:User not found"
+        message: "Invalid email or password"
       });
     }
 
@@ -126,7 +126,7 @@ router.post("/login", async function (req, res) {
 
     if (!isMatch) {
       return res.status(401).json({
-        message: "Debug:Password does not match"
+        message: "Invalid email or password"
       });
     }
 
