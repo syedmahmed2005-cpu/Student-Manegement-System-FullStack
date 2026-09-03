@@ -76,8 +76,14 @@ if (user.role !== "student") {
     ["✓", "Attendance", stats ? stats.attendance + "%" : "—", "Overall present rate", "/attendance"],
   ].filter(function (card) { return user.role !== "student" || ["Courses", "Classes"].includes(card[1]); });
 
-  return <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-    <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-left text-white shadow-xl shadow-green-900/10">
+return (
+  <main
+    className="mx-auto min-h-screen max-w-7xl bg-cover bg-center bg-fixed px-4 py-8 sm:px-6"
+    style={{
+      backgroundImage:
+        "linear-gradient(rgba(6, 78, 59, 0.88), rgba(6, 78, 59, 0.88)), url('/educore-bg-png.jpeg')",
+    }}
+  >    <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-left text-white shadow-xl shadow-green-900/10">
       <p className="text-sm font-semibold uppercase tracking-widest text-green-100">{user.role} portal</p>
       <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Welcome back, {user.name}</h1>
       <p className="mt-3 max-w-2xl text-green-50">Here is a live overview of your academic workspace.</p>
@@ -106,7 +112,8 @@ if (user.role !== "student") {
         </div>
       </div>
     </section>
-  </main>;
+  </main>
+);
 }
 
 export default Dashboard;
