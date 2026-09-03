@@ -633,9 +633,20 @@ function generateClassGradePDF(classItem, classGrades) {
                 onClick={function () {
                 const classGrades = grades.filter(function (grade) {
                     return grade.classId === selectedClass._id;
+
                 });
 
-                generateClassGradePDF(selectedClass, classGrades);
+                const reportClass = {
+                    ...selectedClass,
+                    courseCode: classGrades.length > 0
+                    ? classGrades[0].courseCode
+                    : selectedClass.courseId,
+                    courseName: classGrades.length > 0
+                    ? classGrades[0].courseName
+                    : selectedClass.courseId,
+                };
+
+                generateClassGradePDF(reportClass, classGrades);
                 }}
                 className="mb-6 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg"
             >
