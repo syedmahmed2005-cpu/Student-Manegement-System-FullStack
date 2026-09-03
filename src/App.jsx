@@ -29,6 +29,8 @@ import RoleRoute from "./components/RoleRoute.jsx";
 import Login from "./pages/Login.jsx";
 import Announcements from "./pages/Announcements.jsx";
 import Settings from "./pages/Settings.jsx";
+import Grades from "./pages/Grades.jsx";
+
 const browserFetch = window.fetch;
 
 window.fetch = function (url, options = {}) {
@@ -192,7 +194,10 @@ function AppContent() {
               />
             }
           />
-
+          <Route
+            path="/grades"
+            element={<Grades user={user} />}
+          />
           <Route
             path="/students/:studentId"
             element={
