@@ -140,7 +140,7 @@ function AppContent() {
 
   return (
     <>
-      {user && <Navbar title="Student Management System" user={user} setUser={setUser} />}
+      {user && <Navbar title="EduCore" user={user} setUser={setUser} />}
 
       <Routes>
 
