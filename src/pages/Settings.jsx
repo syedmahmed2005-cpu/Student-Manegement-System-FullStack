@@ -51,482 +51,205 @@ function Settings({ user, showToast }) {
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: "#f8faf9",
-        minHeight: "calc(100vh - 160px)",
-        padding: "30px"
-      }}
-    >
+    <div className="min-h-screen bg-slate-50 p-4 md:p-6 lg:p-8">
+
       {/* Header */}
-      <div style={{ marginBottom: "28px" }}>
-        <p
-          style={{
-            color: "#008f3c",
-            fontWeight: "700",
-            fontSize: "14px",
-            letterSpacing: "1.5px",
-            marginBottom: "6px"
-          }}
-        >
-          ACCOUNT
+      <div className="mb-6 md:mb-8">
+        <p className="mb-1 text-sm font-bold uppercase tracking-widest text-green-600">
+          Account
         </p>
 
-        <h1
-          style={{
-            color: "#17233c",
-            fontSize: "34px",
-            fontWeight: "700",
-            marginBottom: "6px"
-          }}
-        >
+        <h1 className="text-3xl font-bold text-slate-800">
           Settings
         </h1>
 
-        <p
-          style={{
-            color: "#64748b",
-            fontSize: "16px",
-            margin: 0
-          }}
-        >
+        <p className="mt-1 text-sm text-slate-500 md:text-base">
           Manage your account and security preferences.
         </p>
       </div>
 
-      <div className="row g-4">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
 
         {/* Account Card */}
-        <div className="col-12 col-lg-5">
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "22px",
-              padding: "30px",
-              boxShadow: "0 5px 18px rgba(0, 0, 0, 0.10)",
-              height: "100%"
-            }}
-          >
-            {/* Card heading */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                marginBottom: "28px"
-              }}
-            >
-              <div
-                style={{
-                  width: "52px",
-                  height: "52px",
-                  borderRadius: "15px",
-                  backgroundColor: "#e8f8ee",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "25px"
-                }}
-              >
-                👤
-              </div>
+        <div className="rounded-3xl bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg lg:col-span-2">
 
-              <div>
-                <h4
-                  style={{
-                    color: "#17233c",
-                    fontWeight: "700",
-                    margin: 0
-                  }}
-                >
-                  Account
-                </h4>
-
-                <p
-                  style={{
-                    color: "#64748b",
-                    margin: "4px 0 0"
-                  }}
-                >
-                  Your account information
-                </p>
-              </div>
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-50 text-2xl">
+              👤
             </div>
 
-            {/* Name */}
-            <div
-              style={{
-                backgroundColor: "#f8fafc",
-                borderRadius: "14px",
-                padding: "16px 18px",
-                marginBottom: "14px"
-              }}
-            >
-              <div
-                style={{
-                  color: "#64748b",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  letterSpacing: "0.8px",
-                  marginBottom: "5px"
-                }}
-              >
-                NAME
-              </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">
+                Account
+              </h2>
 
-              <div
-                style={{
-                  color: "#17233c",
-                  fontWeight: "600",
-                  fontSize: "16px"
-                }}
-              >
+              <p className="text-sm text-slate-500">
+                Your account information
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+
+            <div className="rounded-2xl bg-slate-50 p-4 transition hover:bg-green-50">
+              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-slate-400">
+                Name
+              </p>
+
+              <p className="font-semibold text-slate-800">
                 {user?.name || "User"}
-              </div>
+              </p>
             </div>
 
-            {/* Email */}
-            <div
-              style={{
-                backgroundColor: "#f8fafc",
-                borderRadius: "14px",
-                padding: "16px 18px",
-                marginBottom: "14px"
-              }}
-            >
-              <div
-                style={{
-                  color: "#64748b",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  letterSpacing: "0.8px",
-                  marginBottom: "5px"
-                }}
-              >
-                EMAIL
-              </div>
+            <div className="rounded-2xl bg-slate-50 p-4 transition hover:bg-green-50">
+              <p className="mb-1 text-xs font-bold uppercase tracking-wider text-slate-400">
+                Email
+              </p>
 
-              <div
-                style={{
-                  color: "#17233c",
-                  fontWeight: "600",
-                  fontSize: "16px",
-                  wordBreak: "break-word"
-                }}
-              >
+              <p className="break-all font-semibold text-slate-800">
                 {user?.email || "Not available"}
-              </div>
+              </p>
             </div>
 
-            {/* Role */}
-            <div
-              style={{
-                backgroundColor: "#f8fafc",
-                borderRadius: "14px",
-                padding: "16px 18px"
-              }}
-            >
-              <div
-                style={{
-                  color: "#64748b",
-                  fontSize: "12px",
-                  fontWeight: "700",
-                  letterSpacing: "0.8px",
-                  marginBottom: "8px"
-                }}
-              >
-                ROLE
-              </div>
+            <div className="rounded-2xl bg-slate-50 p-4 transition hover:bg-green-50">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-400">
+                Role
+              </p>
 
-              <span
-                style={{
-                  display: "inline-block",
-                  backgroundColor: "#e8f8ee",
-                  color: "#008f3c",
-                  padding: "7px 15px",
-                  borderRadius: "20px",
-                  fontSize: "14px",
-                  fontWeight: "700",
-                  textTransform: "capitalize"
-                }}
-              >
+              <span className="inline-flex rounded-full bg-green-100 px-3 py-1 text-sm font-semibold capitalize text-green-700">
                 {user?.role || "User"}
               </span>
             </div>
+
           </div>
         </div>
 
-        {/* Password Card */}
-        <div className="col-12 col-lg-7">
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "22px",
-              padding: "30px",
-              boxShadow: "0 5px 18px rgba(0, 0, 0, 0.10)"
-            }}
-          >
-            {/* Heading */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                marginBottom: "28px"
-              }}
-            >
-              <div
-                style={{
-                  width: "52px",
-                  height: "52px",
-                  borderRadius: "15px",
-                  backgroundColor: "#e8f8ee",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "24px"
-                }}
-              >
-                🔒
-              </div>
+        {/* Change Password Card */}
+        <div className="rounded-3xl bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg lg:col-span-3">
 
-              <div>
-                <h4
-                  style={{
-                    color: "#17233c",
-                    fontWeight: "700",
-                    margin: 0
-                  }}
-                >
-                  Change Password
-                </h4>
-
-                <p
-                  style={{
-                    color: "#64748b",
-                    margin: "4px 0 0"
-                  }}
-                >
-                  Update your password to keep your account secure.
-                </p>
-              </div>
+          <div className="mb-6 flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-green-50 text-2xl">
+              🔒
             </div>
 
-            <form onSubmit={handleChangePassword}>
+            <div>
+              <h2 className="text-xl font-bold text-slate-800">
+                Change Password
+              </h2>
 
-              {/* Current Password */}
-              <div style={{ marginBottom: "20px" }}>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#17233c",
-                    fontWeight: "600",
-                    marginBottom: "8px"
-                  }}
-                >
-                  Current Password
+              <p className="text-sm text-slate-500">
+                Keep your EduCore account secure.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleChangePassword} className="space-y-5">
+
+            {/* Current Password */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-slate-700">
+                Current Password
+              </label>
+
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(event) =>
+                  setCurrentPassword(event.target.value)
+                }
+                placeholder="Enter your current password"
+                required
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-100"
+              />
+            </div>
+
+            {/* New + Confirm */}
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  New Password
                 </label>
 
                 <input
                   type="password"
-                  value={currentPassword}
+                  value={newPassword}
                   onChange={(event) =>
-                    setCurrentPassword(event.target.value)
+                    setNewPassword(event.target.value)
                   }
-                  placeholder="Enter your current password"
+                  placeholder="Enter new password"
+                  minLength="6"
                   required
-                  style={{
-                    width: "100%",
-                    border: "1px solid #dbe4df",
-                    borderRadius: "12px",
-                    padding: "13px 16px",
-                    fontSize: "15px",
-                    outline: "none",
-                    backgroundColor: "#fbfdfc"
-                  }}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-100"
                 />
               </div>
 
-              <div className="row g-3">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-slate-700">
+                  Confirm Password
+                </label>
 
-                {/* New Password */}
-                <div className="col-12 col-md-6">
-                  <label
-                    style={{
-                      display: "block",
-                      color: "#17233c",
-                      fontWeight: "600",
-                      marginBottom: "8px"
-                    }}
-                  >
-                    New Password
-                  </label>
-
-                  <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(event) =>
-                      setNewPassword(event.target.value)
-                    }
-                    placeholder="Enter new password"
-                    minLength="6"
-                    required
-                    style={{
-                      width: "100%",
-                      border: "1px solid #dbe4df",
-                      borderRadius: "12px",
-                      padding: "13px 16px",
-                      fontSize: "15px",
-                      outline: "none",
-                      backgroundColor: "#fbfdfc"
-                    }}
-                  />
-                </div>
-
-                {/* Confirm Password */}
-                <div className="col-12 col-md-6">
-                  <label
-                    style={{
-                      display: "block",
-                      color: "#17233c",
-                      fontWeight: "600",
-                      marginBottom: "8px"
-                    }}
-                  >
-                    Confirm Password
-                  </label>
-
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(event) =>
-                      setConfirmPassword(event.target.value)
-                    }
-                    placeholder="Confirm new password"
-                    minLength="6"
-                    required
-                    style={{
-                      width: "100%",
-                      border: "1px solid #dbe4df",
-                      borderRadius: "12px",
-                      padding: "13px 16px",
-                      fontSize: "15px",
-                      outline: "none",
-                      backgroundColor: "#fbfdfc"
-                    }}
-                  />
-                </div>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(event) =>
+                    setConfirmPassword(event.target.value)
+                  }
+                  placeholder="Confirm new password"
+                  minLength="6"
+                  required
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 outline-none transition focus:border-green-500 focus:bg-white focus:ring-2 focus:ring-green-100"
+                />
               </div>
 
-              {/* Password requirement */}
-              <div
-                style={{
-                  marginTop: "20px",
-                  backgroundColor: "#f0faf4",
-                  border: "1px solid #d7f0df",
-                  borderRadius: "14px",
-                  padding: "14px 16px",
-                  color: "#47705a",
-                  fontSize: "14px"
-                }}
-              >
-                🔐 Your new password must contain at least 6 characters.
-              </div>
+            </div>
 
-              {/* Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  marginTop: "24px",
-                  backgroundColor: loading ? "#8ac7a4" : "#008f3c",
-                  color: "#ffffff",
-                  border: "none",
-                  borderRadius: "12px",
-                  padding: "13px 24px",
-                  fontSize: "16px",
-                  fontWeight: "700",
-                  cursor: loading ? "not-allowed" : "pointer",
-                  boxShadow: "0 5px 12px rgba(0, 143, 60, 0.20)"
-                }}
-              >
-                {loading ? "Changing Password..." : "Change Password"}
-              </button>
-            </form>
-          </div>
+            {/* Password Info */}
+            <div className="flex items-center gap-3 rounded-2xl border border-green-100 bg-green-50 px-4 py-3">
+              <span className="text-lg">🔐</span>
+
+              <p className="text-sm text-green-800">
+                Your new password must contain at least 6 characters.
+              </p>
+            </div>
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="rounded-xl bg-green-600 px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:bg-green-700 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Changing Password..." : "Change Password"}
+            </button>
+
+          </form>
         </div>
 
         {/* Appearance Card */}
-        <div className="col-12">
-          <div
-            style={{
-              backgroundColor: "#ffffff",
-              borderRadius: "22px",
-              padding: "26px 30px",
-              boxShadow: "0 5px 18px rgba(0, 0, 0, 0.10)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "20px",
-              flexWrap: "wrap"
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px"
-              }}
-            >
-              <div
-                style={{
-                  width: "50px",
-                  height: "50px",
-                  borderRadius: "15px",
-                  backgroundColor: "#f1f5f9",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "23px"
-                }}
-              >
+        <div className="rounded-3xl bg-white p-6 shadow-md transition-shadow duration-200 hover:shadow-lg lg:col-span-5">
+
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-100 text-2xl">
                 🌙
               </div>
 
               <div>
-                <h5
-                  style={{
-                    color: "#17233c",
-                    fontWeight: "700",
-                    marginBottom: "4px"
-                  }}
-                >
+                <h2 className="text-xl font-bold text-slate-800">
                   Appearance
-                </h5>
+                </h2>
 
-                <p
-                  style={{
-                    color: "#64748b",
-                    margin: 0
-                  }}
-                >
-                  Dark mode and other appearance preferences.
+                <p className="text-sm text-slate-500">
+                  Customize how EduCore looks and feels.
                 </p>
               </div>
             </div>
 
-            <span
-              style={{
-                backgroundColor: "#f1f5f9",
-                color: "#64748b",
-                padding: "8px 16px",
-                borderRadius: "20px",
-                fontSize: "13px",
-                fontWeight: "600"
-              }}
-            >
-              Coming soon
+            <span className="w-fit rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-500">
+              Coming Soon
             </span>
+
           </div>
         </div>
 
