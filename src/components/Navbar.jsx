@@ -26,15 +26,16 @@ function Navbar({ title, user, setUser }) {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-lg text-white shadow-sm">🎓</span>
           <span>{title}</span>
         </NavLink>
+         <div className="order-2 flex items-center gap-3 md:order-3">
+          <div className="hidden text-right text-sm sm:block"><p className="font-semibold text-slate-800">{user.name}</p><p className="capitalize text-slate-600">{user.role}</p></div>
+          <button type="button" onClick={handleLogout} className="rounded-lg border border-green-200 px-3 py-2 text-sm font-semibold text-green-800 hover:bg-green-50">Logout</button>
+        </div>
         <div className="order-3 flex w-full gap-1 overflow-x-auto text-sm font-medium md:order-2 md:w-auto">
           {menuItems[user.role].map(function (item) {
             return <NavLink key={item[1]} to={item[1]} className={({ isActive }) => "whitespace-nowrap rounded-lg px-3 py-2 transition " + (isActive ? "bg-green-600 text-white shadow-sm" : "text-slate-700 hover:bg-green-50 hover:text-green-800")}>{item[0]}</NavLink>;
           })}
         </div>
-        <div className="order-2 flex items-center gap-3 md:order-3">
-          <div className="hidden text-right text-sm sm:block"><p className="font-semibold text-slate-800">{user.name}</p><p className="capitalize text-slate-600">{user.role}</p></div>
-          <button type="button" onClick={handleLogout} className="rounded-lg border border-green-200 px-3 py-2 text-sm font-semibold text-green-800 hover:bg-green-50">Logout</button>
-        </div>
+       
       </div>
     </nav>
   );
