@@ -24,7 +24,7 @@ function Navbar({ title, user, setUser }) {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <NavLink to="/dashboard" className="flex items-center gap-2 font-bold text-green-800">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-green-600 text-lg text-white shadow-sm">🎓</span>
-          <span>{title}</span>
+          <span className="font-bold text-green-800 text-2xl mr-2">{title}</span>
         </NavLink>
          <div className="order-2 flex items-center gap-3 md:order-3">
           <div className="hidden text-right text-sm sm:block"><p className="font-semibold text-slate-800">{user.name}</p><p className="capitalize text-slate-600">{user.role}</p></div>
