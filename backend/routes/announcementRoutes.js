@@ -7,7 +7,23 @@ const router = express.Router();
 
 router.get("/", authenticate, async function (req, res) {
   try {
-    const announcements = await Announcement.find()
+    let filter = {};
+
+    if (req.user.role === "student") {
+      filter = {
+        targetAudience: { $in: ["all", "students"] }
+      };
+    } else if (req.user.role === "faculty") {
+      filter = {
+        targetAudience: { $in: ["all", "faculty"] }
+      };
+    } else if (req.user.role !== "admin") {
+      return res.status(403).json({
+        message: "Access denied"
+      });
+    }
+
+    const announcements = await Announcement.find(filter)
       .populate("createdBy", "name")
       .sort({ createdAt: -1 });
 
@@ -20,7 +36,6 @@ router.get("/", authenticate, async function (req, res) {
     });
   }
 });
-
 router.post("/", authenticate, authorize("admin"), async function (req, res) {
   try {
     const { title, message, targetAudience } = req.body;
