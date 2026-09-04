@@ -185,13 +185,38 @@ router.get("/", authenticate, async function (req, res) {
     }
 
     const assignments = await Assignment.find(filter)
-      .populate("createdBy", "name role")
-      .sort({ createdAt: -1 });
+  .populate("createdBy", "name role")
+  .sort({ createdAt: -1 });
 
-    res.status(200).json({
-      message: "Assignments fetched successfully",
-      assignments: assignments,
-    });
+const classIds = [
+  ...new Set(
+    assignments.map(function (assignment) {
+      return assignment.classId;
+    })
+  ),
+];
+
+const relatedClasses = await Class.find({
+  _id: { $in: classIds },
+}).lean();
+
+const classMap = {};
+
+relatedClasses.forEach(function (classItem) {
+  classMap[classItem._id.toString()] = classItem;
+});
+
+const assignmentResults = assignments.map(function (assignment) {
+  return {
+    ...assignment.toObject(),
+    classDetails: classMap[assignment.classId] || null,
+  };
+});
+
+res.status(200).json({
+  message: "Assignments fetched successfully",
+  assignments: assignmentResults,
+});
   } catch (error) {
     console.log("Get assignments error:", error);
 
