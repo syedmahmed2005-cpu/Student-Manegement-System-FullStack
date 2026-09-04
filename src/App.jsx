@@ -30,6 +30,7 @@ import Login from "./pages/Login.jsx";
 import Announcements from "./pages/Announcements.jsx";
 import Settings from "./pages/Settings.jsx";
 import Grades from "./pages/Grades.jsx";
+import Assignments from "./pages/Assignments.jsx";
 
 const browserFetch = window.fetch;
 
@@ -193,6 +194,15 @@ function AppContent() {
                 setPage={go}
               />
             }
+          />
+          <Route
+            path="/assignments"
+            element={
+              <Assignments
+                user={user}
+                showToast={showToast}
+          />
+          }
           />
           <Route
             path="/grades"
