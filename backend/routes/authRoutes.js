@@ -17,7 +17,7 @@ router.post("/register", async function (req, res) {
       password,
       role,
       studentId,
-      facultyId
+      facultyId,
     } = req.body;
 
     if (!name || !email || !password || !role) {
@@ -58,7 +58,8 @@ router.post("/register", async function (req, res) {
       password: hashedPassword,
       role,
       studentId: role === "student" ? studentId : null,
-      facultyId: role === "faculty" ? facultyId : null
+      facultyId: role === "faculty" ? facultyId : null,
+      themePreference: user.themePreference || "system"
     });
 
     res.status(201).json({
@@ -69,7 +70,8 @@ router.post("/register", async function (req, res) {
         email: user.email,
         role: user.role,
         studentId: user.studentId,
-        facultyId: user.facultyId
+        facultyId: user.facultyId,
+        themePreference: user.themePreference || "system"
       }
     });
 
@@ -154,7 +156,8 @@ res.cookie("token", token, {
         email: user.email,
         role: user.role,
         studentId: user.studentId,
-        facultyId: user.facultyId
+        facultyId: user.facultyId,
+        themePreference: user.themePreference || "system"
       }
     });
 
@@ -201,12 +204,58 @@ router.get("/me", authenticate, async function (req, res) {
         email: user.email,
         role: user.role,
         studentId: user.studentId,
-        facultyId: user.facultyId
+        facultyId: user.facultyId,
+        themePreference: user.themePreference || "system"
       }
     });
 
   } catch (error) {
     console.log("Current user error:", error);
+
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+
+// UPDATE THEME PREFERENCE
+router.put("/theme-preference", authenticate, async function (req, res) {
+  try {
+    const { themePreference } = req.body;
+
+    const allowedThemes = ["light", "dark", "system"];
+
+    if (!allowedThemes.includes(themePreference)) {
+      return res.status(400).json({
+        message: "Theme preference must be light, dark, or system"
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      {
+        $set: {
+          themePreference
+        }
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found"
+      });
+    }
+
+    res.json({
+      message: "Theme preference updated successfully",
+      themePreference: user.themePreference
+    });
+  } catch (error) {
+    console.log("Update theme preference error:", error);
 
     res.status(500).json({
       message: "Server error"

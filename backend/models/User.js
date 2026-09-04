@@ -26,7 +26,11 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "faculty", "student"],
       required: true,
     },
-
+    themePreference: {
+      type: String,
+      enum: ["light", "dark", "system"],
+      default: "system",
+    },
     studentId: {
       type: String,
       default: null,
