@@ -31,6 +31,10 @@ import Announcements from "./pages/Announcements.jsx";
 import Settings from "./pages/Settings.jsx";
 import Grades from "./pages/Grades.jsx";
 import Assignments from "./pages/Assignments.jsx";
+import AddAssignment from "./pages/AddAssignment.jsx";
+import ViewAssignment from "./pages/ViewAssignment.jsx";
+import EditAssignment from "./pages/EditAssignment.jsx";
+import AssignmentSubmissions from "./pages/AssignmentSubmissions.jsx";
 
 const browserFetch = window.fetch;
 
@@ -205,6 +209,40 @@ function AppContent() {
           }
           />
           <Route
+            path="/assignments/add"
+            element={
+              <AddAssignment
+                showToast={showToast}
+              />
+            }
+          />
+          <Route
+          path="/assignments/:assignmentId"
+          element={
+            <ViewAssignment
+              user={user}
+              showToast={showToast}
+            />
+          }
+        />
+          <Route
+            path="/assignments/:assignmentId/edit"
+            element={
+              <EditAssignment
+                showToast={showToast}
+              />
+            }
+          />        
+          <Route
+            path="/assignments/:assignmentId/submissions"
+            element={
+              <AssignmentSubmissions
+                user={user}
+                showToast={showToast}
+              />
+            }
+          />
+          <Route
             path="/grades"
             element={<Grades user={user} />}
           />
@@ -266,7 +304,7 @@ function AppContent() {
               />
             }
           />
-
+          
           <Route
             path="/faculty/courses"
             element={
