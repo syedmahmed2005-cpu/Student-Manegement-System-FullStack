@@ -7,10 +7,6 @@ const User = require("../models/User");
 const authenticate = require("../middleware/authMiddleware");
 
 const router = express.Router();
-bcrypt.compare(
-  "THE_PASSWORD_YOU_ARE_ENTERING",
-  "PASTE_THE_HASH_FROM_MONGODB_HERE"
-).then(console.log);
 
 // REGISTER
 router.post("/register", async function (req, res) {
@@ -141,12 +137,14 @@ router.post("/login", async function (req, res) {
       }
     );
 
-    res.cookie("token", token, {
+   const isProduction = process.env.NODE_ENV === "production";
+
+res.cookie("token", token, {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
   path: "/",
-  maxAge: 60 * 60 * 1000
+  maxAge: 60 * 60 * 1000,
 });
     res.json({
       message: "Login successful",

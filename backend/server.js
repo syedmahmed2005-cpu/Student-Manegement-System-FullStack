@@ -56,6 +56,7 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const authRoutes = require("./routes/authRoutes");
 const announcementRoutes = require("./routes/announcementRoutes");
 const gradeRoutes = require("./routes/gradeRoutes");
+const assignmentRoutes = require("./routes/assignmentRoutes");
 
 app.get("/", function (req, res) {
   res.send("Student Management System Backend Server is running");
@@ -70,6 +71,7 @@ app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/announcements", announcementRoutes);
 app.use("/api/grades", gradeRoutes);
+app.use("/api/assignments", assignmentRoutes);
 
 if (require.main === module) {
   app.listen(PORT, function () {
