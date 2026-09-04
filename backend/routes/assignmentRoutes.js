@@ -12,14 +12,23 @@ const authenticate = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
 
 const router = express.Router();
+const documentUpload = require("../middleware/documentUpload");
 
+const {
+  uploadDocument,
+  deleteDocument,
+} = require("../utils/cloudinaryUpload");
 
 // CREATE ASSIGNMENT
 router.post(
   "/",
   authenticate,
   authorize("faculty"),
+  documentUpload,
   async function (req, res) {
+    let uploadedFile = null;
+    let assignmentCreated = false;
+
     try {
       const {
         title,
@@ -27,12 +36,16 @@ router.post(
         classId,
         dueDate,
         totalMarks,
-        attachmentUrl,
-        attachmentName,
         status,
       } = req.body;
 
-      if (!title || !description || !classId || !dueDate || !totalMarks) {
+      if (
+        !title ||
+        !description ||
+        !classId ||
+        !dueDate ||
+        !totalMarks
+      ) {
         return res.status(400).json({
           message:
             "Title, description, class, due date and total marks are required",
@@ -45,7 +58,9 @@ router.post(
         });
       }
 
-      const currentUser = await User.findById(req.user.userId);
+      const currentUser = await User.findById(
+        req.user.userId
+      );
 
       if (!currentUser || !currentUser.facultyId) {
         return res.status(403).json({
@@ -61,9 +76,12 @@ router.post(
         });
       }
 
-      if (classItem.facultyId !== currentUser.facultyId) {
+      if (
+        classItem.facultyId !== currentUser.facultyId
+      ) {
         return res.status(403).json({
-          message: "You can only create assignments for your own classes",
+          message:
+            "You can only create assignments for your own classes",
         });
       }
 
@@ -80,13 +98,21 @@ router.post(
 
       const parsedMarks = Number(totalMarks);
 
-      if (!Number.isFinite(parsedMarks) || parsedMarks <= 0) {
+      if (
+        !Number.isFinite(parsedMarks) ||
+        parsedMarks <= 0
+      ) {
         return res.status(400).json({
           message: "Total marks must be greater than zero",
         });
       }
 
-      const allowedStatuses = ["draft", "published", "closed"];
+      const allowedStatuses = [
+        "draft",
+        "published",
+        "closed",
+      ];
+
       const assignmentStatus = status || "published";
 
       if (!allowedStatuses.includes(assignmentStatus)) {
@@ -95,19 +121,42 @@ router.post(
         });
       }
 
+      if (req.file) {
+        uploadedFile = await uploadDocument(
+          req.file.buffer,
+          "educore/assignment-files"
+        );
+      }
+
       const assignment = await Assignment.create({
-        title: title.trim(),
-        description: description.trim(),
+        title: String(title).trim(),
+        description: String(description).trim(),
         classId: classId,
         dueDate: parsedDueDate,
         totalMarks: parsedMarks,
-        attachmentUrl: attachmentUrl || "",
-        attachmentName: attachmentName || "",
         status: assignmentStatus,
+
+        attachmentUrl: uploadedFile
+          ? uploadedFile.fileUrl
+          : "",
+
+        attachmentName: req.file
+          ? req.file.originalname
+          : "",
+
+        attachmentPublicId: uploadedFile
+          ? uploadedFile.publicId
+          : "",
+
         createdBy: currentUser._id,
       });
 
-      await assignment.populate("createdBy", "name role");
+      assignmentCreated = true;
+
+      await assignment.populate(
+        "createdBy",
+        "name role"
+      );
 
       res.status(201).json({
         message: "Assignment created successfully",
@@ -116,6 +165,21 @@ router.post(
     } catch (error) {
       console.log("Create assignment error:", error);
 
+      if (
+        uploadedFile &&
+        uploadedFile.publicId &&
+        !assignmentCreated
+      ) {
+        try {
+          await deleteDocument(uploadedFile.publicId);
+        } catch (cleanupError) {
+          console.log(
+            "Assignment file cleanup error:",
+            cleanupError.message
+          );
+        }
+      }
+
       res.status(500).json({
         message: "Failed to create assignment",
         error: error.message,
@@ -123,7 +187,6 @@ router.post(
     }
   }
 );
-
 
 // GET ROLE-FILTERED ASSIGNMENTS
 router.get("/", authenticate, async function (req, res) {
@@ -233,7 +296,11 @@ router.post(
   "/:id/submit",
   authenticate,
   authorize("student"),
+  documentUpload,
   async function (req, res) {
+    let uploadedFile = null;
+    let submissionSaved = false;
+
     try {
       if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).json({
@@ -241,7 +308,9 @@ router.post(
         });
       }
 
-      const currentUser = await User.findById(req.user.userId);
+      const currentUser = await User.findById(
+        req.user.userId
+      );
 
       if (!currentUser || !currentUser.studentId) {
         return res.status(403).json({
@@ -249,7 +318,9 @@ router.post(
         });
       }
 
-      const assignment = await Assignment.findById(req.params.id);
+      const assignment = await Assignment.findById(
+        req.params.id
+      );
 
       if (!assignment) {
         return res.status(404).json({
@@ -259,7 +330,8 @@ router.post(
 
       if (assignment.status !== "published") {
         return res.status(400).json({
-          message: "This assignment is not accepting submissions",
+          message:
+            "This assignment is not accepting submissions",
         });
       }
 
@@ -280,59 +352,127 @@ router.post(
         });
       }
 
+      const existingSubmission =
+        await Submission.findOne({
+          assignmentId: assignment._id,
+          studentId: currentUser.studentId,
+        });
+
       const submissionText = String(
         req.body.submissionText || ""
       ).trim();
 
-      const fileUrl = String(req.body.fileUrl || "").trim();
-      const fileName = String(req.body.fileName || "").trim();
+      const hasExistingFile = Boolean(
+        existingSubmission &&
+          existingSubmission.fileUrl
+      );
 
-      if (!submissionText && !fileUrl) {
+      if (
+        !submissionText &&
+        !req.file &&
+        !hasExistingFile
+      ) {
         return res.status(400).json({
-          message: "Submission text or a file is required",
+          message:
+            "Submission text or a file is required",
         });
       }
 
-      const submission = await Submission.findOneAndUpdate(
-        {
-          assignmentId: assignment._id,
-          studentId: currentUser.studentId,
-        },
-        {
-          $set: {
-            submissionText: submissionText,
-            fileUrl: fileUrl,
-            fileName: fileName,
-            submittedAt: new Date(),
-            status: "submitted",
-            marks: null,
-            feedback: "",
-            gradedAt: null,
-            gradedBy: null,
-          },
-          $setOnInsert: {
+      if (req.file) {
+        uploadedFile = await uploadDocument(
+          req.file.buffer,
+          "educore/submission-files"
+        );
+      }
+
+      const updateData = {
+        submissionText: submissionText,
+        submittedAt: new Date(),
+        status: "submitted",
+        marks: null,
+        feedback: "",
+        gradedAt: null,
+        gradedBy: null,
+      };
+
+      if (uploadedFile) {
+        updateData.fileUrl = uploadedFile.fileUrl;
+        updateData.fileName = req.file.originalname;
+        updateData.filePublicId = uploadedFile.publicId;
+      }
+
+      const submission =
+        await Submission.findOneAndUpdate(
+          {
             assignmentId: assignment._id,
             studentId: currentUser.studentId,
           },
-        },
-        {
-          new: true,
-          upsert: true,
-          runValidators: true,
-          setDefaultsOnInsert: true,
+          {
+            $set: updateData,
+
+            $setOnInsert: {
+              assignmentId: assignment._id,
+              studentId: currentUser.studentId,
+            },
+          },
+          {
+            new: true,
+            upsert: true,
+            runValidators: true,
+            setDefaultsOnInsert: true,
+          }
+        );
+
+      submissionSaved = true;
+
+      if (
+        uploadedFile &&
+        existingSubmission &&
+        existingSubmission.filePublicId &&
+        existingSubmission.filePublicId !==
+          uploadedFile.publicId
+      ) {
+        try {
+          await deleteDocument(
+            existingSubmission.filePublicId
+          );
+        } catch (cleanupError) {
+          console.log(
+            "Old submission file cleanup error:",
+            cleanupError.message
+          );
         }
-      );
+      }
 
       res.status(200).json({
-        message: "Assignment submitted successfully",
+        message: existingSubmission
+          ? "Submission updated successfully"
+          : "Assignment submitted successfully",
+
         submission: submission,
       });
     } catch (error) {
       console.log("Submit assignment error:", error);
 
+      if (
+        uploadedFile &&
+        uploadedFile.publicId &&
+        !submissionSaved
+      ) {
+        try {
+          await deleteDocument(uploadedFile.publicId);
+        } catch (cleanupError) {
+          console.log(
+            "New submission file cleanup error:",
+            cleanupError.message
+          );
+        }
+      }
+
       if (error.code === 11000) {
         return res.status(400).json({
-          message: "A submission already exists for this assignment",
+          message:
+            "A submission already exists for this assignment",
         });
       }
 
@@ -343,7 +483,6 @@ router.post(
     }
   }
 );
-
 
 // GET CURRENT STUDENT'S SUBMISSION
 router.get(
@@ -678,7 +817,12 @@ router.put(
   "/:id",
   authenticate,
   authorize("faculty"),
+  documentUpload,
   async function (req, res) {
+    let uploadedFile = null;
+    let assignmentSaved = false;
+    let previousPublicId = "";
+
     try {
       if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).json({
@@ -686,8 +830,13 @@ router.put(
         });
       }
 
-      const currentUser = await User.findById(req.user.userId);
-      const assignment = await Assignment.findById(req.params.id);
+      const currentUser = await User.findById(
+        req.user.userId
+      );
+
+      const assignment = await Assignment.findById(
+        req.params.id
+      );
 
       if (!currentUser) {
         return res.status(404).json({
@@ -702,21 +851,30 @@ router.put(
       }
 
       if (
-        assignment.createdBy.toString() !== currentUser._id.toString()
+        assignment.createdBy.toString() !==
+        currentUser._id.toString()
       ) {
         return res.status(403).json({
-          message: "You can only edit your own assignments",
+          message:
+            "You can only edit your own assignments",
         });
       }
 
+      previousPublicId =
+        assignment.attachmentPublicId || "";
+
       if (req.body.classId !== undefined) {
-        if (!mongoose.isValidObjectId(req.body.classId)) {
+        if (
+          !mongoose.isValidObjectId(req.body.classId)
+        ) {
           return res.status(400).json({
             message: "Invalid class ID",
           });
         }
 
-        const classItem = await Class.findById(req.body.classId);
+        const classItem = await Class.findById(
+          req.body.classId
+        );
 
         if (!classItem) {
           return res.status(404).json({
@@ -724,7 +882,9 @@ router.put(
           });
         }
 
-        if (classItem.facultyId !== currentUser.facultyId) {
+        if (
+          classItem.facultyId !== currentUser.facultyId
+        ) {
           return res.status(403).json({
             message: "You can only use your own classes",
           });
@@ -746,7 +906,9 @@ router.put(
       }
 
       if (req.body.description !== undefined) {
-        const description = String(req.body.description).trim();
+        const description = String(
+          req.body.description
+        ).trim();
 
         if (!description) {
           return res.status(400).json({
@@ -765,7 +927,8 @@ router.put(
           dueDate <= new Date()
         ) {
           return res.status(400).json({
-            message: "Due date must be a valid future date",
+            message:
+              "Due date must be a valid future date",
           });
         }
 
@@ -773,11 +936,17 @@ router.put(
       }
 
       if (req.body.totalMarks !== undefined) {
-        const totalMarks = Number(req.body.totalMarks);
+        const totalMarks = Number(
+          req.body.totalMarks
+        );
 
-        if (!Number.isFinite(totalMarks) || totalMarks <= 0) {
+        if (
+          !Number.isFinite(totalMarks) ||
+          totalMarks <= 0
+        ) {
           return res.status(400).json({
-            message: "Total marks must be greater than zero",
+            message:
+              "Total marks must be greater than zero",
           });
         }
 
@@ -785,9 +954,15 @@ router.put(
       }
 
       if (req.body.status !== undefined) {
-        const allowedStatuses = ["draft", "published", "closed"];
+        const allowedStatuses = [
+          "draft",
+          "published",
+          "closed",
+        ];
 
-        if (!allowedStatuses.includes(req.body.status)) {
+        if (
+          !allowedStatuses.includes(req.body.status)
+        ) {
           return res.status(400).json({
             message: "Invalid assignment status",
           });
@@ -796,20 +971,62 @@ router.put(
         assignment.status = req.body.status;
       }
 
-      if (req.body.attachmentUrl !== undefined) {
-        assignment.attachmentUrl = String(
-          req.body.attachmentUrl || ""
-        ).trim();
-      }
+      const removeAttachment =
+        req.body.removeAttachment === true ||
+        req.body.removeAttachment === "true";
 
-      if (req.body.attachmentName !== undefined) {
-        assignment.attachmentName = String(
-          req.body.attachmentName || ""
-        ).trim();
+      if (req.file) {
+        uploadedFile = await uploadDocument(
+          req.file.buffer,
+          "educore/assignment-files"
+        );
+
+        assignment.attachmentUrl =
+          uploadedFile.fileUrl;
+
+        assignment.attachmentName =
+          req.file.originalname;
+
+        assignment.attachmentPublicId =
+          uploadedFile.publicId;
+      } else if (removeAttachment) {
+        assignment.attachmentUrl = "";
+        assignment.attachmentName = "";
+        assignment.attachmentPublicId = "";
       }
 
       await assignment.save();
-      await assignment.populate("createdBy", "name role");
+
+      assignmentSaved = true;
+
+      await assignment.populate(
+        "createdBy",
+        "name role"
+      );
+
+      const attachmentWasReplaced =
+        uploadedFile &&
+        previousPublicId &&
+        previousPublicId !== uploadedFile.publicId;
+
+      const attachmentWasRemoved =
+        removeAttachment &&
+        !uploadedFile &&
+        previousPublicId;
+
+      if (
+        attachmentWasReplaced ||
+        attachmentWasRemoved
+      ) {
+        try {
+          await deleteDocument(previousPublicId);
+        } catch (cleanupError) {
+          console.log(
+            "Old assignment file cleanup error:",
+            cleanupError.message
+          );
+        }
+      }
 
       res.status(200).json({
         message: "Assignment updated successfully",
@@ -818,6 +1035,21 @@ router.put(
     } catch (error) {
       console.log("Update assignment error:", error);
 
+      if (
+        uploadedFile &&
+        uploadedFile.publicId &&
+        !assignmentSaved
+      ) {
+        try {
+          await deleteDocument(uploadedFile.publicId);
+        } catch (cleanupError) {
+          console.log(
+            "New assignment file cleanup error:",
+            cleanupError.message
+          );
+        }
+      }
+
       res.status(500).json({
         message: "Failed to update assignment",
         error: error.message,
@@ -825,7 +1057,6 @@ router.put(
     }
   }
 );
-
 
 // DELETE ASSIGNMENT
 router.delete(
@@ -840,8 +1071,13 @@ router.delete(
         });
       }
 
-      const currentUser = await User.findById(req.user.userId);
-      const assignment = await Assignment.findById(req.params.id);
+      const currentUser = await User.findById(
+        req.user.userId
+      );
+
+      const assignment = await Assignment.findById(
+        req.params.id
+      );
 
       if (!currentUser) {
         return res.status(404).json({
@@ -857,11 +1093,31 @@ router.delete(
 
       if (
         currentUser.role === "faculty" &&
-        assignment.createdBy.toString() !== currentUser._id.toString()
+        assignment.createdBy.toString() !==
+          currentUser._id.toString()
       ) {
         return res.status(403).json({
-          message: "You can only delete your own assignments",
+          message:
+            "You can only delete your own assignments",
         });
+      }
+
+      const submissions = await Submission.find({
+        assignmentId: assignment._id,
+      })
+        .select("filePublicId")
+        .lean();
+
+      const publicIds = submissions
+        .map(function (submission) {
+          return submission.filePublicId;
+        })
+        .filter(Boolean);
+
+      if (assignment.attachmentPublicId) {
+        publicIds.push(
+          assignment.attachmentPublicId
+        );
       }
 
       await Submission.deleteMany({
@@ -869,6 +1125,21 @@ router.delete(
       });
 
       await assignment.deleteOne();
+
+      const deletionResults = await Promise.allSettled(
+        publicIds.map(function (publicId) {
+          return deleteDocument(publicId);
+        })
+      );
+
+      deletionResults.forEach(function (result) {
+        if (result.status === "rejected") {
+          console.log(
+            "Cloudinary file cleanup error:",
+            result.reason?.message || result.reason
+          );
+        }
+      });
 
       res.status(200).json({
         message: "Assignment deleted successfully",

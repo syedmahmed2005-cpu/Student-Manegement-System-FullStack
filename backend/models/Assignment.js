@@ -42,6 +42,11 @@ const assignmentSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+    attachmentPublicId: {
+        type: String,
+        default: "",
+        trim: true,
+        },
 
     status: {
       type: String,

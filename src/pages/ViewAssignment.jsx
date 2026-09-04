@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect,useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function ViewAssignment({ user, showToast }) {
@@ -8,7 +8,8 @@ function ViewAssignment({ user, showToast }) {
   const [classDetails, setClassDetails] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [submissionText, setSubmissionText] = useState("");
-
+  const [submissionFile, setSubmissionFile] = useState(null);
+  const submissionFileInputRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -76,33 +77,88 @@ function ViewAssignment({ user, showToast }) {
     loadAssignment();
   }, [assignmentId, isStudent]);
 
+
+  function handleSubmissionFileChange(event) {
+  const file = event.target.files[0];
+
+  if (!file) {
+    setSubmissionFile(null);
+    return;
+  }
+
+  const allowedExtensions = [
+    "pdf",
+    "doc",
+    "docx",
+    "txt",
+    "zip",
+  ];
+
+  const extension = file.name
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  if (!allowedExtensions.includes(extension)) {
+    setError(
+      "Only PDF, DOC, DOCX, TXT and ZIP files are allowed."
+    );
+
+    event.target.value = "";
+    setSubmissionFile(null);
+    return;
+  }
+
+  if (file.size > 4 * 1024 * 1024) {
+    setError("File size cannot exceed 4 MB.");
+
+    event.target.value = "";
+    setSubmissionFile(null);
+    return;
+  }
+
+  setError("");
+  setSubmissionFile(file);
+}
+
+
   async function submitAssignment(event) {
     event.preventDefault();
 
     const cleanText = submissionText.trim();
 
-    if (!cleanText) {
-      setError("Please enter your assignment response.");
-      return;
-    }
+    const hasExistingFile = Boolean(submission?.fileUrl);
 
+if (
+  !cleanText &&
+  !submissionFile &&
+  !hasExistingFile
+) {
+  setError(
+    "Please enter a response or select a file."
+  );
+  return;
+}
     try {
       setSubmitting(true);
       setError("");
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/assignments/${assignmentId}/submit`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            submissionText: cleanText,
-          }),
-        }
-      );
+      const formData = new FormData();
+
+formData.append("submissionText", cleanText);
+
+if (submissionFile) {
+  formData.append("file", submissionFile);
+}
+
+const response = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/assignments/${assignmentId}/submit`,
+  {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  }
+);
 
       const data = await response.json();
 
@@ -116,7 +172,11 @@ function ViewAssignment({ user, showToast }) {
       const wasPreviouslySubmitted = submission !== null;
 
       setSubmission(data.submission);
+      setSubmissionFile(null);
 
+        if (submissionFileInputRef.current) {
+        submissionFileInputRef.current.value = "";
+        }
       showToast(
         wasPreviouslySubmitted
           ? "Submission updated successfully."
@@ -297,10 +357,79 @@ function ViewAssignment({ user, showToast }) {
                     }}
                     rows="9"
                     placeholder="Enter your assignment response..."
-                    required
                     className="w-full resize-y rounded-xl border border-slate-200 px-4 py-3 text-sm leading-6 outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
                   ></textarea>
+                    <div className="mt-5">
+                    <label className="mb-2 block text-sm font-semibold text-slate-700">
+                        Submission File
+                        <span className="ml-1 font-normal text-slate-400">
+                        (Optional)
+                        </span>
+                    </label>
 
+                    <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-green-200 bg-green-50/50 px-6 py-7 text-center transition hover:border-green-400 hover:bg-green-50">
+                        <span className="text-3xl">📤</span>
+
+                        <span className="mt-3 font-semibold text-green-800">
+                        {submissionFile
+                            ? submissionFile.name
+                            : "Choose your completed assignment"}
+                        </span>
+
+                        <span className="mt-1 text-sm text-slate-500">
+                        PDF, DOC, DOCX, TXT or ZIP — maximum 4 MB
+                        </span>
+
+                        <input
+                        ref={submissionFileInputRef}
+                        type="file"
+                        accept=".pdf,.doc,.docx,.txt,.zip"
+                        onChange={handleSubmissionFileChange}
+                        className="hidden"
+                        />
+                    </label>
+
+                    {submissionFile && (
+                        <div className="mt-3 flex flex-wrap items-center gap-3">
+                        <p className="text-sm text-amber-600">
+                            {submission?.fileUrl
+                            ? "This will replace your previously submitted file."
+                            : "This file will be uploaded with your submission."}
+                        </p>
+
+                        <button
+                            type="button"
+                            onClick={function () {
+                            setSubmissionFile(null);
+
+                            if (submissionFileInputRef.current) {
+                                submissionFileInputRef.current.value = "";
+                            }
+                            }}
+                            className="text-sm font-semibold text-red-600 hover:text-red-700"
+                        >
+                            Remove selected file
+                        </button>
+                        </div>
+                    )}
+
+                    {!submissionFile && submission?.fileUrl && (
+                        <div className="mt-3 rounded-xl border border-blue-100 bg-blue-50 px-4 py-3">
+                        <p className="text-xs font-semibold uppercase tracking-wide text-blue-500">
+                            Current submitted file
+                        </p>
+
+                        <a
+                            href={submission.fileUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="mt-1 inline-block text-sm font-semibold text-blue-700 hover:underline"
+                        >
+                            📎 {submission.fileName || "Open submitted file"}
+                        </a>
+                        </div>
+                    )}
+                    </div>
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-slate-500">
                       {submission
@@ -326,20 +455,34 @@ function ViewAssignment({ user, showToast }) {
               ) : (
                 <div className="p-6">
                   {submission ? (
-                    <div>
-                      <div className="rounded-xl bg-slate-50 p-5">
-                        <p className="whitespace-pre-wrap leading-7 text-slate-700">
-                          {submission.submissionText}
-                        </p>
-                      </div>
+  <div>
+    <div className="rounded-xl bg-slate-50 p-5">
+      <p className="whitespace-pre-wrap leading-7 text-slate-700">
+        {submission.submissionText ||
+          "No written response was provided."}
+      </p>
+    </div>
 
-                      <p className="mt-3 text-sm text-slate-500">
-                        Submitted on{" "}
-                        {formatDate(submission.submittedAt)}
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="rounded-xl border border-red-100 bg-red-50 p-5 text-red-700">
+    {submission.fileUrl && (
+      <a
+        href={submission.fileUrl}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-4 inline-flex rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700"
+      >
+        📎{" "}
+        {submission.fileName ||
+          "Open submitted file"}
+      </a>
+    )}
+
+    <p className="mt-3 text-sm text-slate-500">
+      Submitted on{" "}
+      {formatDate(submission.submittedAt)}
+    </p>
+  </div>
+) : (
+      <div className="rounded-xl border border-red-100 bg-red-50 p-5 text-red-700">
                       {deadlinePassed
                         ? "The deadline has passed and no submission was made."
                         : "This assignment is not currently accepting submissions."}

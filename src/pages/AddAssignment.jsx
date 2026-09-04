@@ -11,7 +11,7 @@ function AddAssignment({ showToast }) {
   const [dueDate, setDueDate] = useState("");
   const [totalMarks, setTotalMarks] = useState("10");
   const [status, setStatus] = useState("published");
-
+  const [attachmentFile, setAttachmentFile] = useState(null);
   const [loadingClasses, setLoadingClasses] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -71,6 +71,49 @@ function AddAssignment({ showToast }) {
     return date.toISOString().slice(0, 16);
   }
 
+  function handleAttachmentChange(event) {
+  const file = event.target.files[0];
+
+  if (!file) {
+    setAttachmentFile(null);
+    return;
+  }
+
+  const allowedExtensions = [
+    "pdf",
+    "doc",
+    "docx",
+    "txt",
+    "zip",
+  ];
+
+  const extension = file.name
+    .split(".")
+    .pop()
+    .toLowerCase();
+
+  if (!allowedExtensions.includes(extension)) {
+    setError(
+      "Only PDF, DOC, DOCX, TXT and ZIP files are allowed."
+    );
+
+    event.target.value = "";
+    setAttachmentFile(null);
+    return;
+  }
+
+  if (file.size > 4 * 1024 * 1024) {
+    setError("File size cannot exceed 4 MB.");
+
+    event.target.value = "";
+    setAttachmentFile(null);
+    return;
+  }
+
+  setError("");
+  setAttachmentFile(file);
+}
+
   async function createAssignment(event) {
     event.preventDefault();
     setError("");
@@ -100,26 +143,36 @@ function AddAssignment({ showToast }) {
     try {
       setSaving(true);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/assignments`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({
-            title: title.trim(),
-            description: description.trim(),
-            classId: classId,
-            dueDate: new Date(dueDate).toISOString(),
-            totalMarks: parsedMarks,
-            status: status,
-          }),
-        }
-      );
+const formData = new FormData();
 
-      const data = await response.json();
+formData.append("title", title.trim());
+formData.append("description", description.trim());
+formData.append("classId", classId);
+
+formData.append(
+  "dueDate",
+  new Date(dueDate).toISOString()
+);
+
+formData.append(
+  "totalMarks",
+  String(parsedMarks)
+);
+
+formData.append("status", status);
+
+if (attachmentFile) {
+  formData.append("file", attachmentFile);
+}
+
+const response = await fetch(
+  `${import.meta.env.VITE_API_URL}/api/assignments`,
+  {
+    method: "POST",
+    credentials: "include",
+    body: formData,
+  }
+);      const data = await response.json();
 
       if (!response.ok) {
         setError(
@@ -309,9 +362,47 @@ function AddAssignment({ showToast }) {
             </div>
           </div>
 
-          <div className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm text-blue-700">
-            File attachments will be added after the core assignment and submission workflow has been verified.
-          </div>
+          <div>
+  <label className="mb-2 block text-sm font-semibold text-slate-700">
+    Assignment Attachment
+    <span className="ml-1 font-normal text-slate-400">
+      (Optional)
+    </span>
+  </label>
+
+  <label className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-green-200 bg-green-50/50 px-6 py-8 text-center transition hover:border-green-400 hover:bg-green-50">
+    <span className="text-3xl">📎</span>
+
+    <span className="mt-3 font-semibold text-green-800">
+      {attachmentFile
+        ? attachmentFile.name
+        : "Choose an assignment file"}
+    </span>
+
+    <span className="mt-1 text-sm text-slate-500">
+      PDF, DOC, DOCX, TXT or ZIP — maximum 4 MB
+    </span>
+
+    <input
+      type="file"
+      accept=".pdf,.doc,.docx,.txt,.zip"
+      onChange={handleAttachmentChange}
+      className="hidden"
+    />
+  </label>
+
+  {attachmentFile && (
+    <button
+      type="button"
+      onClick={function () {
+        setAttachmentFile(null);
+      }}
+      className="mt-3 text-sm font-semibold text-red-600 hover:text-red-700"
+    >
+      Remove selected file
+    </button>
+  )}
+</div>
         </div>
 
         <div className="flex flex-col-reverse gap-3 border-t border-slate-100 bg-slate-50 px-6 py-5 sm:flex-row sm:justify-end">
