@@ -1,12 +1,48 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   color-scheme: light;
+
+  --app-background: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-soft: #f1f5f9;
+  --app-text: #1e293b;
+  --app-text-muted: #64748b;
+  --app-border: #e2e8f0;
+  --app-input-background: rgb(255 255 255 / 0.92);
+  --app-page-glow: rgb(220 252 231 / 0.7);
+  --app-shadow: rgb(15 23 42 / 0.06);
+
   font-family: system-ui, "Segoe UI", Roboto, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark {
+  color-scheme: dark;
+
+  --app-background: #0f172a;
+  --app-surface: #1e293b;
+  --app-surface-soft: #334155;
+  --app-text: #f1f5f9;
+  --app-text-muted: #94a3b8;
+  --app-border: #475569;
+  --app-input-background: rgb(30 41 59 / 0.92);
+  --app-page-glow: rgb(22 163 74 / 0.1);
+  --app-shadow: rgb(0 0 0 / 0.25);
+}
+
+@theme inline {
+  --color-app-background: var(--app-background);
+  --color-app-surface: var(--app-surface);
+  --color-app-surface-soft: var(--app-surface-soft);
+  --color-app-text: var(--app-text);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-border: var(--app-border);
 }
 
 * {
@@ -23,14 +59,17 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  color: #1e293b;
+  color: var(--app-text);
   background:
     radial-gradient(
       circle at top left,
-      rgb(220 252 231 / 0.7),
+      var(--app-page-glow),
       transparent 26rem
     ),
-    #f8fafc;
+    var(--app-background);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
 }
 
 button,
@@ -44,10 +83,12 @@ input,
 select,
 textarea {
   min-height: 2.75rem;
-  color: #1e293b;
-  background-color: rgb(255 255 255 / 0.92);
-  border-color: #cbd5e1;
+  color: var(--app-text);
+  background-color: var(--app-input-background);
+  border-color: var(--app-border);
   transition:
+    color 160ms ease,
+    background-color 160ms ease,
     border-color 160ms ease,
     box-shadow 160ms ease;
 }
@@ -65,8 +106,21 @@ main {
 }
 
 .page-surface {
-  border: 1px solid rgb(255 255 255 / 0.7);
-  background: rgb(255 255 255 / 0.78);
-  box-shadow: 0 12px 32px rgb(15 23 42 / 0.06);
+  border: 1px solid var(--app-border);
+  background: color-mix(
+    in srgb,
+    var(--app-surface) 88%,
+    transparent
+  );
+  box-shadow: 0 12px 32px var(--app-shadow);
   backdrop-filter: blur(12px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body,
+  input,
+  select,
+  textarea {
+    transition: none;
+  }
 }

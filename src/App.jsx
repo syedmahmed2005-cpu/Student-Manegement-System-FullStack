@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import {ThemeProvider} from "./context/ThemeContext.jsx";
 import Navbar from "./components/Navbar";
 import Toast from "./components/Toast";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -144,7 +145,7 @@ function AppContent() {
   }, []);
 
   return (
-    <>
+    <ThemeProvider user={user} setUser={setUser}>
       {user && <Navbar title="EduCore" user={user} setUser={setUser} />}
 
       <Routes>
@@ -457,7 +458,7 @@ function AppContent() {
           onClose={() => setToast(null)}
         />
       )}
-    </>
+    </ThemeProvider>
   );
 }
 
