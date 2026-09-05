@@ -15,28 +15,33 @@ function AddStudent({ setStudents }) {
     department: "",
     city: "",
     country: "",
-    address: "",
+    address: ""
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] =
+    useState("");
+  const [successMessage, setSuccessMessage] =
+    useState("");
 
-  useEffect(function () {
-    if (errorMessage !== "") {
-      const timer = setTimeout(function () {
-        setErrorMessage("");
-      }, 3000);
+  useEffect(
+    function () {
+      if (errorMessage !== "") {
+        const timer = setTimeout(function () {
+          setErrorMessage("");
+        }, 3000);
 
-      return function () {
-        clearTimeout(timer);
-      };
-    }
-  }, [errorMessage]);
+        return function () {
+          clearTimeout(timer);
+        };
+      }
+    },
+    [errorMessage]
+  );
 
   function handleChange(event) {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
     });
   }
 
@@ -56,23 +61,31 @@ function AddStudent({ setStudents }) {
       formData.country === "" ||
       formData.address === ""
     ) {
-      setErrorMessage("Please fill all required fields.");
+      setErrorMessage(
+        "Please fill all required fields."
+      );
       return;
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/students`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/students`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(formData)
+        }
+      );
 
       const data = await response.json();
 
       if (!response.ok) {
-        setErrorMessage(data.message || "Failed to save student.");
+        setErrorMessage(
+          data.message ||
+            "Failed to save student."
+        );
         return;
       }
 
@@ -91,17 +104,22 @@ function AddStudent({ setStudents }) {
         department: "",
         city: "",
         country: "",
-        address: "",
+        address: ""
       });
 
-      setSuccessMessage("Student saved successfully!");
+      setSuccessMessage(
+        "Student saved successfully!"
+      );
 
       setTimeout(function () {
         navigate("/students");
       }, 1000);
     } catch (error) {
       console.log(error);
-      setErrorMessage("Unable to connect to the server.");
+
+      setErrorMessage(
+        "Unable to connect to the server."
+      );
     }
   }
 
@@ -117,28 +135,33 @@ function AddStudent({ setStudents }) {
       department: "",
       city: "",
       country: "",
-      address: "",
+      address: ""
     });
   }
 
-  return (
-    <main className="max-w-7xl mx-auto px-6 py-8">
+  const inputClass =
+    "w-full rounded-lg border border-app-border bg-app-surface-soft px-4 py-3 text-app-text placeholder:text-app-text-muted focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50";
 
+  const labelClass =
+    "mb-2 block text-sm font-medium text-app-text";
+
+  return (
+    <main className="mx-auto min-h-screen max-w-7xl bg-app-background px-6 py-8 transition-colors duration-200">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-green-700 flex items-center">
+        <h1 className="flex items-center text-3xl font-bold text-green-700 dark:text-green-400">
           <span className="mr-3">➕</span>
           Add Student
         </h1>
 
-        <p className="text-gray-500 mt-2">
-          Fill in the details below to add a new student.
+        <p className="mt-2 text-app-text-muted">
+          Fill in the details below to add a new
+          student.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-
-        <div className="bg-green-600 text-white px-6 py-4">
-          <h2 className="text-xl font-semibold flex items-center">
+      <div className="overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-lg">
+        <div className="bg-green-600 px-6 py-4 text-white">
+          <h2 className="flex items-center text-xl font-semibold">
             <span className="mr-3">🎓</span>
             Student Information
           </h2>
@@ -146,12 +169,13 @@ function AddStudent({ setStudents }) {
 
         <div className="p-6">
           <form onSubmit={handleSubmit}>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  👤 First Name <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  👤 First Name{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
@@ -160,13 +184,16 @@ function AddStudent({ setStudents }) {
                   placeholder="Enter first name"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  👤 Last Name <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  👤 Last Name{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
@@ -175,13 +202,16 @@ function AddStudent({ setStudents }) {
                   placeholder="Enter last name"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  📧 Email <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  📧 Email{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
@@ -190,71 +220,87 @@ function AddStudent({ setStudents }) {
                   placeholder="Enter your email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  📞 Phone Number <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  📞 Phone Number{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
                   name="phoneNumber"
                   type="tel"
-                  placeholder="Enter your Phone Number"
+                  placeholder="Enter your phone number"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  ⚧ Gender <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  ⚧ Gender{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
-                <div className="space-y-2">
-
-                  <label className="flex items-center gap-2">
+                <div className="space-y-2 text-app-text">
+                  <label className="flex items-center gap-3">
                     <input
                       type="radio"
                       name="gender"
                       value="Male"
-                      checked={formData.gender === "Male"}
+                      checked={
+                        formData.gender === "Male"
+                      }
                       onChange={handleChange}
+                      className="h-4 min-h-0 w-4 accent-green-600"
                     />
                     Male
                   </label>
 
-                  <label className="flex items-center gap-2">
+                  <label className="flex items-center gap-3">
                     <input
                       type="radio"
                       name="gender"
                       value="Female"
-                      checked={formData.gender === "Female"}
+                      checked={
+                        formData.gender === "Female"
+                      }
                       onChange={handleChange}
+                      className="h-4 min-h-0 w-4 accent-green-600"
                     />
                     Female
                   </label>
 
-                  <label className="flex items-center gap-2">
+                  <label className="flex items-center gap-3">
                     <input
                       type="radio"
                       name="gender"
                       value="Other"
-                      checked={formData.gender === "Other"}
+                      checked={
+                        formData.gender === "Other"
+                      }
                       onChange={handleChange}
+                      className="h-4 min-h-0 w-4 accent-green-600"
                     />
                     Others
                   </label>
-
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  📅 Date of Birth <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  📅 Date of Birth{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
@@ -262,13 +308,16 @@ function AddStudent({ setStudents }) {
                   type="date"
                   value={formData.dob}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold mb-2">
-                  Batch <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  Batch{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
@@ -277,83 +326,105 @@ function AddStudent({ setStudents }) {
                   value={formData.batchId}
                   onChange={handleChange}
                   placeholder="e.g. FA24"
-                  className="border rounded-lg px-4 py-2 w-full"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🏢 Department <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  🏢 Department{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
                   name="department"
                   type="text"
-                  placeholder="Enter your Department"
+                  placeholder="Enter your department"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  📍 City <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  📍 City{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <select
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 >
                   <option value="" disabled>
                     Select City
                   </option>
-                  <option value="Islamabad">Islamabad</option>
-                  <option value="Lahore">Lahore</option>
-                  <option value="Faisalabad">Faisalabad</option>
-                  <option value="Multan">Multan</option>
+
+                  <option value="Islamabad">
+                    Islamabad
+                  </option>
+
+                  <option value="Lahore">
+                    Lahore
+                  </option>
+
+                  <option value="Faisalabad">
+                    Faisalabad
+                  </option>
+
+                  <option value="Multan">
+                    Multan
+                  </option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  🌍 Country <span className="text-red-500">*</span>
+                <label className={labelClass}>
+                  🌍 Country{" "}
+                  <span className="text-red-500">
+                    *
+                  </span>
                 </label>
 
                 <input
                   name="country"
                   type="text"
-                  placeholder="Enter your Country"
+                  placeholder="Enter your country"
                   value={formData.country}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                  className={inputClass}
                 />
               </div>
-
             </div>
 
             <div className="mt-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                🏠 Address <span className="text-red-500">*</span>
+              <label className={labelClass}>
+                🏠 Address{" "}
+                <span className="text-red-500">
+                  *
+                </span>
               </label>
 
               <input
                 name="address"
                 type="text"
-                placeholder="Enter your Address"
+                placeholder="Enter your address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+                className={inputClass}
               />
             </div>
 
-            <div className="flex justify-between mt-8">
-
+            <div className="mt-8 flex flex-col-reverse justify-between gap-3 sm:flex-row">
               <button
                 type="submit"
-                className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
               >
                 Save Student
               </button>
@@ -361,29 +432,26 @@ function AddStudent({ setStudents }) {
               <button
                 type="button"
                 onClick={handleReset}
-                className="bg-yellow-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-yellow-600 transition"
+                className="rounded-lg bg-yellow-500 px-6 py-3 font-semibold text-white transition hover:bg-yellow-600"
               >
                 Reset
               </button>
-
             </div>
-
           </form>
         </div>
       </div>
 
       {errorMessage !== "" && (
-        <div className="fixed top-5 right-5 bg-red-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">
+        <div className="fixed right-5 top-5 z-50 rounded-lg bg-red-600 px-6 py-4 text-white shadow-xl">
           {errorMessage}
         </div>
       )}
 
       {successMessage !== "" && (
-        <div className="fixed top-5 right-5 bg-green-600 text-white px-6 py-4 rounded-lg shadow-xl z-50">
+        <div className="fixed right-5 top-5 z-50 rounded-lg bg-green-600 px-6 py-4 text-white shadow-xl">
           {successMessage}
         </div>
       )}
-
     </main>
   );
 }

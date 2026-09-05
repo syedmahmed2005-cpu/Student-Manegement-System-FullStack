@@ -8,44 +8,82 @@ function AddClass({
   setCourses,
   setFaculty,
   setStudents,
-  showToast,
+  showToast
 }) {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     courseId: "",
     facultyId: "",
     batchId: "",
-    semester: "",
+    semester: ""
   });
 
-  useEffect(function () {
-    async function fetchDependencies() {
-      try {
-        const responses = await Promise.all([
-          fetch(`${import.meta.env.VITE_API_URL}/api/courses`),
-          fetch(`${import.meta.env.VITE_API_URL}/api/faculty`),
-          fetch(`${import.meta.env.VITE_API_URL}/api/students`),
-        ]);
-        const data = await Promise.all(responses.map(function (response) { return response.json(); }));
-        if (!responses[0].ok || !responses[1].ok || !responses[2].ok) {
-          showToast("Failed to retrieve class data.", "error");
-          return;
+  useEffect(
+    function () {
+      async function fetchDependencies() {
+        try {
+          const responses = await Promise.all([
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/courses`,
+              {
+                credentials: "include"
+              }
+            ),
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/faculty`,
+              {
+                credentials: "include"
+              }
+            ),
+            fetch(
+              `${import.meta.env.VITE_API_URL}/api/students`,
+              {
+                credentials: "include"
+              }
+            )
+          ]);
+
+          const data = await Promise.all(
+            responses.map(function (response) {
+              return response.json();
+            })
+          );
+
+          if (
+            !responses[0].ok ||
+            !responses[1].ok ||
+            !responses[2].ok
+          ) {
+            showToast(
+              "Failed to retrieve class data.",
+              "error"
+            );
+            return;
+          }
+
+          setCourses(data[0].courses);
+          setFaculty(data[1].faculty);
+          setStudents(data[2].students);
+        } catch (error) {
+          console.log(error);
+
+          showToast(
+            "Unable to connect to the server.",
+            "error"
+          );
         }
-        setCourses(data[0].courses);
-        setFaculty(data[1].faculty);
-        setStudents(data[2].students);
-      } catch (error) {
-        console.log(error);
-        showToast("Unable to connect to the server.", "error");
       }
-    }
-    fetchDependencies();
-  }, [setCourses, setFaculty, setStudents]);
+
+      fetchDependencies();
+    },
+    [setCourses, setFaculty, setStudents]
+  );
 
   function handleChange(event) {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [event.target.name]: event.target.value
     });
   }
 
@@ -56,60 +94,120 @@ function AddClass({
       formData.batchId === "" ||
       formData.semester === ""
     ) {
-      showToast("Please fill all required fields.", "warning");
+      showToast(
+        "Please fill all required fields.",
+        "warning"
+      );
       return;
     }
 
-    const selectedCourse = courses.find(function (course) {
-      return course.courseCode === formData.courseId;
-    });
+    const selectedCourse = courses.find(
+      function (course) {
+        return (
+          course.courseCode === formData.courseId
+        );
+      }
+    );
 
-    const selectedFaculty = faculty.find(function (member) {
-      return member.facultyId === formData.facultyId;
-    });
+    const selectedFaculty = faculty.find(
+      function (member) {
+        return (
+          member.facultyId ===
+          formData.facultyId
+        );
+      }
+    );
 
     if (!selectedCourse || !selectedFaculty) {
-      showToast("Invalid course or faculty selection.", "warning");
+      showToast(
+        "Invalid course or faculty selection.",
+        "warning"
+      );
       return;
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/classes`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/classes`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify(formData)
+        }
+      );
+
       const data = await response.json();
+
       if (!response.ok) {
-        showToast(data.message || "Failed to create class.", "error");
+        showToast(
+          data.message ||
+            "Failed to create class.",
+          "error"
+        );
         return;
       }
-      showToast("Class created successfully.", "success");
+
+      showToast(
+        "Class created successfully.",
+        "success"
+      );
+
       navigate("/classes");
     } catch (error) {
       console.log(error);
-      showToast("Unable to connect to the server.", "error");
+
+      showToast(
+        "Unable to connect to the server.",
+        "error"
+      );
     }
   }
 
-  return (
-    <main className="p-5">
+  const inputClass =
+    "w-full rounded-lg border border-app-border bg-app-surface-soft px-4 py-3 text-app-text focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50";
 
-      <div className="bg-gradient-to-r from-green-700 to-green-500 rounded-2xl shadow-lg p-8 text-white mb-8">
-        <h1 className="text-4xl font-bold">🏫 Add Class</h1>
+  const labelClass =
+    "mb-2 block font-semibold text-app-text";
+
+  const batchOptions = Array.from(
+    new Set(
+      students.map(function (student) {
+        return student.batchId;
+      })
+    )
+  );
+
+  return (
+    <main className="min-h-screen bg-app-background p-5 transition-colors duration-200">
+      <div className="mb-8 rounded-2xl bg-gradient-to-r from-green-700 to-green-500 p-8 text-white shadow-lg">
+        <h1 className="text-3xl font-bold sm:text-4xl">
+          🏫 Add Class
+        </h1>
 
         <p className="mt-2 text-green-100">
-          Create a class by connecting a course, faculty member, and batch.
+          Create a class by connecting a course, faculty
+          member and batch.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-lg p-8">
+      <div className="rounded-xl border border-app-border bg-app-surface p-6 shadow-lg sm:p-8">
+        <div className="mb-6">
+          <h2 className="text-xl font-bold text-app-text">
+            Class Information
+          </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <p className="mt-1 text-sm text-app-text-muted">
+            Select the course, faculty member, batch and
+            semester for this class.
+          </p>
+        </div>
 
-          {/* Course */}
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label className="block font-semibold mb-2">
+            <label className={labelClass}>
               Course
             </label>
 
@@ -117,7 +215,7 @@ function AddClass({
               name="courseId"
               value={formData.courseId}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             >
               <option value="">
                 Select Course
@@ -129,16 +227,16 @@ function AddClass({
                     key={course._id}
                     value={course.courseCode}
                   >
-                    {course.courseCode} - {course.courseName}
+                    {course.courseCode} -{" "}
+                    {course.courseName}
                   </option>
                 );
               })}
             </select>
           </div>
 
-          {/* Faculty */}
           <div>
-            <label className="block font-semibold mb-2">
+            <label className={labelClass}>
               Faculty
             </label>
 
@@ -146,7 +244,7 @@ function AddClass({
               name="facultyId"
               value={formData.facultyId}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             >
               <option value="">
                 Select Faculty
@@ -158,16 +256,16 @@ function AddClass({
                     key={member._id}
                     value={member.facultyId}
                   >
-                    {member.firstName} {member.lastName}
+                    {member.firstName}{" "}
+                    {member.lastName}
                   </option>
                 );
               })}
             </select>
           </div>
 
-          {/* Batch */}
           <div>
-            <label className="block font-semibold mb-2">
+            <label className={labelClass}>
               Batch
             </label>
 
@@ -175,31 +273,32 @@ function AddClass({
               name="batchId"
               value={formData.batchId}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             >
-              <option value="">
-                Select Batch
-              </option>
+              <option value="">Select Batch</option>
 
-              {Array.from(
-                new Set(
-                  students.map(function (student) {
-                    return student.batchId;
-                  })
-                )
-              ).map(function (batchId) {
+              {batchOptions.map(function (batchId) {
                 return (
-                  <option key={batchId} value={batchId}>
+                  <option
+                    key={batchId}
+                    value={batchId}
+                  >
                     {batchId}
                   </option>
                 );
               })}
             </select>
+
+            {batchOptions.length === 0 && (
+              <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+                No student batches are currently
+                available.
+              </p>
+            )}
           </div>
 
-          {/* Semester */}
           <div>
-            <label className="block font-semibold mb-2">
+            <label className={labelClass}>
               Semester
             </label>
 
@@ -207,7 +306,7 @@ function AddClass({
               name="semester"
               value={formData.semester}
               onChange={handleChange}
-              className="w-full border rounded-lg px-4 py-2"
+              className={inputClass}
             >
               <option value="">
                 Select Semester
@@ -223,17 +322,15 @@ function AddClass({
               <option value="8">8</option>
             </select>
           </div>
-
         </div>
 
-        <div className="flex justify-between mt-8">
-
+        <div className="mt-8 flex flex-col-reverse justify-between gap-3 sm:flex-row">
           <button
             type="button"
             onClick={function () {
               navigate("/classes");
             }}
-            className="bg-gray-500 text-white px-6 py-3 rounded-lg"
+            className="rounded-lg border border-app-border bg-app-surface-soft px-6 py-3 font-semibold text-app-text transition hover:border-green-300 dark:hover:border-green-800"
           >
             Cancel
           </button>
@@ -241,15 +338,12 @@ function AddClass({
           <button
             type="button"
             onClick={handleSave}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700"
+            className="rounded-lg bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
           >
             Create Class
           </button>
-
         </div>
-
       </div>
-
     </main>
   );
 }

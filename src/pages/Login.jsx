@@ -9,24 +9,27 @@ function Login({ setUser }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async function (event) {
+  async function handleLogin(event) {
     event.preventDefault();
 
     setError("");
     setLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            email,
+            password
+          })
+        }
+      );
 
       const data = await response.json();
 
@@ -41,101 +44,104 @@ function Login({ setUser }) {
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-green-50 via-slate-50 to-emerald-100 flex items-center justify-center px-4 py-10">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-app-background px-4 py-10 transition-colors duration-200">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-32 -top-32 h-96 w-96 rounded-full bg-green-200/60 blur-3xl dark:bg-green-900/20"
+      />
 
-      <div className="w-full max-w-md">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-emerald-200/60 blur-3xl dark:bg-emerald-900/20"
+      />
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-2xl shadow-md mb-4">
+      <div className="relative z-10 w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-green-600 shadow-md">
             <span className="text-3xl">🎓</span>
           </div>
 
-          <h1 className="text-2xl font-bold tracking-tight text-green-900">
+          <h1 className="text-2xl font-bold tracking-tight text-green-900 dark:text-green-300">
             EduCore
           </h1>
 
-          <p className="text-slate-600 mt-2">
+          <p className="mt-2 text-app-text-muted">
             Sign in to access your account
           </p>
         </div>
 
-        {/* Login Card */}
-        <div className="rounded-3xl border border-white/80 bg-white/85 p-8 shadow-xl shadow-green-950/10 backdrop-blur-xl">
-
+        <div className="rounded-3xl border border-app-border bg-app-surface/90 p-8 shadow-xl shadow-green-950/10 backdrop-blur-xl dark:shadow-black/30">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-slate-900">
+            <h2 className="text-2xl font-bold text-app-text">
               Welcome Back
             </h2>
 
-            <p className="text-slate-600 mt-1">
+            <p className="mt-1 text-app-text-muted">
               Please enter your credentials to continue.
             </p>
           </div>
 
-          {/* Error */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-5">
+            <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
               {error}
             </div>
           )}
 
           <form onSubmit={handleLogin}>
-
-            {/* Email */}
             <div className="mb-5">
-              <label className="block text-slate-700 font-semibold mb-2">
+              <label className="mb-2 block font-semibold text-app-text">
                 Email Address
               </label>
 
               <input
                 type="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) =>
+                  setEmail(event.target.value)
+                }
                 placeholder="Enter your email"
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none transition"
+                autoComplete="email"
+                className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-app-text placeholder:text-app-text-muted"
                 required
               />
             </div>
 
-            {/* Password */}
             <div className="mb-6">
-              <label className="block text-slate-700 font-semibold mb-2">
+              <label className="mb-2 block font-semibold text-app-text">
                 Password
               </label>
 
               <input
                 type="password"
                 value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                onChange={(event) =>
+                  setPassword(event.target.value)
+                }
                 placeholder="Enter your password"
-                className="w-full border border-slate-300 rounded-xl px-4 py-3 outline-none transition"
+                autoComplete="current-password"
+                className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-app-text placeholder:text-app-text-muted"
                 required
               />
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 text-white font-semibold px-6 py-3 rounded-xl hover:bg-green-700 hover:shadow-lg hover:shadow-green-900/15 transition disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700 hover:shadow-lg hover:shadow-green-900/15 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
-
           </form>
-
         </div>
 
-        <p className="text-center text-sm text-slate-600 mt-6">
-          Secure access for students, faculty, and administrators.
+        <p className="mt-6 text-center text-sm text-app-text-muted">
+          Secure access for students, faculty, and
+          administrators.
         </p>
-
       </div>
-
     </main>
   );
 }

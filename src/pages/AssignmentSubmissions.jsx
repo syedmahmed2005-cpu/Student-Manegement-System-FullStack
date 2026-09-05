@@ -1,117 +1,146 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-function AssignmentSubmissions({ user, showToast }) {
+function AssignmentSubmissions({
+  user,
+  showToast
+}) {
   const { assignmentId } = useParams();
 
   const [assignment, setAssignment] = useState(null);
-  const [classDetails, setClassDetails] = useState(null);
+  const [classDetails, setClassDetails] =
+    useState(null);
   const [records, setRecords] = useState([]);
 
   const [summary, setSummary] = useState({
     totalStudents: 0,
     submitted: 0,
     notSubmitted: 0,
-    graded: 0,
+    graded: 0
   });
 
   const [gradeValues, setGradeValues] = useState({});
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] =
+    useState("all");
 
   const [loading, setLoading] = useState(true);
-  const [savingSubmission, setSavingSubmission] = useState("");
+  const [savingSubmission, setSavingSubmission] =
+    useState("");
   const [error, setError] = useState("");
 
   const isFaculty = user.role === "faculty";
   const isAdmin = user.role === "admin";
 
-  useEffect(function () {
-    async function loadSubmissions() {
-      try {
-        setLoading(true);
-        setError("");
+  useEffect(
+    function () {
+      async function loadSubmissions() {
+        try {
+          setLoading(true);
+          setError("");
 
-        const [assignmentResponse, submissionsResponse] =
-          await Promise.all([
+          const [
+            assignmentResponse,
+            submissionsResponse
+          ] = await Promise.all([
             fetch(
               `${import.meta.env.VITE_API_URL}/api/assignments/${assignmentId}`,
               {
-                credentials: "include",
+                credentials: "include"
               }
             ),
-
             fetch(
               `${import.meta.env.VITE_API_URL}/api/assignments/${assignmentId}/submissions`,
               {
-                credentials: "include",
+                credentials: "include"
               }
-            ),
+            )
           ]);
 
-        const assignmentData = await assignmentResponse.json();
-        const submissionsData = await submissionsResponse.json();
+          const assignmentData =
+            await assignmentResponse.json();
 
-        if (!assignmentResponse.ok) {
-          setError(
-            assignmentData.message ||
-              "Assignment could not be loaded."
-          );
-          return;
-        }
+          const submissionsData =
+            await submissionsResponse.json();
 
-        if (!submissionsResponse.ok) {
-          setError(
-            submissionsData.message ||
-              "Submissions could not be loaded."
-          );
-          return;
-        }
-
-        setAssignment(assignmentData.assignment);
-        setClassDetails(assignmentData.class || null);
-        setRecords(submissionsData.records || []);
-
-        setSummary(
-          submissionsData.summary || {
-            totalStudents: 0,
-            submitted: 0,
-            notSubmitted: 0,
-            graded: 0,
+          if (!assignmentResponse.ok) {
+            setError(
+              assignmentData.message ||
+                "Assignment could not be loaded."
+            );
+            return;
           }
-        );
 
-        const initialGradeValues = {};
-
-        (submissionsData.records || []).forEach(function (record) {
-          if (record.submission) {
-            initialGradeValues[record.submission._id] = {
-              marks: record.submission.marks ?? "",
-              feedback: record.submission.feedback || "",
-            };
+          if (!submissionsResponse.ok) {
+            setError(
+              submissionsData.message ||
+                "Submissions could not be loaded."
+            );
+            return;
           }
-        });
 
-        setGradeValues(initialGradeValues);
-      } catch (requestError) {
-        console.log(requestError);
-        setError("Unable to connect to the server.");
-      } finally {
-        setLoading(false);
+          setAssignment(assignmentData.assignment);
+          setClassDetails(
+            assignmentData.class || null
+          );
+          setRecords(
+            submissionsData.records || []
+          );
+
+          setSummary(
+            submissionsData.summary || {
+              totalStudents: 0,
+              submitted: 0,
+              notSubmitted: 0,
+              graded: 0
+            }
+          );
+
+          const initialGradeValues = {};
+
+          (
+            submissionsData.records || []
+          ).forEach(function (record) {
+            if (record.submission) {
+              initialGradeValues[
+                record.submission._id
+              ] = {
+                marks:
+                  record.submission.marks ?? "",
+                feedback:
+                  record.submission.feedback || ""
+              };
+            }
+          });
+
+          setGradeValues(initialGradeValues);
+        } catch (requestError) {
+          console.log(requestError);
+          setError(
+            "Unable to connect to the server."
+          );
+        } finally {
+          setLoading(false);
+        }
       }
-    }
 
-    loadSubmissions();
-  }, [assignmentId]);
+      loadSubmissions();
+    },
+    [assignmentId]
+  );
 
-  function updateGradeValue(submissionId, field, value) {
+  function updateGradeValue(
+    submissionId,
+    field,
+    value
+  ) {
     setGradeValues(function (currentValues) {
       return {
         ...currentValues,
         [submissionId]: {
           ...currentValues[submissionId],
-          [field]: value,
-        },
+          [field]: value
+        }
       };
     });
   }
@@ -132,9 +161,13 @@ function AssignmentSubmissions({ user, showToast }) {
       return;
     }
 
-    const existingRecord = records.find(function (record) {
-      return record.submission?._id === submissionId;
-    });
+    const existingRecord = records.find(
+      function (record) {
+        return (
+          record.submission?._id === submissionId
+        );
+      }
+    );
 
     const wasAlreadyGraded =
       existingRecord?.submission?.status === "graded";
@@ -148,13 +181,15 @@ function AssignmentSubmissions({ user, showToast }) {
         {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           },
           credentials: "include",
           body: JSON.stringify({
-            marks: marks,
-            feedback: String(values.feedback || "").trim(),
-          }),
+            marks,
+            feedback: String(
+              values.feedback || ""
+            ).trim()
+          })
         }
       );
 
@@ -162,17 +197,20 @@ function AssignmentSubmissions({ user, showToast }) {
 
       if (!response.ok) {
         setError(
-          data.message || "Submission could not be graded."
+          data.message ||
+            "Submission could not be graded."
         );
         return;
       }
 
       setRecords(function (currentRecords) {
         return currentRecords.map(function (record) {
-          if (record.submission?._id === submissionId) {
+          if (
+            record.submission?._id === submissionId
+          ) {
             return {
               ...record,
-              submission: data.submission,
+              submission: data.submission
             };
           }
 
@@ -184,12 +222,15 @@ function AssignmentSubmissions({ user, showToast }) {
         setSummary(function (currentSummary) {
           return {
             ...currentSummary,
-            graded: currentSummary.graded + 1,
+            graded: currentSummary.graded + 1
           };
         });
       }
 
-      showToast("Submission graded successfully.", "success");
+      showToast(
+        "Submission graded successfully.",
+        "success"
+      );
     } catch (requestError) {
       console.log(requestError);
       setError("Unable to connect to the server.");
@@ -204,7 +245,7 @@ function AssignmentSubmissions({ user, showToast }) {
       month: "short",
       day: "numeric",
       hour: "numeric",
-      minute: "2-digit",
+      minute: "2-digit"
     });
   }
 
@@ -226,64 +267,77 @@ function AssignmentSubmissions({ user, showToast }) {
     if (status === "graded") {
       return {
         label: "Graded",
-        style: "border-green-200 bg-green-50 text-green-700",
+        style:
+          "border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-950/50 dark:text-green-300"
       };
     }
 
     if (status === "submitted") {
       return {
         label: "Submitted",
-        style: "border-blue-200 bg-blue-50 text-blue-700",
+        style:
+          "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-900 dark:bg-blue-950/50 dark:text-blue-300"
       };
     }
 
     return {
       label: "Not Submitted",
-      style: "border-red-200 bg-red-50 text-red-700",
+      style:
+        "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300"
     };
   }
 
-  const filteredRecords = records.filter(function (record) {
-    const student = record.student || {};
+  const filteredRecords = records.filter(
+    function (record) {
+      const student = record.student || {};
 
-    const searchableText = [
-      student.firstName,
-      student.lastName,
-      student.studentId,
-      student.rollNumber,
-      student.registrationNumber,
-    ]
-      .join(" ")
-      .toLowerCase();
+      const searchableText = [
+        student.firstName,
+        student.lastName,
+        student.studentId,
+        student.rollNumber,
+        student.registrationNumber
+      ]
+        .join(" ")
+        .toLowerCase();
 
-    const matchesSearch = searchableText.includes(
-      search.toLowerCase().trim()
-    );
+      const matchesSearch =
+        searchableText.includes(
+          search.toLowerCase().trim()
+        );
 
-    const recordStatus = getSubmissionStatus(record);
+      const recordStatus =
+        getSubmissionStatus(record);
 
-    let matchesStatus = true;
+      let matchesStatus = true;
 
-    if (statusFilter === "submitted") {
-      matchesStatus = record.submission !== null;
-    } else if (statusFilter === "not-submitted") {
-      matchesStatus = record.submission === null;
-    } else if (statusFilter === "graded") {
-      matchesStatus = recordStatus === "graded";
-    } else if (statusFilter === "ungraded") {
-      matchesStatus = recordStatus === "submitted";
+      if (statusFilter === "submitted") {
+        matchesStatus =
+          record.submission !== null;
+      } else if (
+        statusFilter === "not-submitted"
+      ) {
+        matchesStatus =
+          record.submission === null;
+      } else if (statusFilter === "graded") {
+        matchesStatus =
+          recordStatus === "graded";
+      } else if (statusFilter === "ungraded") {
+        matchesStatus =
+          recordStatus === "submitted";
+      }
+
+      return matchesSearch && matchesStatus;
     }
-
-    return matchesSearch && matchesStatus;
-  });
+  );
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-green-100 bg-white p-10 text-center shadow-sm">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-green-100 border-t-green-600"></div>
+      <main className="mx-auto min-h-screen max-w-7xl bg-app-background px-4 py-8 sm:px-6">
+        <div className="rounded-2xl border border-app-border bg-app-surface p-10 text-center shadow-sm">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-green-100 border-t-green-600 dark:border-green-950 dark:border-t-green-400" />
 
-          <p className="font-medium text-slate-600">
+          <p className="font-medium text-app-text-muted">
             Loading student submissions...
           </p>
         </div>
@@ -293,19 +347,20 @@ function AssignmentSubmissions({ user, showToast }) {
 
   if (!assignment) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center">
-          <h1 className="text-xl font-bold text-red-700">
+      <main className="mx-auto min-h-screen max-w-7xl bg-app-background px-4 py-8 sm:px-6">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-900 dark:bg-red-950/50">
+          <h1 className="text-xl font-bold text-red-700 dark:text-red-300">
             Submissions unavailable
           </h1>
 
-          <p className="mt-2 text-red-600">
-            {error || "Assignment could not be found."}
+          <p className="mt-2 text-red-600 dark:text-red-400">
+            {error ||
+              "Assignment could not be found."}
           </p>
 
           <Link
             to="/assignments"
-            className="mt-5 inline-block rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white"
+            className="mt-5 inline-block rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700"
           >
             Back to Assignments
           </Link>
@@ -315,17 +370,18 @@ function AssignmentSubmissions({ user, showToast }) {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <main className="mx-auto min-h-screen max-w-7xl bg-app-background px-4 py-8 transition-colors duration-200 sm:px-6">
       <Link
         to={`/assignments/${assignmentId}`}
-        className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800"
+        className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
       >
         ← Back to Assignment
       </Link>
 
-      <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-white shadow-xl shadow-green-900/10">
+      <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-white shadow-xl shadow-green-900/10 dark:border-green-800">
         <p className="text-sm font-semibold uppercase tracking-widest text-green-100">
-          {classDetails?.courseId || "Assignment Review"}
+          {classDetails?.courseId ||
+            "Assignment Review"}
         </p>
 
         <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
@@ -342,57 +398,57 @@ function AssignmentSubmissions({ user, showToast }) {
       </section>
 
       {error && (
-        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
           {error}
         </div>
       )}
 
       <section className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-slate-500">
+        <div className="rounded-2xl border border-app-border bg-app-surface p-5 shadow-sm">
+          <p className="text-sm font-medium text-app-text-muted">
             Enrolled Students
           </p>
 
-          <p className="mt-2 text-3xl font-bold text-slate-800">
+          <p className="mt-2 text-3xl font-bold text-app-text">
             {summary.totalStudents}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 shadow-sm">
-          <p className="text-sm font-medium text-blue-600">
+        <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 shadow-sm dark:border-blue-900 dark:bg-blue-950/40">
+          <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
             Submitted
           </p>
 
-          <p className="mt-2 text-3xl font-bold text-blue-800">
+          <p className="mt-2 text-3xl font-bold text-blue-800 dark:text-blue-200">
             {summary.submitted}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-red-100 bg-red-50 p-5 shadow-sm">
-          <p className="text-sm font-medium text-red-600">
+        <div className="rounded-2xl border border-red-100 bg-red-50 p-5 shadow-sm dark:border-red-900 dark:bg-red-950/40">
+          <p className="text-sm font-medium text-red-600 dark:text-red-400">
             Not Submitted
           </p>
 
-          <p className="mt-2 text-3xl font-bold text-red-800">
+          <p className="mt-2 text-3xl font-bold text-red-800 dark:text-red-200">
             {summary.notSubmitted}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-green-100 bg-green-50 p-5 shadow-sm">
-          <p className="text-sm font-medium text-green-600">
+        <div className="rounded-2xl border border-green-100 bg-green-50 p-5 shadow-sm dark:border-green-900 dark:bg-green-950/40">
+          <p className="text-sm font-medium text-green-600 dark:text-green-400">
             Graded
           </p>
 
-          <p className="mt-2 text-3xl font-bold text-green-800">
+          <p className="mt-2 text-3xl font-bold text-green-800 dark:text-green-200">
             {summary.graded}
           </p>
         </div>
       </section>
 
-      <section className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="mt-6 rounded-2xl border border-app-border bg-app-surface p-5 shadow-sm">
         <div className="grid gap-4 md:grid-cols-[1fr_220px]">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-app-text">
               Search students
             </label>
 
@@ -403,12 +459,12 @@ function AssignmentSubmissions({ user, showToast }) {
                 setSearch(event.target.value);
               }}
               placeholder="Search by name, student ID or roll number"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+              className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-sm text-app-text placeholder:text-app-text-muted focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-app-text">
               Submission Status
             </label>
 
@@ -417,29 +473,35 @@ function AssignmentSubmissions({ user, showToast }) {
               onChange={function (event) {
                 setStatusFilter(event.target.value);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+              className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-sm text-app-text focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
             >
               <option value="all">All students</option>
-              <option value="submitted">Submitted</option>
-              <option value="not-submitted">Not submitted</option>
+              <option value="submitted">
+                Submitted
+              </option>
+              <option value="not-submitted">
+                Not submitted
+              </option>
               <option value="graded">Graded</option>
-              <option value="ungraded">Awaiting grading</option>
+              <option value="ungraded">
+                Awaiting grading
+              </option>
             </select>
           </div>
         </div>
       </section>
 
       {filteredRecords.length === 0 ? (
-        <section className="mt-6 rounded-2xl border border-dashed border-green-200 bg-white p-12 text-center shadow-sm">
-          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-green-50 text-3xl">
+        <section className="mt-6 rounded-2xl border border-dashed border-green-200 bg-app-surface p-12 text-center shadow-sm dark:border-green-900">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-green-50 text-3xl dark:bg-green-950/50">
             📥
           </div>
 
-          <h2 className="text-lg font-bold text-slate-800">
+          <h2 className="text-lg font-bold text-app-text">
             No student records found
           </h2>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-app-text-muted">
             Student submissions will appear here.
           </p>
         </section>
@@ -453,18 +515,27 @@ function AssignmentSubmissions({ user, showToast }) {
             return (
               <article
                 key={student.studentId}
-                className="rounded-2xl border border-slate-200 bg-white shadow-sm"
+                className="rounded-2xl border border-app-border bg-app-surface shadow-sm"
               >
-                <div className="flex flex-col gap-4 border-b border-slate-100 p-6 sm:flex-row sm:items-start sm:justify-between">
+                <div className="flex flex-col gap-4 border-b border-app-border p-6 sm:flex-row sm:items-start sm:justify-between">
                   <div>
-                    <h2 className="text-lg font-bold text-slate-800">
-                      {student.firstName} {student.lastName}
+                    <h2 className="text-lg font-bold text-app-text">
+                      {student.firstName}{" "}
+                      {student.lastName}
                     </h2>
 
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-500">
-                      <span>{student.studentId}</span>
-                      <span>{student.rollNumber}</span>
-                      <span>{student.registrationNumber}</span>
+                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-app-text-muted">
+                      <span>
+                        {student.studentId}
+                      </span>
+
+                      <span>
+                        {student.rollNumber}
+                      </span>
+
+                      <span>
+                        {student.registrationNumber}
+                      </span>
                     </div>
                   </div>
 
@@ -477,19 +548,20 @@ function AssignmentSubmissions({ user, showToast }) {
 
                 {!submission ? (
                   <div className="p-6">
-                    <p className="text-sm text-slate-500">
-                      This student has not submitted the assignment.
+                    <p className="text-sm text-app-text-muted">
+                      This student has not submitted the
+                      assignment.
                     </p>
                   </div>
                 ) : (
                   <div className="grid gap-6 p-6 lg:grid-cols-[1fr_360px]">
                     <div>
-                      <h3 className="font-bold text-slate-800">
+                      <h3 className="font-bold text-app-text">
                         Submitted Work
                       </h3>
 
-                      <div className="mt-3 rounded-xl bg-slate-50 p-5">
-                        <p className="whitespace-pre-wrap leading-7 text-slate-700">
+                      <div className="mt-3 rounded-xl bg-app-surface-soft p-5">
+                        <p className="whitespace-pre-wrap leading-7 text-app-text">
                           {submission.submissionText ||
                             "No written response provided."}
                         </p>
@@ -500,7 +572,7 @@ function AssignmentSubmissions({ user, showToast }) {
                           href={submission.fileUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="mt-4 inline-flex rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700"
+                          className="mt-4 inline-flex rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm font-semibold text-green-700 dark:border-green-900 dark:bg-green-950/40 dark:text-green-300"
                         >
                           📎{" "}
                           {submission.fileName ||
@@ -508,56 +580,67 @@ function AssignmentSubmissions({ user, showToast }) {
                         </a>
                       )}
 
-                      <p className="mt-4 text-xs text-slate-400">
+                      <p className="mt-4 text-xs text-app-text-muted">
                         Submitted on{" "}
-                        {formatDate(submission.submittedAt)}
+                        {formatDate(
+                          submission.submittedAt
+                        )}
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
-                      <h3 className="font-bold text-slate-800">
+                    <div className="rounded-xl border border-app-border bg-app-surface-soft p-5">
+                      <h3 className="font-bold text-app-text">
                         Evaluation
                       </h3>
 
                       {isFaculty ? (
                         <div className="mt-4 space-y-4">
                           <div>
-                            <label className="mb-2 block text-sm font-semibold text-slate-700">
-                              Marks out of {assignment.totalMarks}
+                            <label className="mb-2 block text-sm font-semibold text-app-text">
+                              Marks out of{" "}
+                              {assignment.totalMarks}
                             </label>
 
                             <input
                               type="number"
                               min="0"
-                              max={assignment.totalMarks}
+                              max={
+                                assignment.totalMarks
+                              }
                               step="0.5"
                               value={
-                                gradeValues[submission._id]?.marks ??
-                                ""
+                                gradeValues[
+                                  submission._id
+                                ]?.marks ?? ""
                               }
-                              onChange={function (event) {
+                              onChange={function (
+                                event
+                              ) {
                                 updateGradeValue(
                                   submission._id,
                                   "marks",
                                   event.target.value
                                 );
                               }}
-                              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
+                              className="w-full rounded-xl border border-app-border bg-app-surface px-4 py-3 text-sm text-app-text focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
                             />
                           </div>
 
                           <div>
-                            <label className="mb-2 block text-sm font-semibold text-slate-700">
+                            <label className="mb-2 block text-sm font-semibold text-app-text">
                               Feedback
                             </label>
 
                             <textarea
                               rows="4"
                               value={
-                                gradeValues[submission._id]
-                                  ?.feedback ?? ""
+                                gradeValues[
+                                  submission._id
+                                ]?.feedback ?? ""
                               }
-                              onChange={function (event) {
+                              onChange={function (
+                                event
+                              ) {
                                 updateGradeValue(
                                   submission._id,
                                   "feedback",
@@ -565,44 +648,54 @@ function AssignmentSubmissions({ user, showToast }) {
                                 );
                               }}
                               placeholder="Write feedback for the student..."
-                              className="w-full resize-y rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
-                            ></textarea>
+                              className="w-full resize-y rounded-xl border border-app-border bg-app-surface px-4 py-3 text-sm text-app-text placeholder:text-app-text-muted focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
+                            />
+
                           </div>
 
                           <button
                             type="button"
                             disabled={
-                              savingSubmission === submission._id
+                              savingSubmission ===
+                              submission._id
                             }
                             onClick={function () {
-                              saveGrade(submission._id);
+                              saveGrade(
+                                submission._id
+                              );
                             }}
                             className="w-full rounded-xl bg-green-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
                           >
-                            {savingSubmission === submission._id
+                            {savingSubmission ===
+                            submission._id
                               ? "Saving Grade..."
-                              : submission.status === "graded"
-                              ? "Update Grade"
-                              : "Save Grade"}
+                              : submission.status ===
+                                  "graded"
+                                ? "Update Grade"
+                                : "Save Grade"}
                           </button>
                         </div>
                       ) : (
                         <div className="mt-4">
-                          {submission.status === "graded" ? (
+                          {submission.status ===
+                          "graded" ? (
                             <>
-                              <p className="text-3xl font-bold text-green-700">
+                              <p className="text-3xl font-bold text-green-700 dark:text-green-400">
                                 {submission.marks} /{" "}
-                                {assignment.totalMarks}
+                                {
+                                  assignment.totalMarks
+                                }
                               </p>
 
-                              <p className="mt-3 text-sm leading-6 text-slate-600">
+                              <p className="mt-3 text-sm leading-6 text-app-text-muted">
                                 {submission.feedback ||
                                   "No written feedback provided."}
                               </p>
                             </>
                           ) : (
-                            <p className="text-sm text-slate-500">
-                              This submission has not been graded yet.
+                            <p className="text-sm text-app-text-muted">
+                              This submission has not been
+                              graded yet.
                             </p>
                           )}
                         </div>
@@ -617,8 +710,9 @@ function AssignmentSubmissions({ user, showToast }) {
       )}
 
       {isAdmin && (
-        <p className="mt-6 text-center text-sm text-slate-500">
-          Administrators can monitor submissions. Grades must be entered by the assigned faculty member.
+        <p className="mt-6 text-center text-sm text-app-text-muted">
+          Administrators can monitor submissions. Grades
+          must be entered by the assigned faculty member.
         </p>
       )}
     </main>

@@ -3,147 +3,241 @@ import { useEffect, useState } from "react";
 function StudentAttendance({ student }) {
   const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] =
+    useState("");
 
-  useEffect(function () {
-    async function fetchStudentAttendance() {
-      if (!student || !student.studentId) {
-        setErrorMessage("Select a student from the Students page first.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/api/attendance/student/${student.studentId}`
-        );
-        const data = await response.json();
-
-        if (!response.ok) {
-          setErrorMessage(data.message || "Failed to retrieve attendance.");
+  useEffect(
+    function () {
+      async function fetchStudentAttendance() {
+        if (!student || !student.studentId) {
+          setErrorMessage(
+            "Select a student from the Students page first."
+          );
+          setLoading(false);
           return;
         }
 
-        setClasses(data.classes);
-      } catch (error) {
-        console.log(error);
-        setErrorMessage("Unable to connect to the server.");
-      } finally {
-        setLoading(false);
-      }
-    }
+        try {
+          const response = await fetch(
+            `${import.meta.env.VITE_API_URL}/api/attendance/student/${student.studentId}`,
+            {
+              credentials: "include"
+            }
+          );
 
-    fetchStudentAttendance();
-  }, [student]);
+          const data = await response.json();
+
+          if (!response.ok) {
+            setErrorMessage(
+              data.message ||
+                "Failed to retrieve attendance."
+            );
+            return;
+          }
+
+          setClasses(data.classes);
+        } catch (error) {
+          console.log(error);
+
+          setErrorMessage(
+            "Unable to connect to the server."
+          );
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      fetchStudentAttendance();
+    },
+    [student]
+  );
 
   return (
-    <main className="p-5">
-      <div className="bg-gradient-to-r from-green-700 to-green-500 rounded-2xl shadow-lg p-8 text-white mb-8">
-        <h1 className="text-4xl font-bold">📊 My Attendance</h1>
+    <main className="min-h-screen bg-app-background p-5 transition-colors duration-200">
+      <div className="mb-8 rounded-2xl bg-gradient-to-r from-green-700 to-green-500 p-8 text-white shadow-lg">
+        <h1 className="text-3xl font-bold sm:text-4xl">
+          📊 My Attendance
+        </h1>
 
         <p className="mt-2 text-green-100">
-          Track your attendance across enrolled courses.
+          Track your attendance across enrolled
+          courses.
         </p>
       </div>
 
       {loading ? (
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
-          Loading attendance...
+        <div className="rounded-xl border border-app-border bg-app-surface p-8 text-center shadow-lg">
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-green-100 border-t-green-600 dark:border-green-950 dark:border-t-green-400" />
+
+          <p className="text-app-text-muted">
+            Loading attendance...
+          </p>
         </div>
       ) : errorMessage !== "" ? (
-        <div className="bg-red-100 border border-red-300 text-red-700 px-5 py-3 rounded-lg">
+        <div className="rounded-lg border border-red-300 bg-red-100 px-5 py-3 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
           {errorMessage}
         </div>
       ) : classes.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-lg p-8 text-center text-gray-500">
-          You are not enrolled in any classes yet.
+        <div className="rounded-xl border border-app-border bg-app-surface p-10 text-center shadow-lg">
+          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-green-50 text-2xl dark:bg-green-950/50">
+            📚
+          </div>
+
+          <p className="font-semibold text-app-text">
+            You are not enrolled in any classes yet.
+          </p>
+
+          <p className="mt-1 text-sm text-app-text-muted">
+            Your course attendance will appear here
+            after enrollment.
+          </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {classes.map(function (item) {
+            const attendancePercentage = Math.min(
+              100,
+              Math.max(
+                0,
+                Number(item.attendancePercentage) || 0
+              )
+            );
+
+            const isLowAttendance =
+              attendancePercentage < 75;
+
             return (
-              <div
+              <article
                 key={item.class._id}
-                className="bg-white rounded-xl shadow-lg p-6"
+                className="rounded-xl border border-app-border bg-app-surface p-6 shadow-lg transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-xl dark:hover:border-green-800"
               >
-                <h2 className="text-xl font-bold">
-                  {item.course ? item.course.courseName : "Unknown Course"}
-                </h2>
+                <div className="flex items-start gap-4">
+                  <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-green-50 text-2xl dark:bg-green-950/50">
+                    📚
+                  </div>
 
-                <p className="text-gray-500 mt-1">
-                  {item.course ? item.course.courseCode : "-"}
-                </p>
+                  <div>
+                    <h2 className="text-xl font-bold text-app-text">
+                      {item.course
+                        ? item.course.courseName
+                        : "Unknown Course"}
+                    </h2>
 
-                <div className="flex gap-3 mt-3">
-                  <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                    {item.class.batchId}
+                    <p className="mt-1 text-app-text-muted">
+                      {item.course
+                        ? item.course.courseCode
+                        : "-"}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-700 dark:bg-green-950/60 dark:text-green-300">
+                    Batch {item.class.batchId}
                   </span>
 
-                  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+                  <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
                     Semester {item.class.semester}
                   </span>
                 </div>
 
-                <div className="mt-6">
-                  <div className="flex justify-between mb-2">
-                    <span className="font-semibold">Attendance</span>
-                    <span className="font-bold">
-                      {item.attendancePercentage}%
+                <div className="mt-6 rounded-xl bg-app-surface-soft p-4">
+                  <div className="mb-2 flex justify-between gap-4">
+                    <span className="font-semibold text-app-text">
+                      Attendance
+                    </span>
+
+                    <span
+                      className={
+                        "font-bold " +
+                        (isLowAttendance
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-green-700 dark:text-green-400")
+                      }
+                    >
+                      {attendancePercentage}%
                     </span>
                   </div>
 
-                  <div className="w-full bg-gray-200 rounded-full h-4">
+                  <div
+                    role="progressbar"
+                    aria-label="Course attendance"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={
+                      attendancePercentage
+                    }
+                    className="h-4 w-full overflow-hidden rounded-full bg-app-border"
+                  >
                     <div
                       className={
-                        item.attendancePercentage < 75
-                          ? "bg-red-500 h-4 rounded-full"
-                          : "bg-green-600 h-4 rounded-full"
+                        "h-4 rounded-full transition-all duration-300 " +
+                        (isLowAttendance
+                          ? "bg-red-500"
+                          : "bg-green-600")
                       }
-                      style={{ width: item.attendancePercentage + "%" }}
+                      style={{
+                        width:
+                          attendancePercentage + "%"
+                      }}
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-between mt-4 text-sm text-gray-600">
-                  <span>
-                    Present: {" "}
-                    <strong className="text-green-600">
+                <div className="mt-4 grid grid-cols-2 gap-3 text-center text-sm">
+                  <div className="rounded-lg bg-green-50 p-3 dark:bg-green-950/40">
+                    <p className="font-bold text-green-700 dark:text-green-300">
                       {item.presentCount}
-                    </strong>
-                  </span>
+                    </p>
 
-                  <span>
-                    Absent: {" "}
-                    <strong className="text-red-600">
+                    <p className="text-xs text-green-600 dark:text-green-400">
+                      Present
+                    </p>
+                  </div>
+
+                  <div className="rounded-lg bg-red-50 p-3 dark:bg-red-950/40">
+                    <p className="font-bold text-red-700 dark:text-red-300">
                       {item.absentCount}
-                    </strong>
-                  </span>
+                    </p>
+
+                    <p className="text-xs text-red-600 dark:text-red-400">
+                      Absent
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-5 border-t pt-4">
-                  <h3 className="font-semibold mb-2">Attendance History</h3>
+                <div className="mt-5 border-t border-app-border pt-4">
+                  <h3 className="mb-3 font-semibold text-app-text">
+                    Attendance History
+                  </h3>
 
                   {item.attendance.length === 0 ? (
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-app-text-muted">
                       No attendance records found.
                     </p>
                   ) : (
                     <ul className="space-y-2 text-sm">
-                      {item.attendance.map(function (record) {
+                      {item.attendance.map(function (
+                        record
+                      ) {
                         return (
                           <li
                             key={record._id}
-                            className="flex justify-between text-gray-600"
+                            className="flex items-center justify-between gap-4 rounded-lg bg-app-surface-soft px-3 py-2 text-app-text-muted"
                           >
                             <span>
-                              {new Date(record.date).toLocaleDateString()}
+                              {new Date(
+                                record.date
+                              ).toLocaleDateString()}
                             </span>
 
                             <span
                               className={
-                                record.status === "present"
-                                  ? "text-green-600 font-medium"
-                                  : "text-red-600 font-medium"
+                                "font-medium capitalize " +
+                                (record.status ===
+                                "present"
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-red-600 dark:text-red-400")
                               }
                             >
                               {record.status}
@@ -154,7 +248,7 @@ function StudentAttendance({ student }) {
                     </ul>
                   )}
                 </div>
-              </div>
+              </article>
             );
           })}
         </div>

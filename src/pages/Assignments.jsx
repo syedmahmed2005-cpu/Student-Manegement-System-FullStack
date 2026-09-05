@@ -90,23 +90,23 @@ function Assignments({ user, showToast }) {
     }
   }
 
-  function getStatusStyle(status) {
-    if (status === "published") {
-      return "border-green-200 bg-green-50 text-green-700";
-    }
-
-    if (status === "closed") {
-      return "border-red-200 bg-red-50 text-red-700";
-    }
-
-    return "border-amber-200 bg-amber-50 text-amber-700";
+ function getStatusStyle(status) {
+  if (status === "published") {
+    return "border-green-200 bg-green-50 text-green-700 dark:border-green-900 dark:bg-green-950/50 dark:text-green-300";
   }
+
+  if (status === "closed") {
+    return "border-red-200 bg-red-50 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300";
+  }
+
+  return "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300";
+}
 
   function getDeadlineDetails(assignment) {
     if (assignment.status === "closed") {
       return {
         label: "Closed",
-        style: "text-red-600",
+        style: "text-red-600 dark:text-red-400",
       };
     }
 
@@ -117,27 +117,27 @@ function Assignments({ user, showToast }) {
     if (difference < 0) {
       return {
         label: "Deadline passed",
-        style: "text-red-600",
+        style: "text-red-600 dark:text-red-400",
       };
     }
 
     if (days === 0) {
       return {
         label: "Due today",
-        style: "text-amber-600",
+        style: "text-amber-600 dark:text-amber-400",
       };
     }
 
     if (days === 1) {
       return {
         label: "1 day remaining",
-        style: "text-amber-600",
+        style: "text-amber-600 dark:text-amber-400",
       };
     }
 
     return {
       label: `${days} days remaining`,
-      style: days <= 3 ? "text-amber-600" : "text-green-700",
+      style: days <= 3 ? "text-amber-600 dark:text-amber-400" : "text-green-700 dark:text-green-400",
     };
   }
 
@@ -168,11 +168,11 @@ function Assignments({ user, showToast }) {
 
   if (loading) {
     return (
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div className="rounded-2xl border border-green-100 bg-white p-10 text-center shadow-sm">
+      <main className="mx-auto min-h-screen max-w-7xl bg-app-background px-4 py-8 transition-colors duration-200 sm:px-6">
+        <div className="rounded-2xl border border-app-border bg-app-surface p-10 text-center shadow-sm">
           <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-4 border-green-100 border-t-green-600"></div>
 
-          <p className="font-medium text-slate-600">
+          <p className="font-medium text-app-text-muted">
             Loading assignments...
           </p>
         </div>
@@ -182,7 +182,7 @@ function Assignments({ user, showToast }) {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-white shadow-xl shadow-green-900/10">
+      <section className="rounded-3xl border border-green-200/70 bg-gradient-to-br from-green-700 via-green-600 to-emerald-500 p-8 text-white shadow-xl shadow-green-900/10 dark:border">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-widest text-green-100">
@@ -214,15 +214,15 @@ function Assignments({ user, showToast }) {
       </section>
 
       {error && (
-        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+        <div className="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700 dark:border-red-900 dark:bg-red-950/50 dark:text-red-300">
           {error}
         </div>
       )}
 
-      <section className="mt-8 rounded-2xl border border-slate-200 bg-white/90 p-5 shadow-sm">
+      <section className="mt-8 rounded-2xl border border-app-border bg-app-surface/90 p-5 shadow-sm">
         <div className="grid gap-4 md:grid-cols-[1fr_220px]">
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-app-text">
               Search assignments
             </label>
 
@@ -233,12 +233,12 @@ function Assignments({ user, showToast }) {
                 setSearch(event.target.value);
               }}
               placeholder="Search by title, course, batch or semester"
-              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+              className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-sm text-app-text placeholder:text-app-text-muted focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-semibold text-slate-700">
+            <label className="mb-2 block text-sm font-semibold text-app-text">
               Status
             </label>
 
@@ -247,7 +247,7 @@ function Assignments({ user, showToast }) {
               onChange={function (event) {
                 setStatusFilter(event.target.value);
               }}
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-green-500 focus:ring-2 focus:ring-green-100"
+              className="w-full rounded-xl border border-app-border bg-app-surface-soft px-4 py-3 text-sm text-app-text focus:border-green-500 focus:ring-2 focus:ring-green-100 dark:focus:ring-green-900/50"
             >
               <option value="all">All statuses</option>
               <option value="published">Published</option>
@@ -263,11 +263,11 @@ function Assignments({ user, showToast }) {
       </section>
 
       <div className="mt-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-800">
+        <h2 className="text-xl font-bold text-app-text">
           {isStudent ? "Your Assignments" : "Assignment Records"}
         </h2>
 
-        <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+        <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-950/50 dark:text-green-300">
           {filteredAssignments.length}{" "}
           {filteredAssignments.length === 1
             ? "Assignment"
@@ -276,16 +276,16 @@ function Assignments({ user, showToast }) {
       </div>
 
       {filteredAssignments.length === 0 ? (
-        <section className="mt-5 rounded-2xl border border-dashed border-green-200 bg-white p-12 text-center shadow-sm">
-          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-green-50 text-3xl">
+        <section className="mt-5 rounded-2xl border border-dashed border-green-200 bg-app-surface p-12 text-center shadow-sm dark:border-green-900">
+          <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-green-50 text-3xl dark:bg-green-950/50">
             📝
           </div>
 
-          <h3 className="text-lg font-bold text-slate-800">
+          <h3 className="text-lg font-bold text-app-text">
             No assignments found
           </h3>
 
-          <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+          <p className="mx-auto mt-2 max-w-md text-sm text-app-text-muted">
             {isFaculty
               ? "Create an assignment for one of your classes to get started."
               : isStudent
@@ -302,11 +302,11 @@ function Assignments({ user, showToast }) {
             return (
               <article
                 key={assignment._id}
-                className="flex flex-col rounded-2xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:border-green-200 hover:shadow-lg"
+                className="flex flex-col rounded-2xl border border-app-border bg-app-surface shadow-sm transition hover:-translate-y-1 hover:border-green-200 hover:shadow-lg dark:hover:border-green-800"
               >
                 <div className="flex-1 p-6">
                   <div className="flex items-start justify-between gap-3">
-                    <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-green-50 text-xl">
+                    <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-green-50 text-xl dark:bg-green-950/50">
                       📚
                     </div>
 
@@ -320,56 +320,56 @@ function Assignments({ user, showToast }) {
                   </div>
 
                   <div className="mt-5">
-                    <p className="text-xs font-bold uppercase tracking-wide text-green-600">
+                    <p className="text-xs font-bold uppercase tracking-wide text-green-600 dark:text-green-400">
                       {classDetails.courseId || "Course"}
                     </p>
 
-                    <h3 className="mt-1 text-xl font-bold text-slate-800">
+                    <h3 className="mt-1 text-xl font-bold text-app-text">
                       {assignment.title}
                     </h3>
 
-                    <p className="mt-3 line-clamp-3 leading-6 text-slate-600">
+                    <p className="mt-3 line-clamp-3 leading-6 text-app-text-muted">
                       {assignment.description}
                     </p>
                   </div>
 
                   <div className="mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-xs font-medium text-slate-500">
+                    <div className="rounded-xl bg-app-surface-soft p-3">
+                      <p className="text-xs font-medium text-app-text-muted">
                         Batch
                       </p>
 
-                      <p className="mt-1 font-semibold text-slate-800">
+                      <p className="mt-1 font-semibold text-app-text">
                         {classDetails.batchId || "N/A"}
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-xs font-medium text-slate-500">
+                    <div className="rounded-xl bg-app-surface-soft p-3">
+                      <p className="text-xs font-medium text-app-text-muted">
                         Semester
                       </p>
 
-                      <p className="mt-1 font-semibold text-slate-800">
+                      <p className="mt-1 font-semibold text-app-text">
                         {classDetails.semester || "N/A"}
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-xs font-medium text-slate-500">
+                    <div className="rounded-xl bg-app-surface-soft p-3">
+                      <p className="text-xs font-medium text-app-text-muted">
                         Total Marks
                       </p>
 
-                      <p className="mt-1 font-semibold text-slate-800">
+                      <p className="mt-1 font-semibold text-app-text">
                         {assignment.totalMarks}
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-slate-50 p-3">
-                      <p className="text-xs font-medium text-slate-500">
+                    <div className="rounded-xl bg-app-surface-soft p-3">
+                      <p className="text-xs font-medium text-app-text-muted">
                         Due Date
                       </p>
 
-                      <p className="mt-1 text-sm font-semibold text-slate-800">
+                      <p className="mt-1 text-sm font-semibold text-app-text">
                         {new Date(
                           assignment.dueDate
                         ).toLocaleDateString()}
@@ -377,19 +377,19 @@ function Assignments({ user, showToast }) {
                     </div>
                   </div>
 
-                  <div className="mt-5 border-t border-slate-100 pt-4">
+                  <div className="mt-5 border-t border-app-border pt-4">
                     <p className={`text-sm font-semibold ${deadline.style}`}>
                       {deadline.label}
                     </p>
 
-                    <p className="mt-1 text-xs text-slate-400">
+                    <p className="mt-1 text-xs text-app-text-muted">
                       Created by{" "}
                       {assignment.createdBy?.name || "Faculty"}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-2 border-t border-slate-100 p-4">
+                <div className="flex flex-wrap gap-2 border-t border-app-border p-4">
                   <Link
                     to={`/assignments/${assignment._id}`}
                     className="flex-1 rounded-xl bg-green-600 px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:bg-green-700"
@@ -400,7 +400,7 @@ function Assignments({ user, showToast }) {
                   {isFaculty && (
                     <Link
                       to={`/assignments/${assignment._id}/edit`}
-                      className="rounded-xl border border-green-200 px-4 py-2.5 text-sm font-semibold text-green-700 transition hover:bg-green-50"
+                      className="rounded-xl border border-green-200 px-4 py-2.5 text-sm font-semibold text-green-700 transition hover:bg-green-50 dark:border-green-800 dark:text-green-300 dark:hover:bg-green-950/50"
                     >
                       Edit
                     </Link>
@@ -413,7 +413,7 @@ function Assignments({ user, showToast }) {
                       onClick={function () {
                         deleteAssignment(assignment._id);
                       }}
-                      className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="rounded-xl border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/50"
                     >
                       {deletingId === assignment._id
                         ? "Deleting..."
